@@ -4,20 +4,36 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public static PlayerManager Instance { get; private set; }
+    private static PlayerManager instance;
 
-    public int Level { get; private set; }
+    public static PlayerManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<PlayerManager>();
+                if (instance == null)
+                {
+                    GameObject singleton = new GameObject(typeof(PlayerManager).ToString());
+                    instance = singleton.AddComponent<PlayerManager>();
+                }
+            }
+            return instance;
+        }
+    }
+
     public int Health { get; private set; }
-    public int Stamina { get; private set; }
+    public int Fragment { get; private set; }
 
     private void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (instance != this)
         {
             Destroy(gameObject);
         }
@@ -27,31 +43,13 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         // Initialize player state
-        Level = 1;
-        Health = 100;
-        Stamina = 100;
+        Health = 3;
+        Fragment = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
         // Update player state
-    }
-
-    public void TakeDamage(int damage)
-    {
-        Health -= damage;
-        if (Health < 0) Health = 0;
-    }
-
-    public void UseStamina(int amount)
-    {
-        Stamina -= amount;
-        if (Stamina < 0) Stamina = 0;
-    }
-
-    public void GainExperience(int exp)
-    {
-        // Logic to increase level based on experience
     }
 }
