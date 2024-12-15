@@ -44,52 +44,37 @@ public class GeckoCrawl : MonoBehaviour
             // 检查输入序列是否匹配向上爬行的序列
             if (MatchesSequence(inputSequence, upSequence1) || MatchesSequence(inputSequence, upSequence2))
             {
-                Move(Vector3.up);
-                PlayAnimation("MoveUp");
-                inputSequence.Clear(); // 移动后清空序列
-            }
-            // 检查输入序列是否匹配向下爬行的序列
-            else if (MatchesSequence(inputSequence, downSequence1) || MatchesSequence(inputSequence, downSequence2))
-            {
-                Move(Vector3.down);
-                PlayAnimation("MoveDown");
-                inputSequence.Clear(); // 移动后清空序列
+                MoveAlongCollider(Vector3.up);
             }
         }
-        else
-        {
-            // 更新输入计时器
-            inputTimer += Time.deltaTime;
 
-            // 如果超过超时时间，清空输入序列
-            if (inputTimer >= inputTimeout)
-            {
-                inputSequence.Clear();
-                inputTimer = 0.0f;
-            }
+        // 更新输入计时器
+        inputTimer += Time.deltaTime;
+        if (inputTimer > inputTimeout)
+        {
+            inputSequence.Clear();
         }
     }
 
-    private bool MatchesSequence(List<KeyCode> input, List<KeyCode> sequence)
+    private bool MatchesSequence(List<KeyCode> inputSequence, List<KeyCode> targetSequence)
     {
-        if (input.Count != sequence.Count) return false;
-        for (int i = 0; i < input.Count; i++)
+        if (inputSequence.Count != targetSequence.Count) return false;
+
+        for (int i = 0; i < inputSequence.Count; i++)
         {
-            if (input[i] != sequence[i]) return false;
+            if (inputSequence[i] != targetSequence[i]) return false;
         }
+
         return true;
     }
 
-    private void Move(Vector3 direction)
+    private void MoveAlongCollider(Vector3 direction)
     {
-        transform.Translate(direction * speed * Time.deltaTime, Space.World);
-    }
-
-    private void PlayAnimation(string triggerName)
-    {
-        if (animator != null)
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit))
         {
-            animator.SetTrigger(triggerName);
+            Vector3 moveDirection = Vector3.ProjectOnPlane(direction, hit.normal).normalized;
+            transform.Translate(moveDirection * speed * Time.deltaTime);
         }
     }
 }
