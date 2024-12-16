@@ -10,11 +10,13 @@ public class NpcPatrol : MonoBehaviour
     public bool IsFight = false; // 是否进入战斗状态
 
     private Vector3 targetPoint; // 当前目标点
+    private Animator animator; // 动画控制器
 
     // Start is called before the first frame update
     void Start()
     {
         targetPoint = pointB.position; // 初始目标点为B
+        animator = GetComponent<Animator>(); // 获取动画控制器组件
     }
 
     // Update is called once per frame
@@ -22,6 +24,9 @@ public class NpcPatrol : MonoBehaviour
     {
         if (!IsFight)
         {
+            // 播放巡逻动画
+            animator.SetBool("IsPatrolling", true);
+
             // 移动到目标点
             transform.position = Vector3.MoveTowards(transform.position, targetPoint, speed * Time.deltaTime);
 
@@ -38,6 +43,11 @@ public class NpcPatrol : MonoBehaviour
                     targetPoint = pointB.position;
                 }
             }
+        }
+        else
+        {
+            // 停止巡逻动画
+            animator.SetBool("IsPatrolling", false);
         }
     }
 
