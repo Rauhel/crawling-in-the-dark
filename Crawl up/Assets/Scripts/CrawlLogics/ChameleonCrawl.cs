@@ -60,12 +60,11 @@ public class ChameleonCrawl : MonoBehaviour
             }
             else
             {
-                playerController.chameleon = false;
                 inputCorrect = false;
             }
         }
 
-        if (!keyPressed && timer < interval)
+        if (timer < interval)
         {
             inputCorrect = false;
         }
