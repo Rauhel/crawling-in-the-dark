@@ -8,6 +8,7 @@ TagManager:
   - Solid
   - Npc
   - Ice
+  - Start
   layers:
   - Default
   - TransparentFX
