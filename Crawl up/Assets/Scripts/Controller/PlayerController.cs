@@ -7,12 +7,21 @@ public class PlayerController : MonoBehaviour
     public bool chameleon;
     private BasicCrawl basicCrawl;
     private GeckoCrawl geckoCrawl;
+    private ChameleonCrawl chameleonCrawl;
+    private TurtleCrawl turtleCrawl;
+    private CatCrawl catCrawl;
+    private SnakeCrawl snakeCrawl;
 
     // Start is called before the first frame update
     void Start()
     {
         basicCrawl = GetComponent<BasicCrawl>();
         geckoCrawl = GetComponent<GeckoCrawl>();
+        chameleonCrawl = GetComponent<ChameleonCrawl>();
+        turtleCrawl = GetComponent<TurtleCrawl>();
+        catCrawl = GetComponent<CatCrawl>();
+        snakeCrawl = GetComponent<SnakeCrawl>();
+
 
         // 检查是否成功获取组件
         if (basicCrawl == null)
@@ -23,6 +32,23 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("GeckoCrawl component not found on the player.");
         }
+        if (chameleonCrawl == null)
+        {
+            Debug.LogError("ChameleonCrawl component not found on the player.");
+        }
+        if (turtleCrawl == null)
+        {
+            Debug.LogError("TurtleCrawl component not found on the player.");
+        }
+        if (catCrawl == null)
+        {
+            Debug.LogError("CatCrawl component not found on the player.");
+        }
+        if (snakeCrawl == null)
+        {
+            Debug.LogError("SnakeCrawl component not found on the player.");
+        }
+
 
         // 订阅事件
         if (CrawlManager.Instance != null)
@@ -43,31 +69,18 @@ public class PlayerController : MonoBehaviour
     // 方法：处理学会新的爬行方式事件
     private void OnLearnCrawl(string crawlType)
     {
-        Debug.Log("Player has learned " + crawlType + ".");
         CheckCrawlAbilities();
     }
 
     // 方法：检查玩家的爬行能力
     private void CheckCrawlAbilities()
     {
-        Debug.Log("Checking crawl abilities...");
         // 检查玩家是否学会了 Basic Crawl
         if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedBasicCrawl)
         {
-            Debug.Log("111");   
             if (basicCrawl != null)
             {
-                Debug.Log("222");
                 basicCrawl.enabled = true;
-                Debug.Log("Basic Crawl is enabled.");
-            }
-        }
-        else
-        {
-            if (basicCrawl != null)
-            {
-                Debug.Log("333");
-                basicCrawl.enabled = false;
             }
         }
 
@@ -77,39 +90,42 @@ public class PlayerController : MonoBehaviour
             if (geckoCrawl != null)
             {
                 geckoCrawl.enabled = true;
-                Debug.Log("Gecko Crawl is enabled.");
             }
         }
-        else
-        {
-            if (geckoCrawl != null)
-            {
-                geckoCrawl.enabled = false;
-            }
-        }
-    }
 
-    private void OnDestroy()
-    {
-        // 取消订阅事件
-        if (CrawlManager.Instance != null)
+        // 检查玩家是否学会了 Chameleon Crawl
+        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedChameleonCrawl)
         {
-            CrawlManager.Instance.OnLearnCrawl -= OnLearnCrawl;
-        }
-    }
-
-    // 方法：处理与标签为Water的GameObject接触
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Water"))
-        {
-            if (basicCrawl != null)
+            if (chameleonCrawl != null)
             {
-                basicCrawl.enabled = false;
+                chameleonCrawl.enabled = true;
             }
-            if (geckoCrawl != null)
+        }
+
+        // 检查玩家是否学会了 Turtle Crawl
+        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedTurtleCrawl)
+        {
+            if (turtleCrawl != null)
             {
-                geckoCrawl.enabled = false;
+                turtleCrawl.enabled = true;
+            }
+        }
+
+        // 检查玩家是否学会了 Cat Crawl
+        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedCatCrawl)
+        {
+            if (catCrawl != null)
+            {
+                catCrawl.enabled = true;
+            }
+        }
+
+        // 检查玩家是否学会了 Snake Crawl
+        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedSnakeCrawl)
+        {
+            if (snakeCrawl != null)
+            {
+                snakeCrawl.enabled = true;
             }
         }
     }

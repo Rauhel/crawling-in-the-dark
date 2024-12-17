@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CrawlManager : MonoBehaviour
@@ -30,6 +28,10 @@ public class CrawlManager : MonoBehaviour
     // 玩家学会的爬行方式
     public bool hasLearnedBasicCrawl = false;
     public bool hasLearnedGeckoCrawl = false;
+    public bool hasLearnedCatCrawl = false;
+    public bool hasLearnedSnakeCrawl = false;
+    public bool hasLearnedChameleonCrawl = false;
+    public bool hasLearnedTurtleCrawl = false;
 
     private void Awake()
     {
@@ -50,11 +52,19 @@ public class CrawlManager : MonoBehaviour
         // 初始化爬行方式
         hasLearnedBasicCrawl = false;
         hasLearnedGeckoCrawl = false;
+        hasLearnedCatCrawl = false;
+        hasLearnedSnakeCrawl = false;
+        hasLearnedChameleonCrawl = false;
+        hasLearnedTurtleCrawl = false;
 
         // 调试信息
         Debug.Log("CrawlManager initialized.");
         Debug.Log("hasLearnedBasicCrawl: " + hasLearnedBasicCrawl);
         Debug.Log("hasLearnedGeckoCrawl: " + hasLearnedGeckoCrawl);
+        Debug.Log("hasLearnedCatCrawl: " + hasLearnedCatCrawl);
+        Debug.Log("hasLearnedSnakeCrawl: " + hasLearnedSnakeCrawl);
+        Debug.Log("hasLearnedChameleonCrawl: " + hasLearnedChameleonCrawl);
+        Debug.Log("hasLearnedTurtleCrawl: " + hasLearnedTurtleCrawl);
     }
 
     // Update is called once per frame
@@ -74,16 +84,29 @@ public class CrawlManager : MonoBehaviour
         else if (crawlType == "GeckoCrawl")
         {
             hasLearnedGeckoCrawl = true;
+            Debug.Log("Player has learned Gecko Crawl.");
+        }
+        else if (crawlType == "CatCrawl")
+        {
+            hasLearnedCatCrawl = true;
+            Debug.Log("Player has learned Cat Crawl.");
+        }
+        else if (crawlType == "SnakeCrawl")
+        {
+            hasLearnedSnakeCrawl = true;
+            Debug.Log("Player has learned Snake Crawl.");
+        }
+        else if (crawlType == "ChameleonCrawl")
+        {
+            hasLearnedChameleonCrawl = true;
+            Debug.Log("Player has learned Chameleon Crawl.");
+        }
+        else if (crawlType == "TurtleCrawl")
+        {
+            hasLearnedTurtleCrawl = true;
+            Debug.Log("Player has learned Turtle Crawl.");
         }
 
-        // Trigger the event
-        Debug.Log("CrawlManager: Triggering OnLearnCrawl event for " + crawlType);
         OnLearnCrawl?.Invoke(crawlType);
-    }
-
-    private void OnDestroy()
-    {
-        // 取消订阅所有事件
-        OnLearnCrawl = null;
     }
 }
