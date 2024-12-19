@@ -18,91 +18,68 @@ public class TurtleCrawl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        // 检测方向输入 (A 和 D 键)
-        if (Input.GetKeyDown(KeyCode.A) && !Input.anyKeyDown)
-        {
-            moveDirection = Vector3.left;
-        }
-        else if (Input.GetKeyDown(KeyCode.D) && !Input.anyKeyDown)
-        {
-            moveDirection = Vector3.right;
-        }
 
         // 检测按键输入
         if (Input.anyKeyDown)
         {
-            if (Input.GetKeyDown(KeyCode.F)) inputSequence.Add(KeyCode.F);
-            if (Input.GetKeyDown(KeyCode.J)) inputSequence.Add(KeyCode.J);
-            if (Input.GetKeyDown(KeyCode.D)) inputSequence.Add(KeyCode.D);
-            if (Input.GetKeyDown(KeyCode.K)) inputSequence.Add(KeyCode.K);
-            if (Input.GetKeyDown(KeyCode.S)) inputSequence.Add(KeyCode.S);
-            if (Input.GetKeyDown(KeyCode.L)) inputSequence.Add(KeyCode.L);
-
-            // 重置输入计时器
-            inputTimer = 0.0f;
-
-            // 保持输入序列的长度不超过2
-            if (inputSequence.Count > 2)
+            if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.J) ||
+                Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.K) ||
+                Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.L))
             {
-                inputSequence.RemoveAt(0);
-            }
-
-            // 检查输入序列是否匹配当前序列
-            if (MatchesSequence(inputSequence, GetCurrentSequence()))
-            {
-                Move();
-                inputSequence.Clear(); // 移动后清空序列
-                currentSequenceIndex = (currentSequenceIndex + 1) % 3; // 切换到下一个序列
-            }
-        }
-        else
-        {
-            // 更新输入计时器
-            inputTimer += Time.deltaTime;
-
-            // 如果超过超时时间，清空输入序列并重置序列索引
-            if (inputTimer >= inputTimeout)
-            {
-                inputSequence.Clear();
+                inputSequence.Add(Input.inputString[0]);
+                Debug.Log("Input sequence: " + string.Join(", ", inputSequence));
                 inputTimer = 0.0f;
-                currentSequenceIndex = 0; // 重置序列索引
             }
         }
-    }
 
-    private List<KeyCode> GetCurrentSequence()
-    {
-        switch (currentSequenceIndex)
+        // 检查输入超时
+        inputTimer += Time.deltaTime;
+        if (inputTimer > inputTimeout)
         {
-            case 0:
-                return sequence1;
-            case 1:
-                return sequence2;
-            case 2:
-                return sequence3;
-            default:
-                return sequence1;
+            inputSequence.Clear();
+            Debug.Log("Input sequence cleared due to timeout");
         }
+
+        // 检查输入序列是否匹配
+        if (inputSequence.Count == sequence1.Count)
+        {
+            if (IsSequenceMatch(inputSequence, sequence1))
+            {
+                moveDirection = Vector3.forward;
+                Debug.Log("Sequence 1 matched: Moving forward");
+            }
+            else if (IsSequenceMatch(inputSequence, sequence2))
+            {
+                moveDirection = Vector3.back;
+                Debug.Log("Sequence 2 matched: Moving backward");
+            }
+            else if (IsSequenceMatch(inputSequence, sequence3))
+            {
+                moveDirection = Vector3.up;
+                Debug.Log("Sequence 3 matched: Moving up");
+            }
+            inputSequence.Clear();
+        }
+
+        // 移动乌龟
+        transform.Translate(moveDirection * speed * Time.deltaTime);
     }
 
-    private bool MatchesSequence(List<KeyCode> input, List<KeyCode> sequence)
+    private bool IsSequenceMatch(List<KeyCode> inputSequence, List<KeyCode> sequence)
     {
-        if (input.Count != sequence.Count) return false;
-        for (int i = 0; i < input.Count; i++)
+        for (int i = 0; i < sequence.Count; i++)
         {
-            if (input[i] != sequence[i]) return false;
+            if (inputSequence[i] != sequence[i])
+            {
+                return false;
+            }
         }
         return true;
-    }
-
-    private void Move()
-    {
-        transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
     }
 }

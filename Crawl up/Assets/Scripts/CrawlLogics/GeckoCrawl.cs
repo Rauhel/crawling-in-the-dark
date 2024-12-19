@@ -5,6 +5,7 @@ using UnityEngine;
 public class GeckoCrawl : MonoBehaviour
 {
     public float speed = 20.0f;
+    public bool resetOnWrongKey = true; // 按错键是否重置序列
     private Animator animator;
     private List<KeyCode> inputSequence = new List<KeyCode>();
     private List<KeyCode> upSequence1 = new List<KeyCode> { KeyCode.W, KeyCode.R, KeyCode.S, KeyCode.F };
@@ -51,6 +52,11 @@ public class GeckoCrawl : MonoBehaviour
         // 更新输入计时器
         inputTimer += Time.deltaTime;
         if (inputTimer > inputTimeout)
+        {
+            inputSequence.Clear();
+        }
+
+        if (resetOnWrongKey && !MatchesSequence(inputSequence, upSequence1) && !MatchesSequence(inputSequence, upSequence2))
         {
             inputSequence.Clear();
         }
