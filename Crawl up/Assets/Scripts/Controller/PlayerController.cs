@@ -68,12 +68,16 @@ public class PlayerController : MonoBehaviour
 
         // 初始化爬行方式
         CheckCrawlAbilities();
+<<<<<<< HEAD
+>>>>>>> parent of 3f16b7c (Player Controller)
+=======
 >>>>>>> parent of 3f16b7c (Player Controller)
     }
 
     [System.Serializable]
     public class CrawlSettings
     {
+<<<<<<< HEAD
 <<<<<<< HEAD
         public CrawlType crawlType;
         public List<KeyCode> keySequence;
@@ -105,6 +109,11 @@ public class PlayerController : MonoBehaviour
         // 这里可以添加其他逻辑
     }
 
+=======
+        // 这里可以添加其他逻辑
+    }
+
+>>>>>>> parent of 3f16b7c (Player Controller)
     // 方法：处理学会新的爬行方式事件
     private void OnLearnCrawl(string crawlType)
     {
@@ -166,6 +175,9 @@ public class PlayerController : MonoBehaviour
             {
                 snakeCrawl.enabled = true;
             }
+<<<<<<< HEAD
+>>>>>>> parent of 3f16b7c (Player Controller)
+=======
 >>>>>>> parent of 3f16b7c (Player Controller)
         }
     }
