@@ -12,26 +12,10 @@ public class CatCrawl : MonoBehaviour
     private bool hasPressedLeft = false;
     private bool hasPressedRight = false;
     private bool isMovingRight = true;
-    private PlayerController playerController;
-
-    void Start()
-    {
-        playerController = GetComponent<PlayerController>();
-        if (playerController == null)
-        {
-            Debug.LogError("PlayerController script not found on the same GameObject.");
-        }
-    }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerController != null)
-        {
-            bool isMovingRight = playerController.isMovingRight;
-            // Use isMovingRight as needed
-        }
-        
         int currentLeftKeyCount = 0;
         int currentRightKeyCount = 0;
 

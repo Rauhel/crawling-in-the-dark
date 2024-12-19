@@ -4,17 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-<<<<<<< HEAD
-    public enum CrawlType
-    {
-        BasicCrawl,
-        GeckoCrawl,
-        TurtleCrawl,
-        SnakeCrawl,
-        CatCrawl,
-        ChameleonCrawl
-=======
     public bool chameleon;
+    public bool isMovingRight; // 添加 isMovingRight 变量
     private BasicCrawl basicCrawl;
     private GeckoCrawl geckoCrawl;
     private ChameleonCrawl chameleonCrawl;
@@ -32,153 +23,77 @@ public class PlayerController : MonoBehaviour
         catCrawl = GetComponent<CatCrawl>();
         snakeCrawl = GetComponent<SnakeCrawl>();
 
-
-        // 检查是否成功获取组件
-        if (basicCrawl == null)
-        {
-            Debug.LogError("BasicCrawl component not found on the player.");
-        }
-        if (geckoCrawl == null)
-        {
-            Debug.LogError("GeckoCrawl component not found on the player.");
-        }
-        if (chameleonCrawl == null)
-        {
-            Debug.LogError("ChameleonCrawl component not found on the player.");
-        }
-        if (turtleCrawl == null)
-        {
-            Debug.LogError("TurtleCrawl component not found on the player.");
-        }
-        if (catCrawl == null)
-        {
-            Debug.LogError("CatCrawl component not found on the player.");
-        }
-        if (snakeCrawl == null)
-        {
-            Debug.LogError("SnakeCrawl component not found on the player.");
-        }
-
-
         // 订阅事件
         if (CrawlManager.Instance != null)
         {
             CrawlManager.Instance.OnLearnCrawl += OnLearnCrawl;
         }
-
-        // 初始化爬行方式
-        CheckCrawlAbilities();
-<<<<<<< HEAD
->>>>>>> parent of 3f16b7c (Player Controller)
-=======
->>>>>>> parent of 3f16b7c (Player Controller)
     }
 
-    [System.Serializable]
-    public class CrawlSettings
+    // Update is called once per frame
+    void Update()
     {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        public CrawlType crawlType;
-        public List<KeyCode> keySequence;
-        public float groundSpeed;
-        public float waterSpeed;
-        public float iceSpeed;
-        public float wallSpeed;
-    }
-
-    public List<CrawlSettings> crawlSettingsList;
-
-    private void Update()
-    {
-        HandleInput();
-    }
-
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
+        // 检测按键输入
+        if (Input.GetKey(KeyCode.A))
         {
-            // Handle left direction
-            transform.localScale = new Vector3(-1, 1, 1);
+            isMovingRight = false;
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
-            // Handle right direction
-            transform.localScale = new Vector3(1, 1, 1);
-=======
-        // 这里可以添加其他逻辑
+            isMovingRight = true;
+        }
+
+        if (Input.anyKey)
+        {
+            int keyCount = 0;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.F))
+            {
+                keyCount++;
+            }
+            if (Input.GetKey(KeyCode.F) && Input.GetKey(KeyCode.J))
+            {
+                keyCount++;
+            }
+            if (Input.GetKey(KeyCode.M) || Input.GetKey(KeyCode.Z))
+            {
+                keyCount++;
+            }
+
+            if (keyCount >= 5 && CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedCatCrawl)
+            {
+                EnableCrawl(catCrawl);
+            }
+            else if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.R) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.F)) && CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedGeckoCrawl)
+            {
+                EnableCrawl(geckoCrawl);
+            }
+            else if (Input.GetKey(KeyCode.F) && Input.GetKey(KeyCode.J) && CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedTurtleCrawl)
+            {
+                EnableCrawl(turtleCrawl);
+            }
+            else if ((Input.GetKey(KeyCode.M) || Input.GetKey(KeyCode.Z)) && CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedSnakeCrawl)
+            {
+                EnableCrawl(snakeCrawl);
+            }
+        }
     }
 
-=======
-        // 这里可以添加其他逻辑
+    private void EnableCrawl(MonoBehaviour crawlType)
+    {
+        basicCrawl.enabled = false;
+        geckoCrawl.enabled = false;
+        chameleonCrawl.enabled = false;
+        turtleCrawl.enabled = false;
+        catCrawl.enabled = false;
+        snakeCrawl.enabled = false;
+
+        crawlType.enabled = true;
     }
 
->>>>>>> parent of 3f16b7c (Player Controller)
-    // 方法：处理学会新的爬行方式事件
     private void OnLearnCrawl(string crawlType)
     {
-        CheckCrawlAbilities();
+        // 处理学习爬行方式的逻辑
+        Debug.Log("Learned crawl type: " + crawlType);
     }
-
-    // 方法：检查玩家的爬行能力
-    private void CheckCrawlAbilities()
-    {
-        // 检查玩家是否学会了 Basic Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedBasicCrawl)
-        {
-            if (basicCrawl != null)
-            {
-                basicCrawl.enabled = true;
-            }
-        }
-
-        // 检查玩家是否学会了 Gecko Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedGeckoCrawl)
-        {
-            if (geckoCrawl != null)
-            {
-                geckoCrawl.enabled = true;
-            }
-        }
-
-        // 检查玩家是否学会了 Chameleon Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedChameleonCrawl)
-        {
-            if (chameleonCrawl != null)
-            {
-                chameleonCrawl.enabled = true;
-            }
-        }
-
-        // 检查玩家是否学会了 Turtle Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedTurtleCrawl)
-        {
-            if (turtleCrawl != null)
-            {
-                turtleCrawl.enabled = true;
-            }
-        }
-
-        // 检查玩家是否学会了 Cat Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedCatCrawl)
-        {
-            if (catCrawl != null)
-            {
-                catCrawl.enabled = true;
-            }
-        }
-
-        // 检查玩家是否学会了 Snake Crawl
-        if (CrawlManager.Instance != null && CrawlManager.Instance.hasLearnedSnakeCrawl)
-        {
-            if (snakeCrawl != null)
-            {
-                snakeCrawl.enabled = true;
-            }
-<<<<<<< HEAD
->>>>>>> parent of 3f16b7c (Player Controller)
-=======
->>>>>>> parent of 3f16b7c (Player Controller)
-        }
-    }
+    
 }
