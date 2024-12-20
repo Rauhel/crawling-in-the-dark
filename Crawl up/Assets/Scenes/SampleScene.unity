@@ -4399,11 +4399,26 @@ PrefabInstance:
       propertyPath: pauseMenu
       value: 
       objectReference: {fileID: 129328790}
+    - target: {fileID: 6347135732746613000, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: menuCanvas
+      value: 
+      objectReference: {fileID: 7351244990077019692}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e741d67c67757344ab96478410a8202a, type: 3}
+--- !u!114 &5165975896175494301 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6347135732746613000, guid: e741d67c67757344ab96478410a8202a, type: 3}
+  m_PrefabInstance: {fileID: 5165975896175494300}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 397c02335e2012b41b11214b8dd8a789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7351244990077019691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4496,11 +4511,64 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 2623652747897904728, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_Name
+      value: ReturnToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 3143148476713998146, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5165975896175494301}
+    - target: {fileID: 3143148476713998146, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ReturnToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 3143148476713998146, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3143148476713998146, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397981870696862909, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5165975896175494301}
+    - target: {fileID: 8397981870696862909, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResumeGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397981870696862909, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397981870696862909, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 9184268591229916488, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5165975896175494301}
+    - target: {fileID: 9184268591229916488, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ReturnToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 9184268591229916488, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+--- !u!1 &7351244990077019692 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8925321690975482448, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+  m_PrefabInstance: {fileID: 7351244990077019691}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
