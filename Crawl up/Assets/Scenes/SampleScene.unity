@@ -608,13 +608,7 @@ GameObject:
   - component: {fileID: 158864546}
   - component: {fileID: 158864549}
   - component: {fileID: 158864548}
-  - component: {fileID: 158864554}
-  - component: {fileID: 158864553}
-  - component: {fileID: 158864551}
-  - component: {fileID: 158864552}
   - component: {fileID: 158864550}
-  - component: {fileID: 158864557}
-  - component: {fileID: 158864556}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -758,89 +752,55 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aedd7ed62bcab44bb12cf095b819923, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
---- !u!114 &158864551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07c94b6f77e94f746b851e0c343d9ff4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 20
---- !u!114 &158864552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4367bd9cbd778e240bf3b2bce116f192, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  letterDisplay: {fileID: 498861690}
-  nextLetterDisplay: {fileID: 1747428635}
---- !u!114 &158864553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad7cf573cea8b9b4bb3d7e905337e9fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
---- !u!114 &158864554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3351f41e83fbcff4fb0c6984041446ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chameleon: 0
---- !u!114 &158864556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2243c6adc9ee5443b25bf27633db185, type: 3}
+  m_Script: {fileID: 11500000, guid: 993afe664272af146b3211418649023d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &158864557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158864545}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317850dc445878f488c3b3c5ffca855a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  basicCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  geckoCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  turtleCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  snakeCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  catCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  chameleonCrawl:
+    crawlName: 
+    keySequence: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+  animator: {fileID: 0}
+  moveDistance: 1
 --- !u!1 &216036683
 GameObject:
   m_ObjectHideFlags: 0

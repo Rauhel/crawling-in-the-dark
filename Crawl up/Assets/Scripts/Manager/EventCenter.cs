@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 // 事件中心类
 public class EventCenter : MonoBehaviour
@@ -41,6 +39,14 @@ public class EventCenter : MonoBehaviour
     }
 
     private static Dictionary<string, Action> eventTable = new Dictionary<string, Action>();
+
+    // 定义事件类型
+    public const string EVENT_LEARNED_BASIC_CRAWL = "learned_basic_crawl";
+    public const string EVENT_LEARNED_GECKO_CRAWL = "learned_gecko_crawl";
+    public const string EVENT_LEARNED_TURTLE_CRAWL = "learned_turtle_crawl";
+    public const string EVENT_LEARNED_SNAKE_CRAWL = "learned_snake_crawl";
+    public const string EVENT_LEARNED_CAT_CRAWL = "learned_cat_crawl";
+    public const string EVENT_LEARNED_CHAMELEON_CRAWL = "learned_chameleon_crawl";
 
     // 订阅事件
     public void Subscribe(string eventType, Action listener)
