@@ -4,8 +4,7 @@ using System.Reflection;
 [System.Serializable]
 public class KeySequence
 {
-    public KeyCode key;
-    public KeyCode[] parallelKeys;
+    public KeyCode[] keySequence;
     public int requiredKeyCount = 1; // 默认需要按1个键
 }
 
@@ -49,8 +48,7 @@ public class PlayerInput : MonoBehaviour
         {
             keySequence = new KeySequence[]
             {
-                new KeySequence { key = KeyCode.A },
-                new KeySequence { key = KeyCode.D }
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.A } }
             },
             groundSpeed = 4f, // 根据需要设置速度
             waterSpeed = 2f,
@@ -65,10 +63,10 @@ public class PlayerInput : MonoBehaviour
         {
             keySequence = new KeySequence[]
             {
-                new KeySequence { key = KeyCode.W },
-                new KeySequence { key = KeyCode.R },
-                new KeySequence { key = KeyCode.S },
-                new KeySequence { key = KeyCode.F }
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.W } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.R } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.S } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.F } }
             },
             groundSpeed = 5f, // 根据需要设置速度
             waterSpeed = 3f,
@@ -83,30 +81,9 @@ public class PlayerInput : MonoBehaviour
         {
             keySequence = new KeySequence[]
             {
-                new KeySequence
-                {
-                    parallelKeys = new KeyCode[]
-                    {
-                        KeyCode.F, KeyCode.J
-                    },
-                    requiredKeyCount = 2
-                },
-                new KeySequence
-                {
-                    parallelKeys = new KeyCode[]
-                    {
-                        KeyCode.D, KeyCode.K
-                    },
-                    requiredKeyCount = 2
-                },
-                new KeySequence
-                {
-                    parallelKeys = new KeyCode[]
-                    {
-                        KeyCode.S, KeyCode.L
-                    },
-                    requiredKeyCount = 2
-                }
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredKeyCount = 2 },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredKeyCount = 2 },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredKeyCount = 2 }
             },
             groundSpeed = 2f, // 根据需要设置速度
             waterSpeed = 1f,
@@ -121,13 +98,13 @@ public class PlayerInput : MonoBehaviour
         {
             keySequence = new KeySequence[]
             {
-                new KeySequence { key = KeyCode.M },
-                new KeySequence { key = KeyCode.N },
-                new KeySequence { key = KeyCode.B },
-                new KeySequence { key = KeyCode.V },
-                new KeySequence { key = KeyCode.C },
-                new KeySequence { key = KeyCode.X },
-                new KeySequence { key = KeyCode.Z }
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.M } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.N } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.B } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.V } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.C } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.X } },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.Z } }
             },
             groundSpeed = 3f, // 根据需要设置速度
             waterSpeed = 1.5f,
@@ -142,26 +119,8 @@ public class PlayerInput : MonoBehaviour
         {
             keySequence = new KeySequence[]
             {
-                new KeySequence
-                {
-                    parallelKeys = new KeyCode[]
-                    {
-                        KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G,
-                        KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T,
-                        KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V, KeyCode.B
-                    },
-                    requiredKeyCount = 5
-                },
-                new KeySequence
-                {
-                    parallelKeys = new KeyCode[]
-                    {
-                        KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y,
-                        KeyCode.U, KeyCode.I, KeyCode.O, KeyCode.P, KeyCode.N,
-                        KeyCode.M
-                    },
-                    requiredKeyCount = 5
-                }
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, requiredKeyCount = 5 },
+                new KeySequence { keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, requiredKeyCount = 5 }
             },
             groundSpeed = 4f, // 根据需要设置速度
             waterSpeed = 2f,
@@ -208,7 +167,7 @@ public class PlayerInput : MonoBehaviour
                 KeySequence lastKeySequence = crawlSettings.keySequence[crawlSettings.keySequence.Length - 1];
 
                 // 检查是否按下了第一个或最后一个按键序列的键
-                if (Input.GetKeyDown(firstKeySequence.key) || Input.GetKeyDown(lastKeySequence.key))
+                if (Input.GetKeyDown(firstKeySequence.keySequence[0]) || Input.GetKeyDown(lastKeySequence.keySequence[0]))
                 {
                     Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
                     ChangeCrawlType(crawlType);
@@ -238,18 +197,8 @@ public class PlayerInput : MonoBehaviour
             // Debug.Log($"Current key sequence at index {currentKeyIndex}");
             // Debug.Log($"Current key sequence: {currentKeySequence.key}");
 
-            
-            if (currentKeySequence.parallelKeys != null && currentKeySequence.parallelKeys.Length > 0)
-            {
-                // Debug.Log($"Processing parallel input with {currentKeySequence.parallelKeys.Length} keys");
-                CheckParallelInput(currentKeySequence);
-            }
-            else
-            {
-                // Debug.Log("Processing sequential input");
-                Debug.Log("CHHHECKKKKKING SEQUENTIAL INPUT");
-                CheckSequentialInput(currentKeySequence);
-            }
+            Debug.Log("CHHHECKKKKKING SEQUENTIAL INPUT");
+            CheckParallelInput(currentKeySequence);
         }
         else
         {
@@ -257,78 +206,31 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    void CheckSequentialInput(KeySequence keySequence)
-    {
-        // Debug.Log("Entering CheckSequentialInput");
-        // Debug.Log($"isReversing: {isReversing}");
-        // Debug.Log($"currentKeyIndex: {currentKeyIndex}");
-        
-        // 如果isReversing为true，则检查是否按下了最后一个按键序列的键，否则检查第一个
-        if (isReversing)
-        {
-            Debug.Log("Checking reversed input");
-            KeyCode expectedKey = currentCrawlSettings.keySequence[currentCrawlSettings.keySequence.Length - 1 - currentKeyIndex].key;
-            Debug.Log($"Expected key in reverse: {expectedKey}");
-            
-            if (Input.GetKeyDown(expectedKey))
-            {
-                Debug.Log($"Correct key pressed in reverse: {expectedKey}");
-                MovePlayer();
-                currentKeyIndex++;
-                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
-                
-                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
-                {
-                    Debug.Log("Resetting currentKeyIndex to 0");
-                    currentKeyIndex = 0;
-                }
-                PlayAnimation(currentCrawlName);
-            }
-        }
-        else
-        {
-            Debug.Log("Checking forward input");
-            Debug.Log($"Expected key: {keySequence.key}");
-            
-            // if (Input.GetKeyDown(keySequence.key))
-            if (currentKey == keySequence.key)
-            {
-                Debug.LogWarning($"Correct key pressed: {keySequence.key}");
-                MovePlayer();
-                currentKeyIndex++;
-                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
-                
-                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
-                {
-                    Debug.Log("Resetting currentKeyIndex to 0");
-                    currentKeyIndex = 0;
-                }
-                PlayAnimation(currentCrawlName);
-            }
-        }
-        Debug.Log("Exiting CheckSequentialInput");
-    }
-
     void CheckParallelInput(KeySequence keySequence)
     {
         if (isReversing)
         {
-            // 如果isReversing为true，则逆序检查并行按键
+            Debug.Log("Checking reversed parallel input");
             int keyCount = 0;
-            for (int i = keySequence.parallelKeys.Length - 1; i >= 0; i--) // 逆序遍历数组
+            for (int i = keySequence.keySequence.Length - 1; i >= 0; i--) // 逆序遍历数组
             {
-                if (Input.GetKey(keySequence.parallelKeys[i]))
+                if (Input.GetKey(keySequence.keySequence[i]))
                 {
                     keyCount++;
                 }
             }
 
+            Debug.Log($"Keys pressed in reverse: {keyCount}");
             if (keyCount >= keySequence.requiredKeyCount)
             {
+                Debug.Log("Correct number of keys pressed in reverse");
                 MovePlayer();
                 currentKeyIndex++;
+                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
+
                 if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
                 {
+                    Debug.Log("Resetting currentKeyIndex to 0");
                     currentKeyIndex = 0;
                 }
                 PlayAnimation(currentCrawlName);
@@ -336,9 +238,9 @@ public class PlayerInput : MonoBehaviour
         }
         else
         {
-            // 如果isReversing为false，则正序检查并行按键
+            Debug.Log("Checking forward parallel input");
             int keyCount = 0;
-            foreach (KeyCode key in keySequence.parallelKeys)
+            foreach (KeyCode key in keySequence.keySequence)
             {
                 if (Input.GetKey(key))
                 {
@@ -346,17 +248,23 @@ public class PlayerInput : MonoBehaviour
                 }
             }
 
+            Debug.Log($"Keys pressed: {keyCount}");
             if (keyCount >= keySequence.requiredKeyCount)
             {
+                Debug.Log("Correct number of keys pressed");
                 MovePlayer();
                 currentKeyIndex++;
+                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
+
                 if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
                 {
+                    Debug.Log("Resetting currentKeyIndex to 0");
                     currentKeyIndex = 0;
                 }
                 PlayAnimation(currentCrawlName);
             }
         }
+        Debug.Log("Exiting CheckParallelInput");
     }
 
     void MovePlayer()
