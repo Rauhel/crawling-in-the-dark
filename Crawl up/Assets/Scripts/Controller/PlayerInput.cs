@@ -23,6 +23,16 @@ public class CrawlSettings
     public bool canCrawl; // 表示是否已经学会这种爬行
 }
 
+// 添加新的类来追踪每种爬行方式的切换进度
+[System.Serializable]
+public class CrawlProgress
+{
+    public int currentKeyListIndex = 0;    // 当前在检测第几个按键序列
+    public float lastValidInputTime = 0f;  // 上次有效输入的时间
+    public bool isInProgress = false;      // 是否正在进行切换序列
+    public bool isPlayingTransitionAnim = false;  // 添加：是否正在播放过渡动画
+}
+
 public class PlayerInput : MonoBehaviour
 {
     public CrawlSettings basicCrawl;
@@ -43,6 +53,10 @@ public class PlayerInput : MonoBehaviour
     private HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
     private bool keyDetected = false;
 
+    // 在现有变量后添加
+    private Dictionary<string, CrawlProgress> crawlProgresses = new Dictionary<string, CrawlProgress>();
+    public float maxTimeBetweenInputs = 2f;  // 输入序列的最大间隔时间
+    
     void Start()
     {
         currentKeyIndex = 0;
@@ -143,6 +157,12 @@ public class PlayerInput : MonoBehaviour
             isActive = false,
             canCrawl = false
         };
+
+        // 在现有的 Start 方法中添加
+        foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
+        {
+            crawlProgresses[crawlType] = new CrawlProgress();
+        }
     }
 
     void Update()
@@ -172,94 +192,88 @@ public class PlayerInput : MonoBehaviour
 
     void CheckSpaceInput()
     {
-        // 检查空格键是否被按下
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // 按一下空格键，isReversing的值在true和false之间切换
             isReversing = !isReversing;
+            // 当切换方向时重置所有进度
+            ResetAllProgress();
+            currentKeyIndex = 0;
+            Debug.Log($"方向切换: {(isReversing ? "反向" : "正向")}");
         }
     }
 
     void CheckInput()
     {
-        // 检查是否是每种爬行方式的第一个或最后一个按键序列
         foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
         {
             CrawlSettings crawlSettings = (CrawlSettings)GetType().GetField(crawlType.ToLower() + "Crawl", BindingFlags.Public | BindingFlags.Instance).GetValue(this);
-            if (crawlSettings.canCrawl && crawlSettings.keyLists != null && crawlSettings.keyLists.Length > 0) // 确保数组不为空
+            if (!crawlSettings.canCrawl || crawlSettings.keyLists == null || crawlSettings.keyLists.Length == 0) 
+                continue;
+
+            CrawlProgress progress = crawlProgresses[crawlType];
+            
+            if (progress.isInProgress && Time.time - progress.lastValidInputTime > maxTimeBetweenInputs)
             {
-                KeyList firstKeyList = crawlSettings.keyLists[0];
-                KeyList lastKeyList = crawlSettings.keyLists[crawlSettings.keyLists.Length - 1];
-
-                // 检查是否按下了第一个或最后一个按键序列的键
-                if (Input.GetKeyDown(firstKeyList.keySequence[0]) || Input.GetKeyDown(lastKeyList.keySequence[0]))
-                {
-                    Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
-                    ChangeCrawlType(crawlType);
-                    Debug.Log("Key pressed for crawl type: " + crawlType); // 打印按下的爬行类型
-                    return; // 退出方法，因为已经处理了爬行方式的切换
-                }
-                
-
+                ResetProgress(crawlType);
+                continue;
             }
-            else if (!crawlSettings.canCrawl)
+
+            // 根据 isReversing 获取正确的序列索引
+            int sequenceIndex = isReversing 
+                ? crawlSettings.keyLists.Length - 1 - progress.currentKeyListIndex 
+                : progress.currentKeyListIndex;
+
+            KeyList currentKeyList = crawlSettings.keyLists[sequenceIndex];
+
+            if (IsValidKeyListInput(currentKeyList))
             {
-                // pass
+                progress.lastValidInputTime = Time.time;
+                progress.isInProgress = true;
+
+                if (!progress.isPlayingTransitionAnim)
+                {
+                    progress.isPlayingTransitionAnim = true;
+                    PlayTransitionAnimation(crawlType, sequenceIndex);
+                }
+
+                progress.currentKeyListIndex++;
+                Debug.Log($"{crawlType} 进度: {progress.currentKeyListIndex}/{crawlSettings.keyLists.Length}");
+
+                if (progress.currentKeyListIndex >= crawlSettings.keyLists.Length)
+                {
+                    Debug.Log($"切换到 {crawlType} 爬行方式");
+                    ChangeCrawlType(crawlType);
+                    ResetAllProgress();
+                    return;
+                }
             }
         }
     }
 
-    void CheckParallelInput()
+    private bool IsValidKeyListInput(KeyList keyList)
     {
-        if (currentCrawlSettings == null || currentCrawlSettings.keyLists == null || currentCrawlSettings.keyLists.Length == 0)
-        {
-            Debug.LogWarning("无效的爬行设置或按键列表");
-            return;
-        }
-
-        if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
-        {
-            currentKeyIndex = 0;
-        }
-
-        KeyList currentKeyList = currentCrawlSettings.keyLists[currentKeyIndex];
-        
-        // 检查是否存在无效按键（不在当前序列中的按键）
+        // 检查是否存在无效按键
         foreach (KeyCode pressedKey in currentKeys)
         {
-            if (!currentKeyList.keySequence.Contains(pressedKey))
+            if (!keyList.keySequence.Contains(pressedKey))
             {
                 Debug.Log($"检测到无效按键: {pressedKey}，本次输入无效");
-                return; // 如果有任何一个按键不在序列中，直接返回
+                return false;
             }
         }
 
         // 计算有效按键数量
-        int keyCount = 0;
-        foreach (KeyCode key in currentKeyList.keySequence)
-        {
-            if (currentKeys.Contains(key))
-            {
-                keyCount++;
-            }
-        }
-
-        Debug.Log($"按下的键数: {keyCount}, 最小要求: {currentKeyList.requiredMinKeyCount}, 最大允许: {currentKeyList.requiredMaxKeyCount}");
+        int keyCount = keyList.keySequence.Count(key => currentKeys.Contains(key));
+        
+        Debug.Log($"按下的键数: {keyCount}, 最小要求: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
         
         // 检查按键数是否在允许的范围内
-        if (keyCount >= currentKeyList.requiredMinKeyCount && keyCount <= currentKeyList.requiredMaxKeyCount)
+        bool isValid = keyCount >= keyList.requiredMinKeyCount && keyCount <= keyList.requiredMaxKeyCount;
+        if (isValid)
         {
             Debug.Log($"符合要求的按键数: {keyCount}");
-            MovePlayer();
-            currentKeyIndex++;
-
-            if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
-            {
-                Debug.Log("重置 currentKeyIndex 为 0");
-                currentKeyIndex = 0;
-            }
-            PlayAnimation(currentCrawlName);
         }
+        return isValid;
     }
 
     void MovePlayer()
@@ -299,6 +313,7 @@ public class PlayerInput : MonoBehaviour
 
             currentCrawlSettings.isActive = true;
         }
+        ResetAllProgress();
     }
 
     private void OnEnable()
@@ -353,5 +368,66 @@ public class PlayerInput : MonoBehaviour
     private void OnLearnChameleonCrawl()
     {
         chameleonCrawl.canCrawl = true;
+    }
+
+    // 添加新的辅助方法
+    private void ResetProgress(string crawlType)
+    {
+        var progress = crawlProgresses[crawlType];
+        progress.currentKeyListIndex = 0;
+        progress.isInProgress = false;
+        progress.lastValidInputTime = 0f;
+        progress.isPlayingTransitionAnim = false;  // 重置动画状态
+    }
+
+    private void ResetAllProgress()
+    {
+        foreach (var crawlType in crawlProgresses.Keys.ToList())
+        {
+            ResetProgress(crawlType);
+        }
+    }
+
+    void CheckParallelInput()
+    {
+        if (currentCrawlSettings == null || currentCrawlSettings.keyLists == null || currentCrawlSettings.keyLists.Length == 0)
+        {
+            Debug.LogWarning("无效的爬行设置或按键列表");
+            return;
+        }
+
+        if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
+        {
+            currentKeyIndex = 0;
+        }
+
+        // 根据 isReversing 获取正确的序列索引
+        int sequenceIndex = isReversing 
+            ? currentCrawlSettings.keyLists.Length - 1 - currentKeyIndex 
+            : currentKeyIndex;
+
+        KeyList currentKeyList = currentCrawlSettings.keyLists[sequenceIndex];
+        
+        if (IsValidKeyListInput(currentKeyList))
+        {
+            MovePlayer();
+            currentKeyIndex++;
+
+            if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
+            {
+                Debug.Log("重置 currentKeyIndex 为 0");
+                currentKeyIndex = 0;
+            }
+            PlayAnimation(currentCrawlName);
+        }
+    }
+
+    // 添加新的动画播放方法
+    void PlayTransitionAnimation(string crawlType, int sequenceIndex)
+    {
+        // 构建动画触发器名称，例如: "GeckoTransition1"
+        string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
+        animator.SetTrigger(triggerName);
+        Debug.Log($"播放过渡动画: {triggerName}");
     }
 }
