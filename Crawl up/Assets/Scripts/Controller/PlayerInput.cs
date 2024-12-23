@@ -37,11 +37,9 @@ public class PlayerInput : MonoBehaviour
     private CrawlSettings currentCrawlSettings;
     private string currentCrawlName;
     private bool isReversing = false;
-    public bool isCrawlLearned = false;
 
     void Start()
     {
-        isCrawlLearned = false;
         // Set default crawl settings
         ChangeCrawlType("Basic");
 
@@ -57,7 +55,8 @@ public class PlayerInput : MonoBehaviour
             waterSpeed = 2f,
             iceSpeed = 1.5f,
             wallSpeed = 3f,
-            isActive = false
+            isActive = false,
+            canCrawl = false
         };
 
         // 定义 GeckoCrawl 的按键顺序
@@ -74,7 +73,8 @@ public class PlayerInput : MonoBehaviour
             waterSpeed = 3f,
             iceSpeed = 2f,
             wallSpeed = 4f,
-            isActive = false
+            isActive = false,
+            canCrawl = false
         };
 
         // 定义 TurtleCrawl 的按键顺序
@@ -111,7 +111,8 @@ public class PlayerInput : MonoBehaviour
             waterSpeed = 1f,
             iceSpeed = 1.5f,
             wallSpeed = 1f,
-            isActive = false
+            isActive = false,
+            canCrawl = false
         };
 
         // 定义 SnakeCrawl 的按键顺序
@@ -131,7 +132,8 @@ public class PlayerInput : MonoBehaviour
             waterSpeed = 1.5f,
             iceSpeed = 1f,
             wallSpeed = 2f,
-            isActive = false
+            isActive = false,
+            canCrawl = false
         };
 
         // 定义 CatCrawl 的按键序列
@@ -164,101 +166,145 @@ public class PlayerInput : MonoBehaviour
             waterSpeed = 2f,
             iceSpeed = 1.5f,
             wallSpeed = 3f,
-            isActive = false
+            isActive = false,
+            canCrawl = false
         };
     }
 
     void Update()
     {
         CheckInput();
+        CheckSpaceInput(); // 检查空格键输入
+    }
+
+    void CheckSpaceInput()
+    {
+        // 检查空格键是否被按下
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // 按一下空格键，isReversing的值在true和false之间切换
+            isReversing = !isReversing;
+        }
     }
 
     void CheckInput()
     {
-        bool canCrawl = isCrawlLearned; // 使用isCrawlLearned作为条件
-
-        if (canCrawl)
+        // 检查是否是每种爬行方式的第一个或最后一个按键序列
+        foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
         {
-            if (currentKeyIndex < currentCrawlSettings.keySequence.Length)
+            CrawlSettings crawlSettings = (CrawlSettings)GetType().GetField(crawlType.ToLower() + "Crawl", BindingFlags.Public | BindingFlags.Instance).GetValue(this);
+            if (crawlSettings.canCrawl && crawlSettings.keySequence != null && crawlSettings.keySequence.Length > 0) // 确保数组不为空
             {
-                KeySequence currentKeySequence = currentCrawlSettings.keySequence[currentKeyIndex];
-                if (currentKeySequence.parallelKeys != null && currentKeySequence.parallelKeys.Length > 0)
-                {
-                    CheckParallelInput(currentKeySequence);
-                }
-                else
-                {
-                    CheckSequentialInput(currentKeySequence);
-                }
-            }
+                KeySequence firstKeySequence = crawlSettings.keySequence[0];
+                KeySequence lastKeySequence = crawlSettings.keySequence[crawlSettings.keySequence.Length - 1];
 
-            // 检查是否是每种爬行方式的第一个或最后一个按键序列
-            foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
-            {
-                CrawlSettings crawlSettings = (CrawlSettings)GetType().GetField(crawlType.ToLower() + "Crawl", BindingFlags.Public | BindingFlags.Instance).GetValue(this);
-                if (crawlSettings.keySequence.Length > 0 &&
-                    (Input.GetKeyDown(crawlSettings.keySequence[0].key) ||
-                    Input.GetKeyDown(crawlSettings.keySequence[crawlSettings.keySequence.Length - 1].key)))
+                // 检查是否按下了第一个或最后一个按键序列的键
+                if (Input.GetKeyDown(firstKeySequence.key) || Input.GetKeyDown(lastKeySequence.key))
                 {
                     ChangeCrawlType(crawlType);
+                    currentKeyIndex = 0; // 重置索引
+                    return; // 退出方法，因为已经处理了爬行方式的切换
                 }
             }
-        }
-        else
-        {
-            foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
+            else if (!crawlSettings.canCrawl)
             {
                 Debug.Log("Crawl type not learned yet: " + crawlType);
+            }
+        }
+
+        // 如果当前爬行设置的isActive为true，则处理输入
+        if (currentCrawlSettings != null && currentCrawlSettings.isActive && currentKeyIndex >= 0 && currentKeyIndex < currentCrawlSettings.keySequence.Length)
+        {
+            KeySequence currentKeySequence = currentCrawlSettings.keySequence[currentKeyIndex];
+            if (currentKeySequence.parallelKeys != null && currentKeySequence.parallelKeys.Length > 0)
+            {
+                CheckParallelInput(currentKeySequence);
+            }
+            else
+            {
+                CheckSequentialInput(currentKeySequence);
             }
         }
     }
 
     void CheckSequentialInput(KeySequence keySequence)
     {
-        if (Input.GetKeyDown(keySequence.key))
+        // 如果isReversing为true，则检查是否按下了最后一个按键序列的键，否则检查第一个
+        if (isReversing)
         {
-            MovePlayer();
-            currentKeyIndex++;
-            if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+            if (Input.GetKeyDown(currentCrawlSettings.keySequence[currentCrawlSettings.keySequence.Length - 1 - currentKeyIndex].key))
             {
-                currentKeyIndex = 0;
+                MovePlayer();
+                currentKeyIndex++;
+                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+                {
+                    currentKeyIndex = 0;
+                }
+                PlayAnimation(currentCrawlName);
             }
-            PlayAnimation(currentCrawlName);
         }
-        else if (Input.GetKeyDown(currentCrawlSettings.keySequence[currentCrawlSettings.keySequence.Length - 1 - currentKeyIndex].key))
+        else
         {
-            isReversing = true;
-            MovePlayer();
-            currentKeyIndex++;
-            if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+            if (Input.GetKeyDown(keySequence.key))
             {
-                currentKeyIndex = 0;
-                isReversing = false;
+                MovePlayer();
+                currentKeyIndex++;
+                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+                {
+                    currentKeyIndex = 0;
+                }
+                PlayAnimation(currentCrawlName);
             }
-            PlayAnimation(currentCrawlName);
         }
     }
 
     void CheckParallelInput(KeySequence keySequence)
     {
-        int keyCount = 0;
-        foreach (KeyCode key in keySequence.parallelKeys)
+        if (isReversing)
         {
-            if (Input.GetKey(key))
+            // 如果isReversing为true，则逆序检查并行按键
+            int keyCount = 0;
+            for (int i = keySequence.parallelKeys.Length - 1; i >= 0; i--) // 逆序遍历数组
             {
-                keyCount++;
+                if (Input.GetKey(keySequence.parallelKeys[i]))
+                {
+                    keyCount++;
+                }
+            }
+
+            if (keyCount >= keySequence.requiredKeyCount)
+            {
+                MovePlayer();
+                currentKeyIndex++;
+                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+                {
+                    currentKeyIndex = 0;
+                }
+                PlayAnimation(currentCrawlName);
             }
         }
-
-        if (keyCount >= keySequence.requiredKeyCount)
+        else
         {
-            MovePlayer();
-            currentKeyIndex++;
-            if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+            // 如果isReversing为false，则正序检查并行按键
+            int keyCount = 0;
+            foreach (KeyCode key in keySequence.parallelKeys)
             {
-                currentKeyIndex = 0;
+                if (Input.GetKey(key))
+                {
+                    keyCount++;
+                }
             }
-            PlayAnimation(currentCrawlName);
+
+            if (keyCount >= keySequence.requiredKeyCount)
+            {
+                MovePlayer();
+                currentKeyIndex++;
+                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
+                {
+                    currentKeyIndex = 0;
+                }
+                PlayAnimation(currentCrawlName);
+            }
         }
     }
 
@@ -308,7 +354,10 @@ public class PlayerInput : MonoBehaviour
         // 订阅事件
         EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
         EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
-        // 订阅其他爬行方式的事件...
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
     }
 
     private void OnDisable()
@@ -316,17 +365,41 @@ public class PlayerInput : MonoBehaviour
         // 取消订阅事件
         EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
         EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
-        // 取消订阅其他爬行方式的事件...
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
+    }
+
+    private void OnDestroy()
+    {
+        // 确保在销毁时取消订阅事件
+        OnDisable();
     }
 
     // 事件处理方法
     private void OnLearnBasicCrawl()
     {
-        isCrawlLearned = true;
+        basicCrawl.canCrawl = true;
     }
-
     private void OnLearnGeckoCrawl()
     {
-        isCrawlLearned = true;
+        geckoCrawl.canCrawl = true;
+    }
+    private void OnLearnTurtleCrawl()
+    {
+        turtleCrawl.canCrawl = true;
+    }
+    private void OnLearnSnakeCrawl()
+    {
+        snakeCrawl.canCrawl = true;
+    }
+    private void OnLearnCatCrawl()
+    {
+        catCrawl.canCrawl = true;
+    }
+    private void OnLearnChameleonCrawl()
+    {
+        chameleonCrawl.canCrawl = true;
     }
 }
