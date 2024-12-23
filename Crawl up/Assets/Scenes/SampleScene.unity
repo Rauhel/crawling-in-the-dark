@@ -763,7 +763,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   basicCrawl:
-    keySequence: []
+    keyLists:
+    - keySequence: 
+      requiredKeyCount: 0
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -771,7 +773,7 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
   geckoCrawl:
-    keySequence: []
+    keyLists: []
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -779,7 +781,7 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
   turtleCrawl:
-    keySequence: []
+    keyLists: []
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -787,7 +789,7 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
   snakeCrawl:
-    keySequence: []
+    keyLists: []
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -795,7 +797,7 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
   catCrawl:
-    keySequence: []
+    keyLists: []
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -803,7 +805,7 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
   chameleonCrawl:
-    keySequence: []
+    keyLists: []
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
@@ -812,7 +814,16 @@ MonoBehaviour:
     canCrawl: 0
   animator: {fileID: 0}
   moveDistance: 1
-  isCrawlLearned: 0
+  currentKeyIndex: 0
+  currentCrawlSettings:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+  currentKeys: 
 --- !u!1 &216036683
 GameObject:
   m_ObjectHideFlags: 0

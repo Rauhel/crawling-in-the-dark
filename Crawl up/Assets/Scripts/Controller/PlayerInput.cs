@@ -1,18 +1,20 @@
 using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq; // 添加 LINQ 支持
 
 [System.Serializable]
-public class KeySequence
+public class KeyList
 {
     public KeyCode[] keySequence;
-    public int requiredKeyCount = 1; // 默认需要按1个键
+    public int requiredMinKeyCount = 1; // 最少需要按的键数
+    public int requiredMaxKeyCount = 1; // 最多可以按的键数
 }
 
 [System.Serializable]
 public class CrawlSettings
 {
-    public KeySequence[] keySequence;
+    public KeyList[] keyLists;
     public float groundSpeed;
     public float waterSpeed;
     public float iceSpeed;
@@ -33,8 +35,8 @@ public class PlayerInput : MonoBehaviour
     public Animator animator;
     public float moveDistance = 1f;
 
-    private int currentKeyIndex = 0;
-    private CrawlSettings currentCrawlSettings;
+    public int currentKeyIndex = 0;
+    public CrawlSettings currentCrawlSettings;
     private string currentCrawlName;
     private bool isReversing = false;
     public List<KeyCode> currentKeys = new List<KeyCode>();
@@ -43,15 +45,16 @@ public class PlayerInput : MonoBehaviour
 
     void Start()
     {
-        // Set default crawl settings
+        currentKeyIndex = 0;
         ChangeCrawlType("Basic");
 
-        // 定义 BasicCrawl 的按键顺序
+        // Set default crawl settings
         basicCrawl = new CrawlSettings
         {
-            keySequence = new KeySequence[]
+            keyLists = new KeyList[]
             {
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.A } }
+                new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
             },
             groundSpeed = 5f, // 根据需要设置速度
             waterSpeed = 2f,
@@ -64,12 +67,12 @@ public class PlayerInput : MonoBehaviour
         // 定义 GeckoCrawl 的按键顺序
         geckoCrawl = new CrawlSettings
         {
-            keySequence = new KeySequence[]
+            keyLists = new KeyList[]
             {
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.W } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.R } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.S } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.F } }
+                new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
             },
             groundSpeed = 5f, // 根据需要设置速度
             waterSpeed = 3f,
@@ -82,11 +85,11 @@ public class PlayerInput : MonoBehaviour
         // 定义 TurtleCrawl 的按键顺序
         turtleCrawl = new CrawlSettings
         {
-            keySequence = new KeySequence[]
+            keyLists = new KeyList[]
             {
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredKeyCount = 2 },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredKeyCount = 2 },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredKeyCount = 2 }
+                new KeyList { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
             },
             groundSpeed = 2f, // 根据需要设置速度
             waterSpeed = 1f,
@@ -99,15 +102,15 @@ public class PlayerInput : MonoBehaviour
         // 定义 SnakeCrawl 的按键顺序
         snakeCrawl = new CrawlSettings
         {
-            keySequence = new KeySequence[]
+            keyLists = new KeyList[]
             {
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.M } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.N } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.B } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.V } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.C } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.X } },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.Z } }
+                new KeyList { keySequence = new KeyCode[] { KeyCode.M } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.N } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.B } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.V } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.C } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
             },
             groundSpeed = 3f, // 根据需要设置速度
             waterSpeed = 1.5f,
@@ -120,10 +123,18 @@ public class PlayerInput : MonoBehaviour
         // 定义 CatCrawl 的按键序列
         catCrawl = new CrawlSettings
         {
-            keySequence = new KeySequence[]
+            keyLists = new KeyList[]
             {
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, requiredKeyCount = 5 },
-                new KeySequence { keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, requiredKeyCount = 5 }
+                new KeyList { 
+                    keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, 
+                    requiredMinKeyCount = 3, 
+                    requiredMaxKeyCount = 5 
+                },
+                new KeyList { 
+                    keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, 
+                    requiredMinKeyCount = 3, 
+                    requiredMaxKeyCount = 5 
+                }
             },
             groundSpeed = 4f, // 根据需要设置速度
             waterSpeed = 2f,
@@ -136,24 +147,26 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
-        // if (Input.anyKeyDown) // 使用 Input.anyKeyDown 检测是否有任何按键被按下
-        // {
-        //     Debug.Log("Any key down");
-        //     foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
-        //     {
-        //         if (Input.GetKey(key) && !pressedKeys.Contains(key))
-        //         {
-        //             // currentKeys.Clear();
-        //             // pressedKeys.Clear();
-        //             currentKeys.Add(key);
-        //             pressedKeys.Add(key);
-        //         }
-        //         Debug.Log("Current keys: " + string.Join(", ", currentKeys));
-        //     }
-        //     CheckInput();
-        //     CheckSpaceInput(); // 检查空格键输入
-        //}
+        currentKeys.Clear();
+        
+        // 改用 Input.anyKey 来检测按键的持续状态
+        if (Input.anyKey)
+        {
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKey(key))
+                {
+                    currentKeys.Add(key);
+                }
+            }
+            if (currentKeys.Count > 0)
+            {
+                Debug.Log("Current keys: " + string.Join(", ", currentKeys));
+            }
+        }
+        
         CheckInput();
+        CheckParallelInput();
         CheckSpaceInput(); 
     }
 
@@ -173,21 +186,21 @@ public class PlayerInput : MonoBehaviour
         foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
         {
             CrawlSettings crawlSettings = (CrawlSettings)GetType().GetField(crawlType.ToLower() + "Crawl", BindingFlags.Public | BindingFlags.Instance).GetValue(this);
-            if (crawlSettings.canCrawl && crawlSettings.keySequence != null && crawlSettings.keySequence.Length > 0) // 确保数组不为空
+            if (crawlSettings.canCrawl && crawlSettings.keyLists != null && crawlSettings.keyLists.Length > 0) // 确保数组不为空
             {
-                KeySequence firstKeySequence = crawlSettings.keySequence[0];
-                KeySequence lastKeySequence = crawlSettings.keySequence[crawlSettings.keySequence.Length - 1];
+                KeyList firstKeyList = crawlSettings.keyLists[0];
+                KeyList lastKeyList = crawlSettings.keyLists[crawlSettings.keyLists.Length - 1];
 
                 // 检查是否按下了第一个或最后一个按键序列的键
-                if (Input.GetKeyDown(firstKeySequence.keySequence[0]) || Input.GetKeyDown(lastKeySequence.keySequence[0]))
+                if (Input.GetKeyDown(firstKeyList.keySequence[0]) || Input.GetKeyDown(lastKeyList.keySequence[0]))
                 {
                     Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
                     ChangeCrawlType(crawlType);
-                    KeySequence currentKeySequence = currentCrawlSettings.keySequence[currentKeyIndex];
-                    CheckParallelInput(currentKeySequence);
-                    return; // 退出方法，因为已经处理了爬行方式的切换
                     Debug.Log("Key pressed for crawl type: " + crawlType); // 打印按下的爬行类型
+                    return; // 退出方法，因为已经处理了爬行方式的切换
                 }
+                
+
             }
             else if (!crawlSettings.canCrawl)
             {
@@ -196,65 +209,57 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    void CheckParallelInput(KeySequence keySequence)
+    void CheckParallelInput()
     {
+        if (currentCrawlSettings == null || currentCrawlSettings.keyLists == null || currentCrawlSettings.keyLists.Length == 0)
+        {
+            Debug.LogWarning("无效的爬行设置或按键列表");
+            return;
+        }
+
+        if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
+        {
+            currentKeyIndex = 0;
+        }
+
+        KeyList currentKeyList = currentCrawlSettings.keyLists[currentKeyIndex];
+        
+        // 检查是否存在无效按键（不在当前序列中的按键）
+        foreach (KeyCode pressedKey in currentKeys)
+        {
+            if (!currentKeyList.keySequence.Contains(pressedKey))
+            {
+                Debug.Log($"检测到无效按键: {pressedKey}，本次输入无效");
+                return; // 如果有任何一个按键不在序列中，直接返回
+            }
+        }
+
+        // 计算有效按键数量
         int keyCount = 0;
-
-        if (isReversing)
+        foreach (KeyCode key in currentKeyList.keySequence)
         {
-            //Debug.Log("Checking reversed parallel input");
-            for (int i = keySequence.keySequence.Length - 1; i >= 0; i--) // 逆序遍历数组
+            if (currentKeys.Contains(key))
             {
-                if (currentKeys.Contains(keySequence.keySequence[i]))
-                {
-                    keyCount++;
-                }
-            }
-
-            Debug.Log($"Keys pressed in reverse: {keyCount}");
-            if (keyCount >= keySequence.requiredKeyCount)
-            {
-                //Debug.Log("Correct number of keys pressed in reverse");
-                MovePlayer();
-                currentKeyIndex++;
-                //Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
-
-                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
-                {
-                    //Debug.Log("Resetting currentKeyIndex to 0");
-                    currentKeyIndex = 0;
-                }
-                PlayAnimation(currentCrawlName);
+                keyCount++;
             }
         }
-        else
+
+        Debug.Log($"按下的键数: {keyCount}, 最小要求: {currentKeyList.requiredMinKeyCount}, 最大允许: {currentKeyList.requiredMaxKeyCount}");
+        
+        // 检查按键数是否在允许的范围内
+        if (keyCount >= currentKeyList.requiredMinKeyCount && keyCount <= currentKeyList.requiredMaxKeyCount)
         {
-            Debug.Log("Checking forward parallel input");
-            foreach (KeyCode key in keySequence.keySequence)
-            {
-                if (currentKeys.Contains(key))
-                {
-                    keyCount++;
-                }
-            }
+            Debug.Log($"符合要求的按键数: {keyCount}");
+            MovePlayer();
+            currentKeyIndex++;
 
-            Debug.Log($"Keys pressed: {keyCount}");
-            if (keyCount >= keySequence.requiredKeyCount)
+            if (currentKeyIndex >= currentCrawlSettings.keyLists.Length)
             {
-                Debug.Log("Correct number of keys pressed: " + keySequence.requiredKeyCount);
-                MovePlayer();
-                currentKeyIndex++;
-                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
-
-                if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
-                {
-                    Debug.Log("Resetting currentKeyIndex to 0");
-                    currentKeyIndex = 0;
-                }
-                PlayAnimation(currentCrawlName);
+                Debug.Log("重置 currentKeyIndex 为 0");
+                currentKeyIndex = 0;
             }
+            PlayAnimation(currentCrawlName);
         }
-        Debug.Log("Exiting CheckParallelInput");
     }
 
     void MovePlayer()
