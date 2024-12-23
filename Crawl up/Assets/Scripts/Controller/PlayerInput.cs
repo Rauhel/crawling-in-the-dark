@@ -37,6 +37,7 @@ public class PlayerInput : MonoBehaviour
     private CrawlSettings currentCrawlSettings;
     private string currentCrawlName;
     private bool isReversing = false;
+    public KeyCode currentKey;
 
     void Start()
     {
@@ -175,6 +176,14 @@ public class PlayerInput : MonoBehaviour
     {
         CheckInput();
         CheckSpaceInput(); // 检查空格键输入
+        foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+        {
+            if (Input.GetKeyDown(key))
+            {
+                currentKey = key;
+                break;
+            }
+        }
     }
 
     void CheckSpaceInput()
@@ -201,43 +210,76 @@ public class PlayerInput : MonoBehaviour
                 // 检查是否按下了第一个或最后一个按键序列的键
                 if (Input.GetKeyDown(firstKeySequence.key) || Input.GetKeyDown(lastKeySequence.key))
                 {
+                    Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
                     ChangeCrawlType(crawlType);
                     currentKeyIndex = 0; // 重置索引
                     return; // 退出方法，因为已经处理了爬行方式的切换
+                    Debug.Log("Key pressed for crawl type: " + crawlType); // 打印按下的爬行类型
                 }
             }
             else if (!crawlSettings.canCrawl)
             {
-                Debug.Log("Crawl type not learned yet: " + crawlType);
+                // pass
             }
         }
-
         // 如果当前爬行设置的isActive为true，则处理输入
+        Debug.Log($"currentCrawlSettings: {(currentCrawlSettings == null ? "null" : "not null")}");
+        if (currentCrawlSettings != null)
+        {
+            // Debug.Log($"isActive: {currentCrawlSettings.isActive}");
+            // Debug.Log($"currentKeyIndex: {currentKeyIndex}");
+            // Debug.Log($"keySequence length: {currentCrawlSettings.keySequence.Length}");
+        }
+
         if (currentCrawlSettings != null && currentCrawlSettings.isActive && currentKeyIndex >= 0 && currentKeyIndex < currentCrawlSettings.keySequence.Length)
         {
+            // Debug.Log("Current crawl settings are valid, processing input...");
             KeySequence currentKeySequence = currentCrawlSettings.keySequence[currentKeyIndex];
+            // Debug.Log($"Current key sequence at index {currentKeyIndex}");
+            // Debug.Log($"Current key sequence: {currentKeySequence.key}");
+
+            
             if (currentKeySequence.parallelKeys != null && currentKeySequence.parallelKeys.Length > 0)
             {
+                // Debug.Log($"Processing parallel input with {currentKeySequence.parallelKeys.Length} keys");
                 CheckParallelInput(currentKeySequence);
             }
             else
             {
+                // Debug.Log("Processing sequential input");
+                Debug.Log("CHHHECKKKKKING SEQUENTIAL INPUT");
                 CheckSequentialInput(currentKeySequence);
             }
+        }
+        else
+        {
+            Debug.Log("Skipping input processing - invalid crawl settings or key index");
         }
     }
 
     void CheckSequentialInput(KeySequence keySequence)
     {
+        // Debug.Log("Entering CheckSequentialInput");
+        // Debug.Log($"isReversing: {isReversing}");
+        // Debug.Log($"currentKeyIndex: {currentKeyIndex}");
+        
         // 如果isReversing为true，则检查是否按下了最后一个按键序列的键，否则检查第一个
         if (isReversing)
         {
-            if (Input.GetKeyDown(currentCrawlSettings.keySequence[currentCrawlSettings.keySequence.Length - 1 - currentKeyIndex].key))
+            Debug.Log("Checking reversed input");
+            KeyCode expectedKey = currentCrawlSettings.keySequence[currentCrawlSettings.keySequence.Length - 1 - currentKeyIndex].key;
+            Debug.Log($"Expected key in reverse: {expectedKey}");
+            
+            if (Input.GetKeyDown(expectedKey))
             {
+                Debug.Log($"Correct key pressed in reverse: {expectedKey}");
                 MovePlayer();
                 currentKeyIndex++;
+                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
+                
                 if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
                 {
+                    Debug.Log("Resetting currentKeyIndex to 0");
                     currentKeyIndex = 0;
                 }
                 PlayAnimation(currentCrawlName);
@@ -245,17 +287,26 @@ public class PlayerInput : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown(keySequence.key))
+            Debug.Log("Checking forward input");
+            Debug.Log($"Expected key: {keySequence.key}");
+            
+            // if (Input.GetKeyDown(keySequence.key))
+            if (currentKey == keySequence.key)
             {
+                Debug.LogWarning($"Correct key pressed: {keySequence.key}");
                 MovePlayer();
                 currentKeyIndex++;
+                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
+                
                 if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
                 {
+                    Debug.Log("Resetting currentKeyIndex to 0");
                     currentKeyIndex = 0;
                 }
                 PlayAnimation(currentCrawlName);
             }
         }
+        Debug.Log("Exiting CheckSequentialInput");
     }
 
     void CheckParallelInput(KeySequence keySequence)
