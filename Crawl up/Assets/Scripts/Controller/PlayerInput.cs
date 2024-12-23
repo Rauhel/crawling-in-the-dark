@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Reflection;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class KeySequence
@@ -36,7 +37,9 @@ public class PlayerInput : MonoBehaviour
     private CrawlSettings currentCrawlSettings;
     private string currentCrawlName;
     private bool isReversing = false;
-    public KeyCode currentKey;
+    public List<KeyCode> currentKeys = new List<KeyCode>();
+    private HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
+    private bool keyDetected = false;
 
     void Start()
     {
@@ -50,7 +53,7 @@ public class PlayerInput : MonoBehaviour
             {
                 new KeySequence { keySequence = new KeyCode[] { KeyCode.A } }
             },
-            groundSpeed = 4f, // 根据需要设置速度
+            groundSpeed = 5f, // 根据需要设置速度
             waterSpeed = 2f,
             iceSpeed = 1.5f,
             wallSpeed = 3f,
@@ -135,14 +138,24 @@ public class PlayerInput : MonoBehaviour
     {
         CheckInput();
         CheckSpaceInput(); // 检查空格键输入
-        foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+
+        if (!keyDetected)
         {
-            if (Input.GetKeyDown(key))
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
             {
-                currentKey = key;
-                break;
+                if (Input.GetKey(key) && !pressedKeys.Contains(key))
+                {
+                    currentKeys.Add(key);
+                    pressedKeys.Add(key);
+                    keyDetected = true;
+                    break;
+                }
             }
         }
+        Debug.Log($"Current keys: {string.Join(", ", currentKeys)}");
+
+        // 清除 pressedKeys 和重置 keyDetected 以便在下一帧重新检测按键
+        keyDetected = false;
     }
 
     void CheckSpaceInput()
@@ -169,11 +182,11 @@ public class PlayerInput : MonoBehaviour
                 // 检查是否按下了第一个或最后一个按键序列的键
                 if (Input.GetKeyDown(firstKeySequence.keySequence[0]) || Input.GetKeyDown(lastKeySequence.keySequence[0]))
                 {
-                    Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
+                    //Debug.Log("Crawl type switched: " + crawlType); // 打印切换的爬行类型
                     ChangeCrawlType(crawlType);
                     currentKeyIndex = 0; // 重置索引
                     return; // 退出方法，因为已经处理了爬行方式的切换
-                    Debug.Log("Key pressed for crawl type: " + crawlType); // 打印按下的爬行类型
+                    //Debug.Log("Key pressed for crawl type: " + crawlType); // 打印按下的爬行类型
                 }
             }
             else if (!crawlSettings.canCrawl)
@@ -182,7 +195,7 @@ public class PlayerInput : MonoBehaviour
             }
         }
         // 如果当前爬行设置的isActive为true，则处理输入
-        Debug.Log($"currentCrawlSettings: {(currentCrawlSettings == null ? "null" : "not null")}");
+        //Debug.Log($"currentCrawlSettings: {(currentCrawlSettings == null ? "null" : "not null")}");
         if (currentCrawlSettings != null)
         {
             // Debug.Log($"isActive: {currentCrawlSettings.isActive}");
@@ -196,25 +209,25 @@ public class PlayerInput : MonoBehaviour
             KeySequence currentKeySequence = currentCrawlSettings.keySequence[currentKeyIndex];
             // Debug.Log($"Current key sequence at index {currentKeyIndex}");
             // Debug.Log($"Current key sequence: {currentKeySequence.key}");
-
-            Debug.Log("CHHHECKKKKKING SEQUENTIAL INPUT");
+            //Debug.Log("CHHHECKKKKKING SEQUENTIAL INPUT");
             CheckParallelInput(currentKeySequence);
         }
         else
         {
-            Debug.Log("Skipping input processing - invalid crawl settings or key index");
+            //Debug.Log("Skipping input processing - invalid crawl settings or key index");
         }
     }
 
     void CheckParallelInput(KeySequence keySequence)
     {
+        int keyCount = 0;
+
         if (isReversing)
         {
-            Debug.Log("Checking reversed parallel input");
-            int keyCount = 0;
+            //Debug.Log("Checking reversed parallel input");
             for (int i = keySequence.keySequence.Length - 1; i >= 0; i--) // 逆序遍历数组
             {
-                if (Input.GetKey(keySequence.keySequence[i]))
+                if (currentKeys.Contains(keySequence.keySequence[i]))
                 {
                     keyCount++;
                 }
@@ -223,14 +236,14 @@ public class PlayerInput : MonoBehaviour
             Debug.Log($"Keys pressed in reverse: {keyCount}");
             if (keyCount >= keySequence.requiredKeyCount)
             {
-                Debug.Log("Correct number of keys pressed in reverse");
+                //Debug.Log("Correct number of keys pressed in reverse");
                 MovePlayer();
                 currentKeyIndex++;
-                Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
+                //Debug.Log($"Increased currentKeyIndex to: {currentKeyIndex}");
 
                 if (currentKeyIndex >= currentCrawlSettings.keySequence.Length)
                 {
-                    Debug.Log("Resetting currentKeyIndex to 0");
+                    //Debug.Log("Resetting currentKeyIndex to 0");
                     currentKeyIndex = 0;
                 }
                 PlayAnimation(currentCrawlName);
@@ -239,10 +252,9 @@ public class PlayerInput : MonoBehaviour
         else
         {
             Debug.Log("Checking forward parallel input");
-            int keyCount = 0;
             foreach (KeyCode key in keySequence.keySequence)
             {
-                if (Input.GetKey(key))
+                if (currentKeys.Contains(key))
                 {
                     keyCount++;
                 }
@@ -269,7 +281,6 @@ public class PlayerInput : MonoBehaviour
 
     void MovePlayer()
     {
-        Debug.Log("Moving player");
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? Vector3.left : Vector3.right;
         transform.position += moveDirection * speed * moveDistance * Time.deltaTime;
