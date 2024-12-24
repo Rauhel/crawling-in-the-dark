@@ -10,6 +10,7 @@ TagManager:
   - Start
   - Ground
   - Wall
+  - Tree
   layers:
   - Default
   - TransparentFX
