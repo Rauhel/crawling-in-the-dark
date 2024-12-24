@@ -47,7 +47,7 @@ public class PlayerInput : MonoBehaviour
 
     public int currentKeyIndex = 0;
     public CrawlSettings currentCrawlSettings;
-    private string currentCrawlName;
+    public string currentCrawlName { get; private set; }  // 允许外部读取但只能在内部修改
     private bool isReversing = false;
     public List<KeyCode> currentKeys = new List<KeyCode>();
     private HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
@@ -57,6 +57,12 @@ public class PlayerInput : MonoBehaviour
     private Dictionary<string, CrawlProgress> crawlProgresses = new Dictionary<string, CrawlProgress>();
     public float maxTimeBetweenInputs = 2f;  // 输入序列的最大间隔时间
     
+    // 添加新的字段
+    private Vector2 currentMoveDirection = Vector2.right;  // 默认向右移动
+    private ContactPoint2D currentContact;  // 存储当前的接触点信息
+    private bool isInContact = false;  // 是否正在接触表面
+    public bool canCrawlOnCurrentSurface = false;  // 是否可以在当前表面爬行
+
     void Start()
     {
         currentKeyIndex = 0;
@@ -278,10 +284,16 @@ public class PlayerInput : MonoBehaviour
 
     void MovePlayer()
     {
+        if (!canCrawlOnCurrentSurface)
+        {
+            Debug.Log("无法在当前表面爬行");
+            return;
+        }
+        
         Debug.Log("Moving player...");
         float speed = GetSpeedBasedOnSurface();
-        Vector3 moveDirection = isReversing ? Vector3.left : Vector3.right;
-        transform.position += moveDirection * speed * moveDistance * Time.deltaTime;
+        Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
+        transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
     }
 
     float GetSpeedBasedOnSurface()
@@ -429,5 +441,49 @@ public class PlayerInput : MonoBehaviour
         string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
         animator.SetTrigger(triggerName);
         Debug.Log($"播放过渡动画: {triggerName}");
+    }
+
+    // 添加碰撞检测方法
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        UpdateMoveDirection(collision);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!isInContact)
+        {
+            UpdateMoveDirection(collision);
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        isInContact = false;
+        canCrawlOnCurrentSurface = false;  // 离开表面时重置爬行状态
+    }
+
+    // 添加更新移动方向的方法
+    void UpdateMoveDirection(Collision2D collision)
+    {
+        if (collision.contactCount > 0)
+        {
+            isInContact = true;
+            currentContact = collision.GetContact(0);
+            
+            // 获取碰撞点的法线
+            Vector2 normal = currentContact.normal;
+            
+            // 计算切线方向（顺时针）
+            currentMoveDirection = new Vector2(normal.y, -normal.x);
+            
+            // 确保切线方向总是指向右侧（如果可能）
+            if (currentMoveDirection.x < 0)
+            {
+                currentMoveDirection = -currentMoveDirection;
+            }
+            
+            Debug.Log($"新的移动方向: {currentMoveDirection}");
+        }
     }
 }
