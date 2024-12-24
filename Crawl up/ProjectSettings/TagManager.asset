@@ -5,11 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Water
-  - Solid
   - Npc
   - Ice
   - Start
   - Ground
+  - Wall
   layers:
   - Default
   - TransparentFX
