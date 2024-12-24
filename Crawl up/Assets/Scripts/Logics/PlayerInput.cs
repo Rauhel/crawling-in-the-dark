@@ -42,7 +42,8 @@ public class PlayerInput : MonoBehaviour
     public CrawlSettings catCrawl;
     public CrawlSettings chameleonCrawl;
 
-    public Animator animator;
+    // 注释掉 Animator 引用
+    // public Animator animator;
     public float moveDistance = 1f;
 
     public int currentKeyIndex = 0;
@@ -175,7 +176,7 @@ public class PlayerInput : MonoBehaviour
     {
         currentKeys.Clear();
         
-        // 改用 Input.anyKey 来检测按键的持续状态
+        // 改用 Input.anyKey 来检测按键的持续��态
         if (Input.anyKey)
         {
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
@@ -263,7 +264,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (!keyList.keySequence.Contains(pressedKey))
             {
-                Debug.Log($"检测到无效按键: {pressedKey}，本次输入无效");
+                // Debug.Log($"检测到无效按键: {pressedKey}，本次输入无效");
                 return false;
             }
         }
@@ -271,13 +272,13 @@ public class PlayerInput : MonoBehaviour
         // 计算有效按键数量
         int keyCount = keyList.keySequence.Count(key => currentKeys.Contains(key));
         
-        Debug.Log($"按下的键数: {keyCount}, 最小要求: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
+        // Debug.Log($"按下的键数: {keyCount}, 最小要求: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
         
         // 检查按键数是否在允许的范围内
         bool isValid = keyCount >= keyList.requiredMinKeyCount && keyCount <= keyList.requiredMaxKeyCount;
         if (isValid)
         {
-            Debug.Log($"符合要求的按键数: {keyCount}");
+            // Debug.Log($"符合要求的按键数: {keyCount}");
         }
         return isValid;
     }
@@ -303,7 +304,8 @@ public class PlayerInput : MonoBehaviour
 
     void PlayAnimation(string crawlName)
     {
-        animator.SetTrigger(crawlName);
+        // 注释掉动画触发
+        // animator.SetTrigger(crawlName);
     }
 
     // Call this method to change the current crawl settings
@@ -437,10 +439,10 @@ public class PlayerInput : MonoBehaviour
     // 添加新的动画播放方法
     void PlayTransitionAnimation(string crawlType, int sequenceIndex)
     {
-        // 构建动画触发器名称，例如: "GeckoTransition1"
-        string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
-        animator.SetTrigger(triggerName);
-        Debug.Log($"播放过渡动画: {triggerName}");
+        // 注释掉过渡动画相关代码
+        // string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
+        // animator.SetTrigger(triggerName);
+        Debug.Log($"播放过渡动画: {crawlType}Transition{sequenceIndex + 1}");
     }
 
     // 添加碰撞检测方法

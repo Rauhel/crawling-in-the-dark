@@ -5,6 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public GameObject pauseMenu;
     public GameObject winMenu;
     public GameObject menuCanvas;
@@ -53,12 +67,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    public void PlayerWin()
-    {
-        winMenu.SetActive(true);
-        StartCoroutine(PlayEndAnimation());
-    }
-
     private IEnumerator PlayEndAnimation()
     {
         endAnimator.SetTrigger("PlayEnd");
@@ -76,5 +84,11 @@ public class GameManager : MonoBehaviour
         bool isMenuActive = menuCanvas.activeSelf;
         menuCanvas.SetActive(!isMenuActive);
         Time.timeScale = isMenuActive ? 1 : 0;
+    }
+
+    public void OnGameVictory()
+    {
+        winMenu.SetActive(true);
+        StartCoroutine(PlayEndAnimation());// 处理游戏胜利逻辑
     }
 }

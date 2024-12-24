@@ -9,6 +9,7 @@ TagManager:
   - Npc
   - Ice
   - Start
+  - Ground
   layers:
   - Default
   - TransparentFX
