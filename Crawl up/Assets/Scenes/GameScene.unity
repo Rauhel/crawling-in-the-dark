@@ -414,6 +414,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: dialogues.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: dialoguesByType.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: possibleDialogues.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: detectionSettings.friendlyCrawlTypes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1358,6 +1374,11 @@ Transform:
   - {fileID: 344260219}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &475870752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3720474286499813720, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+  m_PrefabInstance: {fileID: 564798034}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &475879385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1796,6 +1817,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 3527623515023069032, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2044,6 +2069,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 2070071276578310949, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: dialogueText
+      value: 
+      objectReference: {fileID: 693398206}
+    - target: {fileID: 2070071276578310949, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: dialoguePanel
+      value: 
+      objectReference: {fileID: 475870752}
     - target: {fileID: 6347135732746613000, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: winMenu
       value: 
@@ -2465,6 +2498,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+--- !u!114 &693398206 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3527623515023069032, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+  m_PrefabInstance: {fileID: 564798034}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &697367289
 PrefabInstance:
   m_ObjectHideFlags: 0

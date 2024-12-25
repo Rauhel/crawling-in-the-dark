@@ -1,37 +1,7 @@
 using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Linq; // 添加 LINQ 支持
-
-[System.Serializable]
-public class KeyList
-{
-    public KeyCode[] keySequence;
-    public int requiredMinKeyCount = 1; // 最少需要按的键数
-    public int requiredMaxKeyCount = 1; // 最多可以按的键数
-}
-
-[System.Serializable]
-public class CrawlSettings
-{
-    public KeyList[] keyLists;
-    public float groundSpeed;
-    public float waterSpeed;
-    public float iceSpeed;
-    public float wallSpeed;
-    public bool isActive; // 表示是否正在进行这种爬行
-    public bool canCrawl; // 表示是否已经学会这种爬行
-}
-
-// 添加新的类来追踪每种爬行方式的切换进度
-[System.Serializable]
-public class CrawlProgress
-{
-    public int currentKeyListIndex = 0;    // 当前在检测第几个按键序列
-    public float lastValidInputTime = 0f;  // 上次有效输入的时间
-    public bool isInProgress = false;      // 是否正在进行切换序列
-    public bool isPlayingTransitionAnim = false;  // 添加：是否正在播放过渡动画
-}
+using System.Linq;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -103,7 +73,7 @@ public class PlayerInput : MonoBehaviour
             canCrawl = false
         };
 
-        // ���义 TurtleCrawl 的按键顺序
+        // 定义 TurtleCrawl 的按键顺序
         turtleCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -445,7 +415,7 @@ public class PlayerInput : MonoBehaviour
     // 添加新的动画播放方法
     void PlayTransitionAnimation(string crawlType, int sequenceIndex)
     {
-        // 注释掉过渡动画相关代码
+        // 注释掉过渡动画相���代码
         // string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
         // animator.SetTrigger(triggerName);
         Debug.Log($"播放过渡动画: {crawlType}Transition{sequenceIndex + 1}");
