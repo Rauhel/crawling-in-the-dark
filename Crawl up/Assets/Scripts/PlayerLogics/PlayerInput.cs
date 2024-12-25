@@ -65,10 +65,22 @@ public class PlayerInput : MonoBehaviour
                 new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
                 new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
             },
-            groundSpeed = 5f, // 根据需要设置速度
+            groundSpeed = 5f,
             waterSpeed = 3f,
             iceSpeed = 2f,
             wallSpeed = 4f,
+            isActive = false,
+            canCrawl = false
+        };
+
+        // 暂时让 chameleonCrawl 使用和 geckoCrawl 相同的设置
+        chameleonCrawl = new CrawlSettings
+        {
+            keyLists = geckoCrawl.keyLists,
+            groundSpeed = geckoCrawl.groundSpeed,
+            waterSpeed = geckoCrawl.waterSpeed,
+            iceSpeed = geckoCrawl.iceSpeed,
+            wallSpeed = geckoCrawl.wallSpeed,
             isActive = false,
             canCrawl = false
         };
@@ -415,7 +427,7 @@ public class PlayerInput : MonoBehaviour
     // 添加新的动画播放方法
     void PlayTransitionAnimation(string crawlType, int sequenceIndex)
     {
-        // 注释掉过渡动画相���代码
+        // 注释掉过渡动画相关代码
         // string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
         // animator.SetTrigger(triggerName);
         Debug.Log($"播放过渡动画: {crawlType}Transition{sequenceIndex + 1}");
