@@ -20,7 +20,7 @@ public class CrawlSurface : MonoBehaviour
         new CrawlTypeMapping 
         { 
             surfaceTag = "Wall", 
-            allowedCrawlTypes = new List<string> { "Gecko", "Snake", "Cat" } 
+            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Snake", "Cat" } 
         },
         new CrawlTypeMapping 
         { 

@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 8236841728472952860}
   - component: {fileID: 6102696099707414572}
   - component: {fileID: 6945622414193114249}
-  m_Layer: 0
+  - component: {fileID: -476217452538873429}
+  m_Layer: 9
   m_Name: Wall
-  m_TagString: Wall
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,3 +131,34 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-476217452538873429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5713212361311694219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adfceaef8873c4b4fa11cf50b645fec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  crawlTypeMappings:
+  - surfaceTag: Ground
+    allowedCrawlTypes:
+    - Basic
+    - Gecko
+    - Turtle
+    - Snake
+    - Cat
+    - Chameleon
+  - surfaceTag: Wall
+    allowedCrawlTypes:
+    - Basic
+    - Gecko
+    - Snake
+    - Cat
+  - surfaceTag: Water
+    allowedCrawlTypes:
+    - Turtle
+    - Snake

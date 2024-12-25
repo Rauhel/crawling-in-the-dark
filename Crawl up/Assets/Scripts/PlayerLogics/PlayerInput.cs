@@ -33,6 +33,7 @@ public class PlayerInput : MonoBehaviour
     private ContactPoint2D currentContact;  // 存储当前的接触点信息
     private bool isInContact = false;  // 是否正在接触表面
     public bool canCrawlOnCurrentSurface = false;  // 是否可以在当前表面爬行
+    private Rigidbody2D rb;
 
     void Start()
     {
@@ -158,6 +159,8 @@ public class PlayerInput : MonoBehaviour
         {
             crawlProgresses[crawlType] = new CrawlProgress();
         }
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -282,6 +285,12 @@ public class PlayerInput : MonoBehaviour
         Debug.Log("Moving player...");
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
+
+        // 根据移动方向旋转玩家
+        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        // 移动玩家
         transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
     }
 
@@ -305,7 +314,7 @@ public class PlayerInput : MonoBehaviour
             currentCrawlSettings = (CrawlSettings)field.GetValue(this);
             currentCrawlName = crawlType;
 
-            // �����新所有爬行方式的 isActive 状态
+            // 新所有爬行方式的 isActive 状态
             basicCrawl.isActive = false;
             geckoCrawl.isActive = false;
             turtleCrawl.isActive = false;
@@ -442,6 +451,13 @@ public class PlayerInput : MonoBehaviour
     // 添加碰撞检测方法
     void OnCollisionEnter2D(Collision2D collision)
     {
+        // 停止所有运动
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
         UpdateMoveDirection(collision);
     }
 
@@ -449,6 +465,13 @@ public class PlayerInput : MonoBehaviour
     {
         if (!isInContact)
         {
+            // 确保在持续接触时也保持静止
+            if (rb != null)
+            {
+                rb.velocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+
             UpdateMoveDirection(collision);
         }
     }
@@ -470,7 +493,7 @@ public class PlayerInput : MonoBehaviour
             // 获取碰撞点的法线
             Vector2 normal = currentContact.normal;
             
-            // ��算��线方向（顺时针）
+            // 算线方向（顺时针）
             currentMoveDirection = new Vector2(normal.y, -normal.x);
             
             // 确保切线方向总是指向右侧（如果可能）

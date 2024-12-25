@@ -50,6 +50,11 @@ public class NpcPatrol : MonoBehaviour
 
     private bool hasInteracted = false;   // 是否已经进行过互动
 
+    [Header("巡逻路径设置")]
+    public PatrolPath patrolPath;
+    public float patrolProgress = 0f;  // 0到1之间的值
+    public bool isPathReversing = false;
+
     void Start()
     {
         originalPosition = transform.position;
@@ -120,11 +125,32 @@ public class NpcPatrol : MonoBehaviour
 
     void Patrol()
     {
-        // 这里可实现巡逻逻辑
-        // 简单示例：在原点附近巡逻
-        Vector2 patrolTarget = originalPosition;
-        Vector2 direction = (patrolTarget - (Vector2)transform.position).normalized;
-        transform.position = Vector2.MoveTowards(transform.position, patrolTarget, patrolSpeed * Time.deltaTime);
+        if (patrolPath == null) return;
+
+        // 更新巡逻进度
+        float progressStep = patrolSpeed * Time.deltaTime;
+        if (isPathReversing)
+        {
+            patrolProgress -= progressStep;
+            if (patrolProgress <= 0f)
+            {
+                patrolProgress = 0f;
+                isPathReversing = false;
+            }
+        }
+        else
+        {
+            patrolProgress += progressStep;
+            if (patrolProgress >= 1f)
+            {
+                patrolProgress = 1f;
+                isPathReversing = true;
+            }
+        }
+
+        // 获取新位置并移动
+        Vector3 newPosition = patrolPath.GetPositionAtDistance(patrolProgress);
+        transform.position = newPosition;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -133,7 +159,7 @@ public class NpcPatrol : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            // 检查是否从上方接��
+            // 检查是否从上方接触
             Vector2 contactPoint = other.transform.position - transform.position;
             bool isFromAbove = contactPoint.y > 0 && Mathf.Abs(contactPoint.x) < 0.5f;
 
