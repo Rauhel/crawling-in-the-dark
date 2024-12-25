@@ -1799,6 +1799,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 301771455367764938, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: groundCheckRadius
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2380570054371343259, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.81
@@ -6235,6 +6239,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 5115155723370393318, guid: 3c76ca33e70438f46be58a2005a0d12c, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 6824904452646062911, guid: 3c76ca33e70438f46be58a2005a0d12c, type: 3}
       propertyPath: m_LocalScale.x
       value: 12.531617
@@ -7233,6 +7241,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: detectionSettings.detectableCrawlTypes.Array.size
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

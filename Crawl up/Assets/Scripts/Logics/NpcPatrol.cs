@@ -120,7 +120,7 @@ public class NpcPatrol : MonoBehaviour
     private void KillPlayer()
     {
         // 通知 EventCenter 玩家死亡
-        EventCenter.Instance.Broadcast(EventCenter.EVENT_PLAYER_DIED);
+        EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
         Debug.Log("玩家被NPC抓住了！");
     }
 
