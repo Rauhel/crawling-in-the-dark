@@ -103,7 +103,7 @@ public class PlayerInput : MonoBehaviour
             canCrawl = false
         };
 
-        // 定义 TurtleCrawl 的按键顺序
+        // ���义 TurtleCrawl 的按键顺序
         turtleCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -176,7 +176,7 @@ public class PlayerInput : MonoBehaviour
     {
         currentKeys.Clear();
         
-        // 改用 Input.anyKey 来检测按键的持续��态
+        // 改用 Input.anyKey 来检测按键的持续状态
         if (Input.anyKey)
         {
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
@@ -326,6 +326,12 @@ public class PlayerInput : MonoBehaviour
             chameleonCrawl.isActive = false;
 
             currentCrawlSettings.isActive = true;
+
+            // 如果当前正在接触表面，重新检查可爬行状态
+            if (isInContact)
+            {
+                CheckCrawlability();
+            }
         }
         ResetAllProgress();
     }
@@ -484,8 +490,29 @@ public class PlayerInput : MonoBehaviour
             {
                 currentMoveDirection = -currentMoveDirection;
             }
+
+            // 在更新移动方向时也检查可爬行状态
+            CheckCrawlability();
             
             Debug.Log($"新的移动方向: {currentMoveDirection}");
+        }
+    }
+
+    // 添加检查可爬行状态的方法
+    private void CheckCrawlability()
+    {
+        if (currentContact.collider != null)
+        {
+            // 获取当前接触表面的标签
+            string surfaceTag = currentContact.collider.tag;
+            
+            // 通知 CrawlSurface 组件检查当前爬行类型是否可用
+            CrawlSurface crawlSurface = currentContact.collider.GetComponent<CrawlSurface>();
+            if (crawlSurface != null)
+            {
+                // 使用当前的爬行类型重新检查可爬行状态
+                crawlSurface.CheckCrawlabilityForType(currentCrawlName, this);
+            }
         }
     }
 }
