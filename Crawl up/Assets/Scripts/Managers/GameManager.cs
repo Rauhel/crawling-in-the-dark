@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     public GameObject menuCanvas;
     public Animator endAnimator;
 
+    [Header("重生按钮")]
+    public GameObject respawnButton;  // 在Inspector中设置重生按钮
+
     private bool isPaused = false;
 
     // Start is called before the first frame update
@@ -32,6 +35,8 @@ public class GameManager : MonoBehaviour
         pauseMenu.SetActive(false);
         winMenu.SetActive(false);
         menuCanvas.SetActive(false);
+        if (respawnButton != null)
+            respawnButton.SetActive(false);
     }
 
     // Update is called once per frame
@@ -39,7 +44,14 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePause();
+            if (isPaused)
+            {
+                ResumeGame();  // 如果已经暂停，则恢复游戏
+            }
+            else
+            {
+                TogglePause();  // 如果没有暂停，则暂停游戏
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -52,6 +64,8 @@ public class GameManager : MonoBehaviour
     {
         isPaused = !isPaused;
         pauseMenu.SetActive(isPaused);
+        if (respawnButton != null)
+            respawnButton.SetActive(isPaused);  // 暂停时显示重生按钮
         Time.timeScale = isPaused ? 0 : 1;
     }
 
@@ -77,6 +91,8 @@ public class GameManager : MonoBehaviour
     {
         isPaused = false;
         pauseMenu.SetActive(false);
+        if (respawnButton != null)
+            respawnButton.SetActive(false);
         Time.timeScale = 1;
     }
     public void ToggleMenu()
@@ -90,5 +106,15 @@ public class GameManager : MonoBehaviour
     {
         winMenu.SetActive(true);
         StartCoroutine(PlayEndAnimation());// 处理游戏胜利逻辑
+    }
+
+    // 添加重生功能
+    public void RespawnPlayer()
+    {
+        // 触发玩家死亡事件
+        EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
+        
+        // 恢复游戏
+        ResumeGame();
     }
 }

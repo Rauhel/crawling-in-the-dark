@@ -104,7 +104,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5d797618603a01742a81a890c29898a4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -240,7 +240,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxFallTime: 3
   fallSpeed: 5
-  groundCheckRadius: 0.1
-  surfaceLayer:
-    serializedVersion: 2
-    m_Bits: 512

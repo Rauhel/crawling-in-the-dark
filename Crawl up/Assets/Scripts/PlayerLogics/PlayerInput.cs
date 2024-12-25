@@ -39,7 +39,7 @@ public class PlayerInput : MonoBehaviour
         currentKeyIndex = 0;
         ChangeCrawlType("Basic");
 
-        // Set default crawl settings
+        // Basic Crawl
         basicCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -47,15 +47,15 @@ public class PlayerInput : MonoBehaviour
                 new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
                 new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
             },
-            groundSpeed = 5f, // 根据需要设置速度
-            waterSpeed = 2f,
-            iceSpeed = 1.5f,
-            wallSpeed = 3f,
-            isActive = false,
-            canCrawl = false
+            groundSpeed = 50f,    // 10f * 5
+            waterSpeed = 0f,
+            iceSpeed = 10f,      // 2f * 5
+            wallSpeed = 0f,
+            isActive = true,
+            canCrawl = true
         };
 
-        // 定义 GeckoCrawl 的按键顺序
+        // Gecko Crawl
         geckoCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -65,27 +65,33 @@ public class PlayerInput : MonoBehaviour
                 new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
                 new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
             },
-            groundSpeed = 5f,
-            waterSpeed = 3f,
-            iceSpeed = 2f,
-            wallSpeed = 4f,
+            groundSpeed = 50f,    // 10f * 5
+            waterSpeed = 30f,     // 6f * 5
+            iceSpeed = 20f,      // 4f * 5
+            wallSpeed = 40f,     // 8f * 5
             isActive = false,
             canCrawl = false
         };
 
-        // 暂时让 chameleonCrawl 使用和 geckoCrawl 相同的设置
+        // Chameleon Crawl
         chameleonCrawl = new CrawlSettings
         {
-            keyLists = geckoCrawl.keyLists,
-            groundSpeed = geckoCrawl.groundSpeed,
-            waterSpeed = geckoCrawl.waterSpeed,
-            iceSpeed = geckoCrawl.iceSpeed,
-            wallSpeed = geckoCrawl.wallSpeed,
+            keyLists = new KeyList[]
+            {
+                new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
+                new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
+            },
+            groundSpeed = 30f,    // 6f * 5
+            waterSpeed = 0f,
+            iceSpeed = 10f,      // 2f * 5
+            wallSpeed = 0f,
             isActive = false,
             canCrawl = false
         };
 
-        // 定义 TurtleCrawl 的按键顺序
+        // Turtle Crawl
         turtleCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -94,15 +100,15 @@ public class PlayerInput : MonoBehaviour
                 new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
                 new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
             },
-            groundSpeed = 2f, // 根据需要设置速度
-            waterSpeed = 1f,
-            iceSpeed = 1.5f,
-            wallSpeed = 1f,
+            groundSpeed = 20f,    // 4f * 5
+            waterSpeed = 60f,     // 12f * 5
+            iceSpeed = 40f,      // 8f * 5
+            wallSpeed = 0f,
             isActive = false,
             canCrawl = false
         };
 
-        // 定义 SnakeCrawl 的按键顺序
+        // Snake Crawl
         snakeCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -115,15 +121,15 @@ public class PlayerInput : MonoBehaviour
                 new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
                 new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
             },
-            groundSpeed = 3f, // 根据需要设置速度
-            waterSpeed = 1.5f,
-            iceSpeed = 1f,
-            wallSpeed = 2f,
+            groundSpeed = 30f,    // 6f * 5
+            waterSpeed = 30f,     // 6f * 5
+            iceSpeed = 20f,      // 4f * 5
+            wallSpeed = 50f,     // 10f * 5
             isActive = false,
             canCrawl = false
         };
 
-        // 定义 CatCrawl 的按键序列
+        // Cat Crawl
         catCrawl = new CrawlSettings
         {
             keyLists = new KeyList[]
@@ -139,15 +145,15 @@ public class PlayerInput : MonoBehaviour
                     requiredMaxKeyCount = 5 
                 }
             },
-            groundSpeed = 4f, // 根据需要设置速度
-            waterSpeed = 2f,
-            iceSpeed = 1.5f,
-            wallSpeed = 3f,
+            groundSpeed = 50f,    // 10f * 5
+            waterSpeed = 0f,
+            iceSpeed = 0f,
+            wallSpeed = 50f,     // 10f * 5
             isActive = false,
             canCrawl = false
         };
 
-        // 在现有的 Start 方法中添加
+        // 初始化进度字典
         foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
         {
             crawlProgresses[crawlType] = new CrawlProgress();
@@ -299,7 +305,7 @@ public class PlayerInput : MonoBehaviour
             currentCrawlSettings = (CrawlSettings)field.GetValue(this);
             currentCrawlName = crawlType;
 
-            // 更新所有爬行方式的 isActive 状态
+            // �����新所有爬行方式的 isActive 状态
             basicCrawl.isActive = false;
             geckoCrawl.isActive = false;
             turtleCrawl.isActive = false;
@@ -464,7 +470,7 @@ public class PlayerInput : MonoBehaviour
             // 获取碰撞点的法线
             Vector2 normal = currentContact.normal;
             
-            // 计算切线方向（顺时针）
+            // ��算��线方向（顺时针）
             currentMoveDirection = new Vector2(normal.y, -normal.x);
             
             // 确保切线方向总是指向右侧（如果可能）

@@ -15,14 +15,23 @@ public class CrawlSurface : MonoBehaviour
         new CrawlTypeMapping 
         { 
             surfaceTag = "Ground", 
-            allowedCrawlTypes = new List<string> { "Basic", "Snake", "Cat" } 
+            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" } 
         },
         new CrawlTypeMapping 
         { 
             surfaceTag = "Wall", 
-            allowedCrawlTypes = new List<string> { "Gecko", "Chameleon" } 
+            allowedCrawlTypes = new List<string> { "Gecko", "Snake", "Cat" } 
         },
-        // 可以根据需要添加更多映射
+        new CrawlTypeMapping 
+        { 
+            surfaceTag = "Water", 
+            allowedCrawlTypes = new List<string> { "Turtle", "Snake" } 
+        },
+        // new CrawlTypeMapping 
+        // { 
+        //     surfaceTag = "Ice", 
+        //     allowedCrawlTypes = new List<string> { "Snake", "Chameleon" } 
+        // }
     };
 
     private void OnCollisionEnter2D(Collision2D collision)
