@@ -286,10 +286,18 @@ public class PlayerInput : MonoBehaviour
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
 
-        // 只通过缩放控制方向
-        Vector3 scale = transform.localScale;
-        scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-        transform.localScale = scale;
+        // 根据接触面的法线计算旋转角度
+        if (isInContact)
+        {
+            // 计算与表面平行的角度（不需要额外加90度）
+            float angle = Mathf.Atan2(currentMoveDirection.y, currentMoveDirection.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            
+            // 根据isReversing调整scale，实现左右朝向
+            Vector3 scale = transform.localScale;
+            scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+            transform.localScale = scale;
+        }
 
         // 移动玩家
         transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
@@ -494,19 +502,18 @@ public class PlayerInput : MonoBehaviour
             // 获取碰撞点的法线
             Vector2 normal = currentContact.normal;
             
-            // 算线方向（顺时针）
+            // 计算沿表面的移动方向（与法线垂直）
             currentMoveDirection = new Vector2(normal.y, -normal.x);
             
-            // 确保切��方向总是指向右侧（如果可）
-            if (currentMoveDirection.x < 0)
+            // 确保移动方向与玩家的朝向一致
+            if (Vector2.Dot(currentMoveDirection, Vector2.right) < 0)
             {
                 currentMoveDirection = -currentMoveDirection;
             }
 
-            // 在更新移动方向时也检查可爬行状态
             CheckCrawlability();
             
-            Debug.Log($"新的移动方向: {currentMoveDirection}");
+            Debug.Log($"新的移动方向: {currentMoveDirection}, 法线: {normal}");
         }
     }
 

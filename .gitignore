@@ -252,3 +252,7 @@ obj/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# TextMeshPro
+[Aa]ssets/TextMeshPro/Fonts/*
+[Aa]ssets/TextMeshPro/Resources/Fonts\ &\ Materials/*
