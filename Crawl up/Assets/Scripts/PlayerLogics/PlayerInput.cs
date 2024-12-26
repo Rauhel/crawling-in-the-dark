@@ -35,6 +35,12 @@ public class PlayerInput : MonoBehaviour
     public bool canCrawlOnCurrentSurface = false;  // 是否可以在当前表面爬行
     private Rigidbody2D rb;
 
+    // 添加新字段来跟踪实际速度
+    private float currentActualSpeed = 0f;
+    
+    // 添加公共属性供其他脚本访问当前实际速度
+    public float CurrentActualSpeed => currentActualSpeed;
+
     void Start()
     {
         currentKeyIndex = 0;
@@ -167,6 +173,12 @@ public class PlayerInput : MonoBehaviour
     {
         currentKeys.Clear();
         
+        // 如果没有任何按键按下，速度为0
+        if (!Input.anyKey)
+        {
+            currentActualSpeed = 0f;
+        }
+        
         // 改用 Input.anyKey 来检测按键的持续状态
         if (Input.anyKey)
         {
@@ -185,7 +197,7 @@ public class PlayerInput : MonoBehaviour
         
         CheckInput();
         CheckParallelInput();
-        CheckSpaceInput(); 
+        CheckSpaceInput();
     }
 
     void CheckSpaceInput()
@@ -279,12 +291,16 @@ public class PlayerInput : MonoBehaviour
         if (!canCrawlOnCurrentSurface)
         {
             Debug.Log("无法在当前表面爬行");
+            currentActualSpeed = 0f;  // 不能爬行时速度为0
             return;
         }
         
         Debug.Log("Moving player...");
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
+
+        // 设置当前实际速度
+        currentActualSpeed = speed;
 
         // 根据接触面的法线计算旋转角度
         if (isInContact)
@@ -488,7 +504,7 @@ public class PlayerInput : MonoBehaviour
     void OnCollisionExit2D(Collision2D collision)
     {
         isInContact = false;
-        canCrawlOnCurrentSurface = false;  // 离开表面时重置爬行状态
+        canCrawlOnCurrentSurface = false;
     }
 
     // 添加更新移动方向的方法
@@ -529,7 +545,7 @@ public class PlayerInput : MonoBehaviour
             CrawlSurface crawlSurface = currentContact.collider.GetComponent<CrawlSurface>();
             if (crawlSurface != null)
             {
-                // 使用当前的爬行类型重新检查可爬行状态
+                // ��用当前的爬行类型重新检查可爬行状态
                 crawlSurface.CheckCrawlabilityForType(currentCrawlName, this);
             }
         }

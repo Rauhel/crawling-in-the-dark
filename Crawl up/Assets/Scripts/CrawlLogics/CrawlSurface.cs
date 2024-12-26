@@ -3,6 +3,57 @@ using System.Collections.Generic;
 
 public class CrawlSurface : MonoBehaviour
 {
+    private static bool isTreeColliderDisabled = false;
+    private static List<CrawlSurface> treeInstances = new List<CrawlSurface>();
+
+    void Awake()
+    {
+        // 如果是树，添加到静态列表中
+        if (gameObject.CompareTag("Tree"))
+        {
+            treeInstances.Add(this);
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 从列表中移除
+        if (gameObject.CompareTag("Tree"))
+        {
+            treeInstances.Remove(this);
+        }
+    }
+
+    void Update()
+    {
+        // 检测P键按下
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (gameObject.CompareTag("Tree"))
+            {
+                isTreeColliderDisabled = !isTreeColliderDisabled;
+                UpdateAllTreeColliders();
+            }
+        }
+    }
+
+    // 添加静态方法来更新所有树的碰撞体
+    private static void UpdateAllTreeColliders()
+    {
+        foreach (var tree in treeInstances)
+        {
+            if (tree != null)
+            {
+                Collider2D collider = tree.GetComponent<Collider2D>();
+                if (collider != null)
+                {
+                    collider.enabled = !isTreeColliderDisabled;
+                }
+            }
+        }
+        Debug.Log($"树的碰撞体状态: {(isTreeColliderDisabled ? "禁用" : "启用")}");
+    }
+
     [System.Serializable]
     public class CrawlTypeMapping
     {
@@ -19,7 +70,7 @@ public class CrawlSurface : MonoBehaviour
         },
         new CrawlTypeMapping 
         { 
-            surfaceTag = "Wall", 
+            surfaceTag = "Tree", 
             allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Snake", "Cat" } 
         },
         new CrawlTypeMapping 

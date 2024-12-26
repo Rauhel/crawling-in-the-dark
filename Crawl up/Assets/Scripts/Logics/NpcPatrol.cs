@@ -50,19 +50,21 @@ public class NpcPatrol : MonoBehaviour
         if (playerTransform != null)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+            PlayerInput playerInput = playerTransform.GetComponent<PlayerInput>();
             
             if (distanceToPlayer <= detectionRange)
             {
-                PlayerInput playerInput = playerTransform.GetComponent<PlayerInput>();
-                CheckPlayerDetection(playerInput);
-
-                // 添加调试信息
-                Debug.Log($"可以对话: {canStartDialogue}, 当前对话: {currentDialogue != null}");
-
-                // 如果可以对话且玩家按下对话键
-                if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
+                // 检查玩家状态
+                bool shouldChase = CheckPlayerDetection(playerInput);
+                
+                // 根据检查结果决定行为
+                if (shouldChase)
                 {
-                    Debug.Log("开始对话");  // 添加调试信息
+                    ChasePlayer();
+                }
+                else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
+                {
+                    Debug.Log("开始对话");
                     StartDialogue(currentDialogue);
                     return;
                 }
@@ -89,6 +91,7 @@ public class NpcPatrol : MonoBehaviour
 
     void ChasePlayer()
     {
+        Debug.Log("ChasePlayer");
         isChasing = true;
         Vector2 direction = (playerTransform.position - transform.position).normalized;
         Vector2 newPosition = (Vector2)transform.position + direction * chaseSpeed * Time.deltaTime;
@@ -150,13 +153,14 @@ public class NpcPatrol : MonoBehaviour
             return;
         }
 
-        // 平滑���动
+        // 平滑移动
         Vector3 currentPos = transform.position;
         transform.position = Vector3.Lerp(currentPos, targetPosition, Time.deltaTime * patrolSpeed);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("OnTriggerEnter2D");
         if (isDead) return;
 
         if (other.CompareTag("Player"))
@@ -171,6 +175,7 @@ public class NpcPatrol : MonoBehaviour
             }
             else if (isChasing)
             {
+                Debug.Log("在追击状态下碰到玩家");
                 // 如果是在追击状态下碰到玩家，触发玩家死亡
                 KillPlayer();
             }
@@ -226,50 +231,60 @@ public class NpcPatrol : MonoBehaviour
 
     private float GetPlayerCurrentSpeed(PlayerInput playerInput)
     {
-        // 根据当前表面类型返回对应的速度
-        // 这里假设使用groundSpeed，您可以根据实际情况修改
-        return playerInput.currentCrawlSettings.groundSpeed;
+        // 直接返回玩家当前的实际速度
+        return playerInput.CurrentActualSpeed;
     }
 
-    void CheckPlayerDetection(PlayerInput playerInput)
+    bool CheckPlayerDetection(PlayerInput playerInput)
     {
-        if (isDead || playerInput == null || isInDialogue) return;
+        if (isDead || playerInput == null || isInDialogue) return false;
 
         if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out CrawlType currentCrawlType))
         {
-            // 添加调试信息
-            Debug.Log($"检测到爬行类型: {currentCrawlType}");
-
+            // 检查是否有匹配的对话
             DialogueContent matchingDialogue = System.Array.Find(dialogues, 
                 d => d.triggerCrawlType == currentCrawlType);
             
             if (matchingDialogue != null)
             {
-                Debug.Log("找到匹配的对话");  // 添加调试信息
+                Debug.Log("找到匹配的对话");
                 canStartDialogue = true;
                 currentDialogue = matchingDialogue;
                 isChasing = false;
-                return;
+                return false;
             }
 
-            // 如果不能对话，检查是否满足追击条件
+            // 检查是否满足追击条件
             float currentSpeed = GetPlayerCurrentSpeed(playerInput);
             bool speedInRange = (currentSpeed >= detectionSettings.minDetectableSpeed && 
                                currentSpeed <= detectionSettings.maxDetectableSpeed);
 
-            if (speedInRange && System.Array.Exists(detectionSettings.hostileCrawlTypes, 
-                type => type == currentCrawlType))
+            bool isHostileCrawl = System.Array.Exists(detectionSettings.hostileCrawlTypes, 
+                type => type == currentCrawlType);
+
+            // 如果条件改变，重置追击状态
+            if (!speedInRange || !isHostileCrawl)
             {
-                isChasing = true;
-                canStartDialogue = false;
-                currentDialogue = null;
+                if (isChasing)
+                {
+                    Debug.Log("玩家状态改变，停止追击");
+                    ResetDetectionState();
+                }
+                return false;
             }
-            else
+
+            // 满足追击条件
+            if (!isChasing)
             {
-                // 既不满足对话条件也不满足追击条件
-                ResetDetectionState();
+                Debug.Log("开始追击玩家");
             }
+            isChasing = true;
+            canStartDialogue = false;
+            currentDialogue = null;
+            return true;
         }
+
+        return false;
     }
 
     private void StartDialogue(DialogueContent dialogue)
@@ -373,5 +388,5 @@ public class DialogueContent
 {
     public CrawlType triggerCrawlType;  // 触发对话的爬行类型
     [TextArea(3, 10)]
-    public string[] dialogueLines;  // 对���内容
+    public string[] dialogueLines;  // 对话内容
 }
