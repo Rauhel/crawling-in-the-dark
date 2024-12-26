@@ -7,10 +7,10 @@ public class DialogueManager : MonoBehaviour
     
     [Header("UI 设置")]
     [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TMP_Text dialogueText;
+    [SerializeField] private TextMeshProUGUI dialogueText;
     
     private string[] currentDialogueLines;
-    private int currentLineIndex;
+    [SerializeField] private int currentLineIndex = 0;
     private bool isInDialogue;
     private PlayerInput playerInput;
     private System.Action onDialogueComplete;  // 对话结束时的回调
@@ -40,13 +40,37 @@ public class DialogueManager : MonoBehaviour
         if (isInDialogue && Input.GetKeyDown(KeyCode.Q))
         {
             DisplayNextLine();
+            Debug.Log("DisplayNextLine");
         }
     }
 
     public void StartDialogue(string[] lines, System.Action onComplete = null)
     {
+        Debug.Log("StartDialogue");
+        
+        // 检查对话面板引用
+        if (dialoguePanel == null)
+        {
+            Debug.LogError("对话面板引用为空！");
+            return;
+        }
+        
+        // 检查对话文本引用
+        if (dialogueText == null)
+        {
+            Debug.LogError("对话文本引用为空！");
+            return;
+        }
+
+        // 检查对话内容
+        if (lines == null || lines.Length == 0)
+        {
+            Debug.LogError("对话内容为空！");
+            return;
+        }
+
         currentDialogueLines = lines;
-        currentLineIndex = 0;
+        currentLineIndex = -1;
         isInDialogue = true;
         onDialogueComplete = onComplete;
 
@@ -57,8 +81,10 @@ public class DialogueManager : MonoBehaviour
         if (playerInput != null)
             playerInput.enabled = false;
 
-        // 显示对话面板和第一行对话
+        Debug.Log($"对话面板当前状态: {dialoguePanel.activeSelf}");
         dialoguePanel.SetActive(true);
+        Debug.Log($"对话面板设置后状态: {dialoguePanel.activeSelf}");
+        
         DisplayCurrentLine();
     }
 
@@ -66,6 +92,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentLineIndex < currentDialogueLines.Length)
         {
+            Debug.Log($"显示对话: {currentDialogueLines[currentLineIndex]}");
             dialogueText.text = currentDialogueLines[currentLineIndex];
         }
     }
@@ -73,10 +100,12 @@ public class DialogueManager : MonoBehaviour
     private void DisplayNextLine()
     {
         currentLineIndex++;
+        Debug.Log($"currentLineIndex: {currentLineIndex}");
         
         if (currentLineIndex >= currentDialogueLines.Length)
         {
             EndDialogue();
+            Debug.Log("EndDialogue");
         }
         else
         {

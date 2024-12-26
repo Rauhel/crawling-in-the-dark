@@ -17,7 +17,7 @@ public class MenuManager : MonoBehaviour
     public Image snakeCrawlImage;
     public Image catCrawlImage;
     public Image chameleonCrawlImage;
-    public Sprite defaultCrawlSprite;  // 未解锁时显示的图片
+    public Sprite defaultCrawlSprite;
 
     private void Awake()
     {
@@ -33,27 +33,40 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        menuCanvas.SetActive(false);
-        UpdateUI();
+        if (menuCanvas != null)
+            menuCanvas.SetActive(false);
+            
+        // 添加空检查
+        if (PlayerManager.Instance != null)
+        {
+            UpdateUI();
+        }
     }
 
     public void ToggleMenu()
     {
+        if (menuCanvas == null) return;
+
         bool isMenuActive = menuCanvas.activeSelf;
         menuCanvas.SetActive(!isMenuActive);
         Time.timeScale = isMenuActive ? 1 : 0;
 
-        if (!isMenuActive)
+        if (!isMenuActive && PlayerManager.Instance != null)
         {
-            UpdateUI();  // 打开菜单时更新UI
+            UpdateUI();
         }
     }
 
     private void UpdateUI()
     {
+        if (PlayerManager.Instance == null) return;
+
         // 更新碎片数量
-        int fragmentCount = PlayerManager.Instance.GetFragmentCount();
-        fragmentCountText.text = $"收集到的碎片: {fragmentCount}";
+        if (fragmentCountText != null)
+        {
+            int fragmentCount = PlayerManager.Instance.GetFragmentCount();
+            fragmentCountText.text = $"收集到的碎片: {fragmentCount}";
+        }
 
         // 更新爬行类型图片
         UpdateCrawlTypeImage(basicCrawlImage, "Basic");
@@ -66,17 +79,17 @@ public class MenuManager : MonoBehaviour
 
     private void UpdateCrawlTypeImage(Image image, string crawlType)
     {
-        if (image == null) return;
+        if (image == null || PlayerManager.Instance == null) return;
 
         bool isUnlocked = PlayerManager.Instance.HasLearnedCrawlType(crawlType);
         if (isUnlocked)
         {
             image.color = Color.white;
         }
-        else
+        else if (defaultCrawlSprite != null)
         {
             image.sprite = defaultCrawlSprite;
-            image.color = new Color(0.5f, 0.5f, 0.5f, 1f);  // 未解锁时显示灰色
+            image.color = new Color(0.5f, 0.5f, 0.5f, 1f);
         }
     }
 } 

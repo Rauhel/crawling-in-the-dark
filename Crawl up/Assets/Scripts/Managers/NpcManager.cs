@@ -5,7 +5,7 @@ public class NpcManager : MonoBehaviour
 {
     // 单例模式
     public static NpcManager Instance { get; private set; }
-    private List<NpcPatrol> allNpcs = new List<NpcPatrol>();
+    private List<NpcPatrol> npcs = new List<NpcPatrol>();
 
     private void Awake()
     {
@@ -35,22 +35,22 @@ public class NpcManager : MonoBehaviour
     // 注册NPC
     public void RegisterNpc(NpcPatrol npc)
     {
-        if (!allNpcs.Contains(npc))
+        if (!npcs.Contains(npc))
         {
-            allNpcs.Add(npc);
+            npcs.Add(npc);
         }
     }
 
     // 取消注册NPC
     public void UnregisterNpc(NpcPatrol npc)
     {
-        if (allNpcs.Contains(npc))
+        if (npcs.Contains(npc))
         {
-            allNpcs.Remove(npc);
+            npcs.Remove(npc);
         }
     }
 
-    // 当���家死亡时复活所有NPC
+    // 当玩家死亡时复活所有NPC
     private void OnPlayerDied()
     {
         ReviveAllNpcs();
@@ -59,7 +59,7 @@ public class NpcManager : MonoBehaviour
     // 复活所有NPC
     public void ReviveAllNpcs()
     {
-        foreach (var npc in allNpcs)
+        foreach (var npc in npcs)
         {
             if (npc != null)
             {

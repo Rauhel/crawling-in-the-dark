@@ -47,33 +47,28 @@ public class NpcPatrol : MonoBehaviour
     {
         if (isDead) return;
 
-        // 检查是否在检测范围内发现玩家
         if (playerTransform != null)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
             
             if (distanceToPlayer <= detectionRange)
             {
-                // 在范围内时持续检测玩家状态
                 PlayerInput playerInput = playerTransform.GetComponent<PlayerInput>();
                 CheckPlayerDetection(playerInput);
+
+                // 添加调试信息
+                Debug.Log($"可以对话: {canStartDialogue}, 当前对话: {currentDialogue != null}");
 
                 // 如果可以对话且玩家按下对话键
                 if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
                 {
+                    Debug.Log("开始对话");  // 添加调试信息
                     StartDialogue(currentDialogue);
                     return;
-                }
-
-                // 如果正在追击则更新追击
-                if (isChasing)
-                {
-                    ChasePlayer();
                 }
             }
             else
             {
-                // 玩家离开检测范围，重置所有状态
                 ResetDetectionState();
             }
         }
@@ -155,7 +150,7 @@ public class NpcPatrol : MonoBehaviour
             return;
         }
 
-        // 平滑移动
+        // 平滑���动
         Vector3 currentPos = transform.position;
         transform.position = Vector3.Lerp(currentPos, targetPosition, Time.deltaTime * patrolSpeed);
     }
@@ -242,13 +237,15 @@ public class NpcPatrol : MonoBehaviour
 
         if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out CrawlType currentCrawlType))
         {
-            // 首先检查是否满足对话条件
+            // 添加调试信息
+            Debug.Log($"检测到爬行类型: {currentCrawlType}");
+
             DialogueContent matchingDialogue = System.Array.Find(dialogues, 
                 d => d.triggerCrawlType == currentCrawlType);
             
             if (matchingDialogue != null)
             {
-                // 设置以对话的状态，停止巡逻和追击
+                Debug.Log("找到匹配的对话");  // 添加调试信息
                 canStartDialogue = true;
                 currentDialogue = matchingDialogue;
                 isChasing = false;
@@ -350,13 +347,15 @@ public class NpcPatrol : MonoBehaviour
     private void OnEnable()
     {
         // 注册到NpcManager
-        NpcManager.Instance.RegisterNpc(this);
+        if (NpcManager.Instance != null)
+            NpcManager.Instance.RegisterNpc(this);
     }
 
     private void OnDisable()
     {
-        // 从NpcManager中销
-        NpcManager.Instance.UnregisterNpc(this);
+        // 从NpcManager中注销
+        if (NpcManager.Instance != null)
+            NpcManager.Instance.UnregisterNpc(this);
     }
 }
 
@@ -374,5 +373,5 @@ public class DialogueContent
 {
     public CrawlType triggerCrawlType;  // 触发对话的爬行类型
     [TextArea(3, 10)]
-    public string[] dialogueLines;  // 对话内容
+    public string[] dialogueLines;  // 对���内容
 }

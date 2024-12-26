@@ -1768,9 +1768,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 3412252292728383084, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -1030
+      objectReference: {fileID: 0}
+    - target: {fileID: 3412252292728383084, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -515.00006
+      objectReference: {fileID: 0}
     - target: {fileID: 3527623515023069032, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
       propertyPath: m_text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3527623515023069032, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_fontSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3527623515023069032, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3692792820117772525, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1799,6 +1815,22 @@ PrefabInstance:
     - target: {fileID: 6835796491643857476, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758488506277697261, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1231.0215
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758488506277697261, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 307.7554
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758488506277697261, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758488506277697261, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -574
       objectReference: {fileID: 0}
     - target: {fileID: 8397981870696862909, guid: bbbcd44cd8ba800468439d347e1949a3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2073,6 +2105,10 @@ PrefabInstance:
       propertyPath: dialoguePanel
       value: 
       objectReference: {fileID: 475870752}
+    - target: {fileID: 3132767682532613787, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: m_Name
+      value: DialogueManager
+      objectReference: {fileID: 0}
     - target: {fileID: 6347135732746613000, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: winMenu
       value: 
@@ -6065,7 +6101,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 397c02335e2012b41b11214b8dd8a789, type: 3}
+  m_Script: {fileID: 11500000, guid: 0347f9bcdfd75481ebeb6c57b8bc2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1859446839
@@ -7631,7 +7667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: dialogues.Array.data[0].dialogueLines.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: dialogues.Array.data[1].dialogueLines.Array.size
@@ -7640,6 +7676,14 @@ PrefabInstance:
     - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: dialogues.Array.data[0].dialogueLines.Array.data[0]
       value: aaaaaaaaa
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[0].dialogueLines.Array.data[1]
+      value: bbbbbbbbbbbbb
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[0].dialogueLines.Array.data[2]
+      value: cccccc
       objectReference: {fileID: 0}
     - target: {fileID: 8105949031306554498, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: m_LocalPosition.x

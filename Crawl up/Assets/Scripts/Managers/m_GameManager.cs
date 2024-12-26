@@ -29,9 +29,17 @@ public class m_GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pauseMenu.SetActive(false);
-        winMenu.SetActive(false);
-        menuCanvas.SetActive(false);
+        // 确保所有UI面板在开始时都是禁用的
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
+        if (winMenu != null)
+            winMenu.SetActive(false);
+        if (menuCanvas != null)
+            menuCanvas.SetActive(false);
+        
+        // 重置暂停状态
+        isPaused = false;
+        Time.timeScale = 1;
     }
 
     // Update is called once per frame
@@ -57,6 +65,10 @@ public class m_GameManager : MonoBehaviour
 
     public void TogglePause()
     {
+        // 如果正在对话，不允许暂停
+        if (DialogueManager.Instance.IsDialogueActive())
+            return;
+
         isPaused = !isPaused;
         pauseMenu.SetActive(isPaused);
         Time.timeScale = isPaused ? 0 : 1;
@@ -83,6 +95,10 @@ public class m_GameManager : MonoBehaviour
     }
     public void ToggleMenu()
     {
+        // 如果正在对话，不允许打开菜单
+        if (DialogueManager.Instance.IsDialogueActive())
+            return;
+
         bool isMenuActive = menuCanvas.activeSelf;
         menuCanvas.SetActive(!isMenuActive);
         Time.timeScale = isMenuActive ? 1 : 0;
