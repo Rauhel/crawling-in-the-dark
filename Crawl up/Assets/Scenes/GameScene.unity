@@ -7602,6 +7602,30 @@ PrefabInstance:
       propertyPath: patrolPath
       value: 
       objectReference: {fileID: 641771292}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[0].displayTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[1].displayTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[0].dialogueLines.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[1].dialogueLines.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: dialogues.Array.data[0].dialogueLines.Array.data[0]
+      value: aaaaaaaaa
+      objectReference: {fileID: 0}
     - target: {fileID: 8105949031306554498, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.88

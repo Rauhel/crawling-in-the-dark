@@ -4,41 +4,23 @@ using UnityEngine;
 
 public class NpcPatrol : MonoBehaviour
 {
-    [System.Serializable]
-    public class DetectionSettings
-    {
-        [Header("追逐设置")]
-        [Tooltip("选择会触发追逐的爬行类型")]
-        public CrawlType[] hostileCrawlTypes;
-        public float minDetectableSpeed = 0f;
-        public float maxDetectableSpeed = 10f;
-    }
-
-    [System.Serializable]
-    public class DialogueContent
-    {
-        public CrawlType triggerCrawlType;  // 触发对话的爬行类型
-        [TextArea(3, 10)]
-        public string[] dialogueLines;  // 对话内容
-        public float displayTime = 2f;  // 每行对话显示时间
-    }
-
-    public DetectionSettings detectionSettings;
+    [Header("基础设置")]
     public float patrolSpeed = 5f;
     public float chaseSpeed = 10f;
     public float detectionRange = 5f;
-    public Vector2 patrolAreaMin;
-    public Vector2 patrolAreaMax;
 
-    private bool isDead = false;
-    private Transform playerTransform;
-    private bool isChasing = false;
-    private Vector3 originalPosition;
+    [Header("追逐设置")]
+    [Tooltip("追逐相关的设置")]
+    public DetectionSettings detectionSettings;
+
+    [Header("巡逻路径设置")]
+    public PatrolPath patrolPath;
+    private float patrolProgress = 0f;  // 0到1之间的值
+    private bool isPathReversing = false;
 
     [Header("对话设置")]
     public DialogueContent[] dialogues;  // 在Inspector中直接设置对话内容
     private bool isInDialogue = false;
-
     private bool canStartDialogue = false;  // 是否可以开始对话
     private DialogueContent currentDialogue = null;  // 当前可用的对话内容
 
@@ -48,12 +30,12 @@ public class NpcPatrol : MonoBehaviour
     [Tooltip("如果是教学NPC，选择要教授的爬行类型")]
     public CrawlType teachableCrawlType;  // 要教授的爬行类型
 
+    // 私有状态字段
+    private bool isDead = false;
+    private bool isChasing = false;
     private bool hasInteracted = false;   // 是否已经进行过互动
-
-    [Header("巡逻路径设置")]
-    public PatrolPath patrolPath;
-    private float patrolProgress = 0f;  // 0到1之间的值
-    private bool isPathReversing = false;
+    private Transform playerTransform;
+    private Vector3 originalPosition;
 
     void Start()
     {
@@ -96,8 +78,8 @@ public class NpcPatrol : MonoBehaviour
             }
         }
 
-        // 如果没有在追击或对话，就继续巡逻
-        if (!isChasing && !isInDialogue)
+        // 只有在不能对话且不在追击状态时才巡逻
+        if (!canStartDialogue && !isChasing && !isInDialogue)
         {
             Patrol();
         }
@@ -115,10 +97,6 @@ public class NpcPatrol : MonoBehaviour
         isChasing = true;
         Vector2 direction = (playerTransform.position - transform.position).normalized;
         Vector2 newPosition = (Vector2)transform.position + direction * chaseSpeed * Time.deltaTime;
-
-        // 确保NPC不会离开巡逻区域
-        newPosition.x = Mathf.Clamp(newPosition.x, patrolAreaMin.x, patrolAreaMax.x);
-        newPosition.y = Mathf.Clamp(newPosition.y, patrolAreaMin.y, patrolAreaMax.y);
 
         transform.position = newPosition;
     }
@@ -270,10 +248,10 @@ public class NpcPatrol : MonoBehaviour
             
             if (matchingDialogue != null)
             {
-                // 设置可以对话的状态，但不立即开始对话
+                // 设置���以对话的状态，停止巡逻和追击
                 canStartDialogue = true;
                 currentDialogue = matchingDialogue;
-                isChasing = false;  // 如果可以对话，停止追击
+                isChasing = false;
                 return;
             }
 
@@ -313,7 +291,7 @@ public class NpcPatrol : MonoBehaviour
                 isInDialogue = false;
                 currentDialogue = null;
 
-                // 如果是安全点NPC，设置安全点
+                // 如果是安全点NPC，设置全点
                 if (isSafePointNPC)
                 {
                     PlayerManager.Instance.SetSafePoint(transform.position);
@@ -367,12 +345,6 @@ public class NpcPatrol : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(
-            new Vector3((patrolAreaMin.x + patrolAreaMax.x) / 2, (patrolAreaMin.y + patrolAreaMax.y) / 2, 0),
-            new Vector3(patrolAreaMax.x - patrolAreaMin.x, patrolAreaMax.y - patrolAreaMin.y, 0)
-        );
     }
 
     private void OnEnable()
@@ -386,4 +358,22 @@ public class NpcPatrol : MonoBehaviour
         // 从NpcManager中销
         NpcManager.Instance.UnregisterNpc(this);
     }
+}
+
+[System.Serializable]
+public class DetectionSettings
+{
+    [Tooltip("选择会触发追逐的爬行类型")]
+    public CrawlType[] hostileCrawlTypes;
+    public float minDetectableSpeed = 0f;
+    public float maxDetectableSpeed = 10f;
+}
+
+[System.Serializable]
+public class DialogueContent
+{
+    public CrawlType triggerCrawlType;  // 触发对话的爬行类型
+    [TextArea(3, 10)]
+    public string[] dialogueLines;  // 对话内容
+    public float displayTime = 2f;  // 每行对话显示时间
 }
