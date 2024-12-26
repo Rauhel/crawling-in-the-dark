@@ -24,9 +24,6 @@ public class GameManager : MonoBehaviour
     public GameObject menuCanvas;
     public Animator endAnimator;
 
-    [Header("重生按钮")]
-    public GameObject respawnButton;  // 在Inspector中设置重生按钮
-
     private bool isPaused = false;
 
     // Start is called before the first frame update
@@ -35,8 +32,6 @@ public class GameManager : MonoBehaviour
         pauseMenu.SetActive(false);
         winMenu.SetActive(false);
         menuCanvas.SetActive(false);
-        if (respawnButton != null)
-            respawnButton.SetActive(false);
     }
 
     // Update is called once per frame
@@ -46,17 +41,17 @@ public class GameManager : MonoBehaviour
         {
             if (isPaused)
             {
-                ResumeGame();  // 如果已经暂停，则恢复游戏
+                ResumeGame();
             }
             else
             {
-                TogglePause();  // 如果没有暂停，则暂停游戏
+                TogglePause();
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            ToggleMenu();
+            MenuManager.Instance.ToggleMenu();
         }
     }
 
@@ -64,20 +59,13 @@ public class GameManager : MonoBehaviour
     {
         isPaused = !isPaused;
         pauseMenu.SetActive(isPaused);
-        if (respawnButton != null)
-            respawnButton.SetActive(isPaused);  // 暂停时显示重生按钮
         Time.timeScale = isPaused ? 0 : 1;
-    }
-
-    public void SaveGame()
-    {
-        // 实现保存游戏逻辑
-        // 例如使用PlayerPrefs或者文件系统保存游戏状态
     }
 
     public void ReturnToMainMenu()
     {
-        // 实现返回主菜单逻辑
+        // 保存游戏状态
+        PlayerManager.Instance.SaveGameState();
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -91,8 +79,6 @@ public class GameManager : MonoBehaviour
     {
         isPaused = false;
         pauseMenu.SetActive(false);
-        if (respawnButton != null)
-            respawnButton.SetActive(false);
         Time.timeScale = 1;
     }
     public void ToggleMenu()

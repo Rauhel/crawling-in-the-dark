@@ -248,7 +248,7 @@ public class NpcPatrol : MonoBehaviour
             
             if (matchingDialogue != null)
             {
-                // 设置���以对话的状态，停止巡逻和追击
+                // 设置以对话的状态，停止巡逻和追击
                 canStartDialogue = true;
                 currentDialogue = matchingDialogue;
                 isChasing = false;
@@ -375,5 +375,4 @@ public class DialogueContent
     public CrawlType triggerCrawlType;  // 触发对话的爬行类型
     [TextArea(3, 10)]
     public string[] dialogueLines;  // 对话内容
-    public float displayTime = 2f;  // 每行对话显示时间
 }

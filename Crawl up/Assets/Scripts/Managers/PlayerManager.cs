@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class PlayerManager : MonoBehaviour
     private Vector3 lastSafePoint;
     private Transform playerTransform;  // 玩家的Transform组件
     // private Animator playerAnimator;  // 玩家的Animator组件
+    private Dictionary<string, bool> unlockedCrawlTypes = new Dictionary<string, bool>();
+    private int fragmentCount = 0;
 
     // 单例模式
     public static PlayerManager Instance { get; private set; }
@@ -96,5 +99,26 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("收集完成所有碎片！");
         // 通知 GameManager 游戏胜利
         GameManager.Instance.OnGameVictory();
+    }
+
+    public bool HasLearnedCrawlType(string crawlType)
+    {
+        return unlockedCrawlTypes.ContainsKey(crawlType) && unlockedCrawlTypes[crawlType];
+    }
+
+    public int GetFragmentCount()
+    {
+        return fragmentCount;
+    }
+
+    public void AddFragment()
+    {
+        fragmentCount++;
+    }
+
+    // 在学习爬行类型时更新解锁状态
+    private void OnLearnCrawlType(string crawlType)
+    {
+        unlockedCrawlTypes[crawlType] = true;
     }
 }
