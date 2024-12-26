@@ -10,9 +10,19 @@ public class PatrolPath : MonoBehaviour
         path = GetComponent<CinemachinePathBase>();
     }
 
-    public Vector3 GetPositionAtDistance(float distance)
+    public Vector3 GetPositionAtDistance(float normalizedDistance)
     {
-        return path.EvaluatePosition(distance);
+        return path.EvaluatePosition(normalizedDistance);
+    }
+
+    public float GetPathLength()
+    {
+        return path.PathLength;
+    }
+
+    public bool IsLooped()
+    {
+        return path.Looped;
     }
 
     private void OnDrawGizmos()
@@ -24,13 +34,19 @@ public class PatrolPath : MonoBehaviour
             {
                 Gizmos.color = Color.green;
                 float step = 0.1f;
-                for (float t = 0; t < 1f; t += step)
+                for (float t = 0; t < 0.999f; t += step)
                 {
+                    float nextT = Mathf.Min(t + step, 1f);
                     Gizmos.DrawLine(
                         path.EvaluatePosition(t),
-                        path.EvaluatePosition(t + step)
+                        path.EvaluatePosition(nextT)
                     );
                 }
+
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(path.EvaluatePosition(0), 0.3f);
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(path.EvaluatePosition(1), 0.3f);
             }
         }
     }

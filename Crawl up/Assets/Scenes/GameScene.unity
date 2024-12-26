@@ -2262,6 +2262,76 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+--- !u!1 &641771291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 641771294}
+  - component: {fileID: 641771293}
+  - component: {fileID: 641771292}
+  m_Layer: 0
+  m_Name: PatrolPath
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &641771292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641771291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6fee773df33151479cb23300d3c5eef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &641771293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641771291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d37e5385efd7064cb1d54c94960acae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Resolution: 20
+  m_Appearance:
+    pathColor: {r: 0, g: 1, b: 0, a: 1}
+    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    width: 0.2
+  m_Looped: 0
+  m_Waypoints:
+  - position: {x: 0, y: 0, z: 5}
+    tangent: {x: 0, y: 0, z: 0}
+    roll: 0
+  - position: {x: 0.5138234, y: -0.0000000012702799, z: 5}
+    tangent: {x: 0.07649988, y: -0.000000006187939, z: 0}
+    roll: 0
+--- !u!4 &641771294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641771291}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.293, y: 4.81, z: 0}
+  m_LocalScale: {x: 8.9196, y: 8.9196, z: 8.9196}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &659400236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7528,9 +7598,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7325419321642498220, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
+      propertyPath: patrolPath
+      value: 
+      objectReference: {fileID: 641771292}
     - target: {fileID: 8105949031306554498, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20.15
+      value: 19.88
       objectReference: {fileID: 0}
     - target: {fileID: 8105949031306554498, guid: 7051f4fca6f33384ab4ceb479734b8a3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7816,3 +7890,4 @@ SceneRoots:
   - {fileID: 1840089031}
   - {fileID: 1502107856}
   - {fileID: 2053974139}
+  - {fileID: 641771294}

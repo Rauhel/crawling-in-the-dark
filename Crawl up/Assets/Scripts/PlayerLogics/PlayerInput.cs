@@ -286,9 +286,10 @@ public class PlayerInput : MonoBehaviour
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
 
-        // 根据移动方向旋转玩家
-        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        // 只通过缩放控制方向
+        Vector3 scale = transform.localScale;
+        scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
 
         // 移动玩家
         transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
@@ -496,7 +497,7 @@ public class PlayerInput : MonoBehaviour
             // 算线方向（顺时针）
             currentMoveDirection = new Vector2(normal.y, -normal.x);
             
-            // 确保切线方向总是指向右侧（如果可能）
+            // 确保切��方向总是指向右侧（如果可）
             if (currentMoveDirection.x < 0)
             {
                 currentMoveDirection = -currentMoveDirection;

@@ -24,8 +24,8 @@ public class NpcPatrol : MonoBehaviour
     }
 
     public DetectionSettings detectionSettings;
-    public float patrolSpeed = 2f;
-    public float chaseSpeed = 4f;
+    public float patrolSpeed = 5f;
+    public float chaseSpeed = 10f;
     public float detectionRange = 5f;
     public Vector2 patrolAreaMin;
     public Vector2 patrolAreaMax;
@@ -52,8 +52,8 @@ public class NpcPatrol : MonoBehaviour
 
     [Header("巡逻路径设置")]
     public PatrolPath patrolPath;
-    public float patrolProgress = 0f;  // 0到1之间的值
-    public bool isPathReversing = false;
+    private float patrolProgress = 0f;  // 0到1之间的值
+    private bool isPathReversing = false;
 
     void Start()
     {
@@ -127,30 +127,59 @@ public class NpcPatrol : MonoBehaviour
     {
         if (patrolPath == null) return;
 
-        // 更新巡逻进度
-        float progressStep = patrolSpeed * Time.deltaTime;
+        float pathLength = patrolPath.GetPathLength();
+        if (pathLength <= 0) return;
+
+        float progressStep = (patrolSpeed / pathLength) * Time.deltaTime;
+        
+        bool wasReversing = isPathReversing;
+        
         if (isPathReversing)
         {
-            patrolProgress -= progressStep;
+            patrolProgress = Mathf.Max(0f, patrolProgress - progressStep);
             if (patrolProgress <= 0f)
             {
-                patrolProgress = 0f;
                 isPathReversing = false;
+                patrolProgress = 0f;
+                // 到达起点时报告位置
+                Vector3 startPoint = patrolPath.GetPositionAtDistance(0f);
+                Debug.Log($"到达起点: {startPoint}, Progress: {patrolProgress}");
             }
         }
         else
         {
-            patrolProgress += progressStep;
+            patrolProgress = Mathf.Min(1f, patrolProgress + progressStep);
             if (patrolProgress >= 1f)
             {
-                patrolProgress = 1f;
                 isPathReversing = true;
+                patrolProgress = 1f;
+                // 到达终点时报告位置
+                Vector3 endPoint = patrolPath.GetPositionAtDistance(1f);
+                Debug.Log($"到达终点: {endPoint}, Progress: {patrolProgress}");
             }
         }
 
-        // 获取新位置并移动
-        Vector3 newPosition = patrolPath.GetPositionAtDistance(patrolProgress);
-        transform.position = newPosition;
+        // 如果方向发生改变，进行镜像翻转
+        if (wasReversing != isPathReversing)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = -scale.x;
+            transform.localScale = scale;
+            // 报告方向改变
+            Debug.Log($"方向改变: {(isPathReversing ? "正向->反向" : "反向->正向")}, Scale.x: {scale.x}");
+        }
+
+        // 获取目标位置并移动
+        Vector3 targetPosition = patrolPath.GetPositionAtDistance(patrolProgress);
+        if (float.IsNaN(targetPosition.x) || float.IsNaN(targetPosition.y) || float.IsNaN(targetPosition.z))
+        {
+            Debug.LogError("计算出的位置无效！");
+            return;
+        }
+
+        // 平滑移动
+        Vector3 currentPos = transform.position;
+        transform.position = Vector3.Lerp(currentPos, targetPosition, Time.deltaTime * patrolSpeed);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -276,7 +305,7 @@ public class NpcPatrol : MonoBehaviour
         canStartDialogue = false;
         isChasing = false;
         
-        // 开始对话，并设置对话结束的回调
+        // 开始对话，设置对话结束的回调
         DialogueManager.Instance.StartDialogue(
             dialogue.dialogueLines,
             () => {
