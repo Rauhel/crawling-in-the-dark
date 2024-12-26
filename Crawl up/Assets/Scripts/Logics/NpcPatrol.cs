@@ -18,26 +18,22 @@ public class NpcPatrol : MonoBehaviour
     private float patrolProgress = 0f;  // 0到1之间的值
     private bool isPathReversing = false;
 
-    [Header("对话设置")]
-    public DialogueContent[] dialogues;  // 在Inspector中直接设置对话内容
-    private bool isInDialogue = false;
-    private bool canStartDialogue = false;  // 是否可以开始对话
-    private DialogueContent currentDialogue = null;  // 当前可用的对话内容
-
-    [Header("特殊NPC设置")]
+    [Header("NPC设置")]
+    public string npcType;  // 在Inspector中设置为"Frog"/"Chameleon"/"Cat"/"Turtle"/"Snake"
     public bool isSafePointNPC = false;  // 是否是安全点NPC
     public bool isTeacherNPC = false;    // 是否是教学NPC
     [Tooltip("如果是教学NPC，选择要教授的爬行类型")]
     public CrawlType teachableCrawlType;  // 要教授的爬行类型
 
-    [Header("NPC类型")]
-    public string npcType;  // 在Inspector中设置为"Frog"/"Chameleon"/"Cat"/"Turtle"/"Snake"
-    private int currentDialogueIndex = 0;  // 当前对话索引
+    [Header("对话触发设置")]
+    public DialogueTrigger[] dialogueTriggers;  // 在Inspector中设置对话触发条件
 
     // 私有状态字段
     private bool isDead = false;
     private bool isChasing = false;
-    private bool hasInteracted = false;   // 是否已经进行过互动
+    private bool isInDialogue = false;
+    private bool canStartDialogue = false;
+    private int currentDialogueIndex = -1;
     private Transform playerTransform;
     private Vector3 originalPosition;
 
@@ -69,7 +65,7 @@ public class NpcPatrol : MonoBehaviour
                 else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
                 {
                     Debug.Log("开始对话");
-                    StartDialogue(currentDialogue);
+                    StartDialogue();
                     return;
                 }
             }
@@ -90,7 +86,7 @@ public class NpcPatrol : MonoBehaviour
     {
         isChasing = false;
         canStartDialogue = false;
-        currentDialogue = null;
+        currentDialogueIndex = -1;
     }
 
     void ChasePlayer()
@@ -121,7 +117,7 @@ public class NpcPatrol : MonoBehaviour
             {
                 isPathReversing = false;
                 patrolProgress = 0f;
-                // 到达起点时���告位置
+                // 到达起点时告位置
                 Vector3 startPoint = patrolPath.GetPositionAtDistance(0f);
                 Debug.Log($"到达起点: {startPoint}, Progress: {patrolProgress}");
             }
@@ -153,7 +149,7 @@ public class NpcPatrol : MonoBehaviour
         Vector3 targetPosition = patrolPath.GetPositionAtDistance(patrolProgress);
         if (float.IsNaN(targetPosition.x) || float.IsNaN(targetPosition.y) || float.IsNaN(targetPosition.z))
         {
-            Debug.LogError("计算出的���置无效！");
+            Debug.LogError("计算出的置无效！");
             return;
         }
 
@@ -201,7 +197,7 @@ public class NpcPatrol : MonoBehaviour
     {
         // 通知 EventCenter 玩家死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
-        Debug.Log("玩家被NPC抓住了！");
+        Debug.Log("玩家被NPC��住了！");
     }
 
     private void Die()
@@ -245,15 +241,15 @@ public class NpcPatrol : MonoBehaviour
 
         if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out CrawlType currentCrawlType))
         {
-            // 检查是否有匹配的对话
-            DialogueContent matchingDialogue = System.Array.Find(dialogues, 
-                d => d.triggerCrawlType == currentCrawlType);
+            // 检查是否有可触发的对话
+            DialogueTrigger trigger = System.Array.Find(dialogueTriggers, 
+                t => t.requiredCrawlType == currentCrawlType && !t.hasTriggered);
             
-            if (matchingDialogue != null)
+            if (trigger != null)
             {
-                Debug.Log("找到匹配的对话");
+                Debug.Log($"找到匹配的对话触发: {currentCrawlType}, 对话索引: {trigger.dialogueIndex}");
                 canStartDialogue = true;
-                currentDialogue = matchingDialogue;
+                currentDialogueIndex = trigger.dialogueIndex;
                 isChasing = false;
                 return false;
             }
@@ -284,22 +280,28 @@ public class NpcPatrol : MonoBehaviour
             }
             isChasing = true;
             canStartDialogue = false;
-            currentDialogue = null;
+            currentDialogueIndex = -1;
             return true;
         }
 
         return false;
     }
 
-    private void StartDialogue(DialogueContent dialogue)
+    private void StartDialogue()
     {
-        if (hasInteracted) return;
+        if (currentDialogueIndex < 0) return;
+
+        if (DialogueData.Instance == null)
+        {
+            Debug.LogError("DialogueData.Instance 为空！请确保场景中有 DialogueSystem 预制体");
+            return;
+        }
 
         // 从DialogueData获取对话内容
         string[] lines = DialogueData.Instance.GetDialogue(npcType, currentDialogueIndex);
         if (lines == null || lines.Length == 0)
         {
-            Debug.LogError($"找不到NPC {npcType} 的对话内容！");
+            Debug.LogError($"找不到NPC {npcType} 的对话内容！索引: {currentDialogueIndex}");
             return;
         }
 
@@ -313,7 +315,14 @@ public class NpcPatrol : MonoBehaviour
             () => {
                 // 对话结束后的回调
                 isInDialogue = false;
-                currentDialogue = null;
+                
+                // 标记当前对话已触发
+                var trigger = System.Array.Find(dialogueTriggers, 
+                    t => t.dialogueIndex == currentDialogueIndex);
+                if (trigger != null)
+                {
+                    trigger.hasTriggered = true;
+                }
 
                 // 如果是安全点NPC，设置安全点
                 if (isSafePointNPC)
@@ -327,9 +336,7 @@ public class NpcPatrol : MonoBehaviour
                     TeachCrawlType();
                 }
 
-                // 增加对话索引，为下次对话做准备
-                currentDialogueIndex++;
-                hasInteracted = true;
+                currentDialogueIndex = -1;  // 重置对话索引
             }
         );
     }
@@ -398,9 +405,9 @@ public class DetectionSettings
 }
 
 [System.Serializable]
-public class DialogueContent
+public class DialogueTrigger
 {
-    public CrawlType triggerCrawlType;  // 触发对话的爬行类型
-    [TextArea(3, 10)]
-    public string[] dialogueLines;  // 对话内容
+    public CrawlType requiredCrawlType;  // 触发对话需要的爬行类型
+    public int dialogueIndex;            // 对应的对话索引
+    public bool hasTriggered = false;    // 是否已经触发过
 }

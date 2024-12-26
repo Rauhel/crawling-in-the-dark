@@ -17,9 +17,11 @@ public class DialogueData : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             LoadDialogues();
+            Debug.Log("DialogueData 初始化成功");
         }
         else
         {
+            Debug.Log("已存在 DialogueData 实例，销毁重复对象");
             Destroy(gameObject);
         }
     }
@@ -30,10 +32,11 @@ public class DialogueData : MonoBehaviour
         TextAsset csvFile = Resources.Load<TextAsset>("Dialogues/NpcDialogues");
         if (csvFile == null)
         {
-            Debug.LogError("找不到对话文件！");
+            Debug.LogError("找不到对话文件！请确保文件位于 Resources/Dialogues/NpcDialogues.csv");
             return;
         }
 
+        Debug.Log("成功加载对话文件");
         string[] lines = csvFile.text.Split('\n');
         bool isFirstLine = true;
 
