@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour
 
         if (!isMenuActive)
         {
-            UpdateUI();  // 打开菜单时更��UI
+            UpdateUI();  // 打开菜单时更新UI
         }
     }
 
@@ -69,7 +69,14 @@ public class MenuManager : MonoBehaviour
         if (image == null) return;
 
         bool isUnlocked = PlayerManager.Instance.HasLearnedCrawlType(crawlType);
-        image.sprite = isUnlocked ? image.sprite : defaultCrawlSprite;
-        image.color = isUnlocked ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);  // 未解锁时显示灰色
+        if (isUnlocked)
+        {
+            image.color = Color.white;
+        }
+        else
+        {
+            image.sprite = defaultCrawlSprite;
+            image.color = new Color(0.5f, 0.5f, 0.5f, 1f);  // 未解锁时显示灰色
+        }
     }
 } 

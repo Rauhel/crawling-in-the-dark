@@ -98,7 +98,7 @@ public class PlayerManager : MonoBehaviour
     {
         Debug.Log("收集完成所有碎片！");
         // 通知 GameManager 游戏胜利
-        GameManager.Instance.OnGameVictory();
+        m_GameManager.Instance.OnGameVictory();
     }
 
     public bool HasLearnedCrawlType(string crawlType)
@@ -120,5 +120,20 @@ public class PlayerManager : MonoBehaviour
     private void OnLearnCrawlType(string crawlType)
     {
         unlockedCrawlTypes[crawlType] = true;
+    }
+
+    public void SaveGameState()
+    {
+        // 保存游戏状态的基本实现
+        PlayerPrefs.SetInt("FragmentCount", fragmentCount);
+        
+        // 保存已解锁的爬行类型
+        foreach (var crawlType in unlockedCrawlTypes)
+        {
+            PlayerPrefs.SetInt("CrawlType_" + crawlType.Key, crawlType.Value ? 1 : 0);
+        }
+        
+        PlayerPrefs.Save();
+        Debug.Log("游戏状态已保存");
     }
 }
