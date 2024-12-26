@@ -30,6 +30,10 @@ public class NpcPatrol : MonoBehaviour
     [Tooltip("如果是教学NPC，选择要教授的爬行类型")]
     public CrawlType teachableCrawlType;  // 要教授的爬行类型
 
+    [Header("NPC类型")]
+    public string npcType;  // 在Inspector中设置为"Frog"/"Chameleon"/"Cat"/"Turtle"/"Snake"
+    private int currentDialogueIndex = 0;  // 当前对话索引
+
     // 私有状态字段
     private bool isDead = false;
     private bool isChasing = false;
@@ -117,7 +121,7 @@ public class NpcPatrol : MonoBehaviour
             {
                 isPathReversing = false;
                 patrolProgress = 0f;
-                // 到达起点时报告位置
+                // 到达起点时���告位置
                 Vector3 startPoint = patrolPath.GetPositionAtDistance(0f);
                 Debug.Log($"到达起点: {startPoint}, Progress: {patrolProgress}");
             }
@@ -149,7 +153,7 @@ public class NpcPatrol : MonoBehaviour
         Vector3 targetPosition = patrolPath.GetPositionAtDistance(patrolProgress);
         if (float.IsNaN(targetPosition.x) || float.IsNaN(targetPosition.y) || float.IsNaN(targetPosition.z))
         {
-            Debug.LogError("计算出的位置无效！");
+            Debug.LogError("计算出的���置无效！");
             return;
         }
 
@@ -289,21 +293,29 @@ public class NpcPatrol : MonoBehaviour
 
     private void StartDialogue(DialogueContent dialogue)
     {
-        if (dialogue == null || hasInteracted) return;
+        if (hasInteracted) return;
+
+        // 从DialogueData获取对话内容
+        string[] lines = DialogueData.Instance.GetDialogue(npcType, currentDialogueIndex);
+        if (lines == null || lines.Length == 0)
+        {
+            Debug.LogError($"找不到NPC {npcType} 的对话内容！");
+            return;
+        }
 
         isInDialogue = true;
         canStartDialogue = false;
         isChasing = false;
         
-        // 开始对话，设置对话结束的回调
+        // 开始对话
         DialogueManager.Instance.StartDialogue(
-            dialogue.dialogueLines,
+            lines,
             () => {
                 // 对话结束后的回调
                 isInDialogue = false;
                 currentDialogue = null;
 
-                // 如果是安全点NPC，设置全点
+                // 如果是安全点NPC，设置安全点
                 if (isSafePointNPC)
                 {
                     PlayerManager.Instance.SetSafePoint(transform.position);
@@ -315,7 +327,9 @@ public class NpcPatrol : MonoBehaviour
                     TeachCrawlType();
                 }
 
-                hasInteracted = true;  // 标记已经互动过
+                // 增加对话索引，为下次对话做准备
+                currentDialogueIndex++;
+                hasInteracted = true;
             }
         );
     }
