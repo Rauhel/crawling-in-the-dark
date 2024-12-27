@@ -9,16 +9,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4064987059489991752, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b74c40b845588a9458305c1ac76725c7, type: 3}
+    - target: {fileID: 4064987059489991752, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_Color.b
-      value: 0.32805273
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4064987059489991752, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_Color.g
-      value: 0.7169812
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4064987059489991752, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_Color.r
-      value: 0.67062116
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7271081442072969862, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_Name
@@ -79,6 +83,10 @@ PrefabInstance:
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: teachableCrawlType
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: dialogueTriggers.Array.size
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
