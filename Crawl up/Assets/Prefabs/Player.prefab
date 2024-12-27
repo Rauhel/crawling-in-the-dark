@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 2380570054371343259}
   - component: {fileID: 5158412202624019409}
   - component: {fileID: 3804587785009650127}
-  - component: {fileID: 2868201167516839304}
   - component: {fileID: 2759704693789213163}
   - component: {fileID: 301771455367764938}
+  - component: {fileID: 6681816447593089412}
+  - component: {fileID: 891244708392976485}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -77,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c6d18767d455fac40ba9ac563224d047, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -115,8 +116,112 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &2868201167516839304
-CircleCollider2D:
+--- !u!114 &2759704693789213163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977890615198079475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993afe664272af146b3211418649023d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicCrawl:
+    keyLists:
+    - keySequence: 
+      requiredMinKeyCount: 1
+      requiredMaxKeyCount: 1
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames:
+    - sprite: {fileID: 21300000, guid: c6d18767d455fac40ba9ac563224d047, type: 3}
+    - sprite: {fileID: 21300000, guid: 9b6d0e432ac79984a99bbdd31043e73e, type: 3}
+  geckoCrawl:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames: []
+  turtleCrawl:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames: []
+  snakeCrawl:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames: []
+  catCrawl:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames:
+    - sprite: {fileID: 21300000, guid: 0fee763bd1aa8cd4bac0f98e8d18f475, type: 3}
+    - sprite: {fileID: 21300000, guid: 2e3617581065aaf46896be752f4e8e1d, type: 3}
+  chameleonCrawl:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames:
+    - sprite: {fileID: 21300000, guid: 6b44bbb6b15913c4ebd0d1b1f4e5736c, type: 3}
+    - sprite: {fileID: 21300000, guid: cc23e682349477d4a9128e5fb127e091, type: 3}
+  moveDistance: 1
+  currentKeyIndex: 0
+  currentCrawlSettings:
+    keyLists: []
+    groundSpeed: 0
+    waterSpeed: 0
+    iceSpeed: 0
+    wallSpeed: 0
+    isActive: 0
+    canCrawl: 0
+    animationFrames: []
+  currentKeys: 
+  totalAnimFrames: 4
+  maxTimeBetweenInputs: 2
+  canCrawlOnCurrentSurface: 0
+--- !u!114 &301771455367764938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977890615198079475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 027d6f54aba46304dba0e04a98ea33d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxFallTime: 3
+  fallSpeed: 5
+--- !u!70 &6681816447593089412
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -147,96 +252,41 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
+  m_Offset: {x: -0.05844594, y: -0.040519025}
+  m_Size: {x: 1.8831103, y: 0.8676929}
+  m_Direction: 1
+--- !u!58 &891244708392976485
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977890615198079475}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
---- !u!114 &2759704693789213163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8977890615198079475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 993afe664272af146b3211418649023d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  basicCrawl:
-    keyLists:
-    - keySequence: 
-      requiredMinKeyCount: 1
-      requiredMaxKeyCount: 1
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  geckoCrawl:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  turtleCrawl:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  snakeCrawl:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  catCrawl:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  chameleonCrawl:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  moveDistance: 1
-  currentKeyIndex: 0
-  currentCrawlSettings:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    wallSpeed: 0
-    isActive: 0
-    canCrawl: 0
-  currentKeys: 
-  maxTimeBetweenInputs: 2
-  canCrawlOnCurrentSurface: 0
---- !u!114 &301771455367764938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8977890615198079475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 027d6f54aba46304dba0e04a98ea33d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxFallTime: 3
-  fallSpeed: 5
+  m_Radius: 1

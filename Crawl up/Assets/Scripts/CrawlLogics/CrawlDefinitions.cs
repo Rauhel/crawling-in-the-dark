@@ -20,6 +20,12 @@ public class KeyList
 }
 
 [System.Serializable]
+public class AnimationFrame
+{
+    public Sprite sprite;  // 动画帧使用的精灵
+}
+
+[System.Serializable]
 public class CrawlSettings
 {
     public KeyList[] keyLists;
@@ -29,6 +35,8 @@ public class CrawlSettings
     public float wallSpeed;
     public bool isActive;
     public bool canCrawl;
+    public AnimationFrame[] animationFrames;  // 动画帧数组
+    public int TotalAnimFrames => animationFrames != null ? animationFrames.Length : 0;  // 总帧数属性
 }
 
 [System.Serializable]

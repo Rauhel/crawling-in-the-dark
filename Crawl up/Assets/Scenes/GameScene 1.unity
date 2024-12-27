@@ -1724,10 +1724,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 301771455367764938, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
-      propertyPath: groundCheckRadius
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 2380570054371343259, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.86
@@ -1768,10 +1764,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3804587785009650127, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
-      propertyPath: m_BodyType
-      value: 0
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: snakeCrawl.animationFrames.Array.size
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: turtleCrawl.animationFrames.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: snakeCrawl.animationFrames.Array.data[0].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 75966373eec586b4cbbcfe3f61c79f5a, type: 3}
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: snakeCrawl.animationFrames.Array.data[1].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 408b9c51fa59e554993556b37e1d182a, type: 3}
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: turtleCrawl.animationFrames.Array.data[0].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f5872ed094c7c9849ad3883ccb38e1f4, type: 3}
+    - target: {fileID: 2759704693789213163, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
+      propertyPath: turtleCrawl.animationFrames.Array.data[1].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5330247eae9288646a41ed1b626e9663, type: 3}
     - target: {fileID: 8977890615198079475, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_Name
       value: Player

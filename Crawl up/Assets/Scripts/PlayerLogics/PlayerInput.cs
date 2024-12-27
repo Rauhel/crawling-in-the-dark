@@ -5,12 +5,17 @@ using System.Linq;
 
 public class PlayerInput : MonoBehaviour
 {
+    [Header("爬行设置")]
     public CrawlSettings basicCrawl;
     public CrawlSettings geckoCrawl;
     public CrawlSettings turtleCrawl;
     public CrawlSettings snakeCrawl;
     public CrawlSettings catCrawl;
     public CrawlSettings chameleonCrawl;
+
+    [Header("动画设置")]
+    private SpriteRenderer spriteRenderer;  // 用于显示精灵
+    private float animationTimer = 0f;  // 动画计时器
 
     // 注释掉 Animator 引用
     // public Animator animator;
@@ -23,6 +28,10 @@ public class PlayerInput : MonoBehaviour
     public List<KeyCode> currentKeys = new List<KeyCode>();
     private HashSet<KeyCode> pressedKeys = new HashSet<KeyCode>();
     private bool keyDetected = false;
+
+    // 添加动画关键帧相关变量
+    private int currentAnimFrame = 0;
+    public int totalAnimFrames = 4; // 动画总关键帧数，根据实际动画设置
 
     // 在现有变量后添加
     private Dictionary<string, CrawlProgress> crawlProgresses = new Dictionary<string, CrawlProgress>();
@@ -44,121 +53,127 @@ public class PlayerInput : MonoBehaviour
     void Start()
     {
         currentKeyIndex = 0;
-        ChangeCrawlType("Basic");
+        spriteRenderer = GetComponent<SpriteRenderer>();  // 获取SpriteRenderer组件
 
-        // Basic Crawl
-        basicCrawl = new CrawlSettings
+        // 初始化基础爬行
+        if (basicCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
-            },
-            groundSpeed = 50f,    // 10f * 5
-            waterSpeed = 0f,
-            iceSpeed = 10f,      // 2f * 5
-            wallSpeed = 0f,
-            isActive = true,
-            canCrawl = true
+            basicCrawl = new CrawlSettings();
+        }
+        basicCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
         };
+        basicCrawl.groundSpeed = 50f;
+        basicCrawl.waterSpeed = 0f;
+        basicCrawl.iceSpeed = 10f;
+        basicCrawl.wallSpeed = 0f;
+        basicCrawl.isActive = true;
+        basicCrawl.canCrawl = true;
 
-        // Gecko Crawl
-        geckoCrawl = new CrawlSettings
+        // 初始化壁虎爬行
+        if (geckoCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
-            },
-            groundSpeed = 50f,    // 10f * 5
-            waterSpeed = 30f,     // 6f * 5
-            iceSpeed = 20f,      // 4f * 5
-            wallSpeed = 40f,     // 8f * 5
-            isActive = false,
-            canCrawl = false
+            geckoCrawl = new CrawlSettings();
+        }
+        geckoCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
         };
+        geckoCrawl.groundSpeed = 50f;
+        geckoCrawl.waterSpeed = 30f;
+        geckoCrawl.iceSpeed = 20f;
+        geckoCrawl.wallSpeed = 40f;
+        geckoCrawl.isActive = false;
+        geckoCrawl.canCrawl = false;
 
-        // Chameleon Crawl
-        chameleonCrawl = new CrawlSettings
+        // 初始化变色龙爬行
+        if (chameleonCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
-            },
-            groundSpeed = 30f,    // 6f * 5
-            waterSpeed = 0f,
-            iceSpeed = 10f,      // 2f * 5
-            wallSpeed = 0f,
-            isActive = false,
-            canCrawl = false
+            chameleonCrawl = new CrawlSettings();
+        }
+        chameleonCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
         };
+        chameleonCrawl.groundSpeed = 30f;
+        chameleonCrawl.waterSpeed = 0f;
+        chameleonCrawl.iceSpeed = 10f;
+        chameleonCrawl.wallSpeed = 0f;
+        chameleonCrawl.isActive = false;
+        chameleonCrawl.canCrawl = false;
 
-        // Turtle Crawl
-        turtleCrawl = new CrawlSettings
+        // 初始化乌龟爬行
+        if (turtleCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
-            },
-            groundSpeed = 20f,    // 4f * 5
-            waterSpeed = 60f,     // 12f * 5
-            iceSpeed = 40f,      // 8f * 5
-            wallSpeed = 0f,
-            isActive = false,
-            canCrawl = false
+            turtleCrawl = new CrawlSettings();
+        }
+        turtleCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
         };
+        turtleCrawl.groundSpeed = 20f;
+        turtleCrawl.waterSpeed = 60f;
+        turtleCrawl.iceSpeed = 40f;
+        turtleCrawl.wallSpeed = 0f;
+        turtleCrawl.isActive = false;
+        turtleCrawl.canCrawl = false;
 
-        // Snake Crawl
-        snakeCrawl = new CrawlSettings
+        // 初始化蛇爬行
+        if (snakeCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { keySequence = new KeyCode[] { KeyCode.M } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.N } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.B } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.V } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.C } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
-                new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
-            },
-            groundSpeed = 30f,    // 6f * 5
-            waterSpeed = 30f,     // 6f * 5
-            iceSpeed = 20f,      // 4f * 5
-            wallSpeed = 50f,     // 10f * 5
-            isActive = false,
-            canCrawl = false
+            snakeCrawl = new CrawlSettings();
+        }
+        snakeCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { keySequence = new KeyCode[] { KeyCode.M } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.N } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.B } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.V } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.C } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
+            new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
         };
+        snakeCrawl.groundSpeed = 30f;
+        snakeCrawl.waterSpeed = 30f;
+        snakeCrawl.iceSpeed = 20f;
+        snakeCrawl.wallSpeed = 50f;
+        snakeCrawl.isActive = false;
+        snakeCrawl.canCrawl = false;
 
-        // Cat Crawl
-        catCrawl = new CrawlSettings
+        // 初始化猫爬行
+        if (catCrawl == null)
         {
-            keyLists = new KeyList[]
-            {
-                new KeyList { 
-                    keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, 
-                    requiredMinKeyCount = 3, 
-                    requiredMaxKeyCount = 5 
-                },
-                new KeyList { 
-                    keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, 
-                    requiredMinKeyCount = 3, 
-                    requiredMaxKeyCount = 5 
-                }
+            catCrawl = new CrawlSettings();
+        }
+        catCrawl.keyLists = new KeyList[]
+        {
+            new KeyList { 
+                keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, 
+                requiredMinKeyCount = 3, 
+                requiredMaxKeyCount = 5 
             },
-            groundSpeed = 50f,    // 10f * 5
-            waterSpeed = 0f,
-            iceSpeed = 0f,
-            wallSpeed = 50f,     // 10f * 5
-            isActive = false,
-            canCrawl = false
+            new KeyList { 
+                keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, 
+                requiredMinKeyCount = 3, 
+                requiredMaxKeyCount = 5 
+            }
         };
+        catCrawl.groundSpeed = 50f;
+        catCrawl.waterSpeed = 0f;
+        catCrawl.iceSpeed = 0f;
+        catCrawl.wallSpeed = 50f;
+        catCrawl.isActive = false;
+        catCrawl.canCrawl = false;
 
         // 初始化进度字典
         foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
@@ -167,6 +182,9 @@ public class PlayerInput : MonoBehaviour
         }
 
         rb = GetComponent<Rigidbody2D>();
+        
+        // 最后设置当前爬行类型
+        ChangeCrawlType("Basic");
     }
 
     void Update()
@@ -275,13 +293,13 @@ public class PlayerInput : MonoBehaviour
         // 计算有效按键数量
         int keyCount = keyList.keySequence.Count(key => currentKeys.Contains(key));
         
-        // Debug.Log($"按下的键数: {keyCount}, 最小要求: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
+        // Debug.Log($"按下的键数: {keyCount}, 最小要: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
         
         // 检查按键数是否在允许的范围内
         bool isValid = keyCount >= keyList.requiredMinKeyCount && keyCount <= keyList.requiredMaxKeyCount;
         if (isValid)
         {
-            // Debug.Log($"符合要求的按键数: {keyCount}");
+            // Debug.Log($"符���要求的按键数: {keyCount}");
         }
         return isValid;
     }
@@ -305,7 +323,7 @@ public class PlayerInput : MonoBehaviour
         // 根据接触面的法线计算旋转角度
         if (isInContact)
         {
-            // 计算与表面平行的角度（不需要额外加90度）
+            // 计算与表面平行的角度（不需额外加90度）
             float angle = Mathf.Atan2(currentMoveDirection.y, currentMoveDirection.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle);
             
@@ -349,7 +367,7 @@ public class PlayerInput : MonoBehaviour
 
             currentCrawlSettings.isActive = true;
 
-            // 如果当前正在接触表面，重新检查可爬行状态
+            // 如果当前正在接触表面，新检查爬行状态
             if (isInContact)
             {
                 CheckCrawlability();
@@ -460,8 +478,34 @@ public class PlayerInput : MonoBehaviour
                 Debug.Log("重置 currentKeyIndex 为 0");
                 currentKeyIndex = 0;
             }
-            PlayAnimation(currentCrawlName);
+
+            // 播放下一个动画关键帧
+            PlayNextAnimationFrame(currentCrawlName);
         }
+    }
+
+    // 修改动画关键帧播放方法
+    void PlayNextAnimationFrame(string crawlName)
+    {
+        if (currentCrawlSettings.animationFrames == null || currentCrawlSettings.animationFrames.Length == 0)
+        {
+            Debug.LogWarning($"{crawlName}没有设置动画帧！");
+            return;
+        }
+
+        // 更新当前帧索引
+        currentAnimFrame = (currentAnimFrame + 1) % currentCrawlSettings.TotalAnimFrames;
+        
+        // 获取当前帧
+        AnimationFrame currentFrame = currentCrawlSettings.animationFrames[currentAnimFrame];
+        
+        // 更新精灵
+        if (spriteRenderer != null && currentFrame.sprite != null)
+        {
+            spriteRenderer.sprite = currentFrame.sprite;
+        }
+        
+        Debug.Log($"播放{crawlName}动画关键帧: {currentAnimFrame}/{currentCrawlSettings.TotalAnimFrames-1}");
     }
 
     // 添加新的动画播放方法
@@ -529,7 +573,7 @@ public class PlayerInput : MonoBehaviour
 
             CheckCrawlability();
             
-            Debug.Log($"新的移动方向: {currentMoveDirection}, 法线: {normal}");
+            Debug.Log($"新的移动���向: {currentMoveDirection}, 法线: {normal}");
         }
     }
 
@@ -545,7 +589,7 @@ public class PlayerInput : MonoBehaviour
             CrawlSurface crawlSurface = currentContact.collider.GetComponent<CrawlSurface>();
             if (crawlSurface != null)
             {
-                // ��用当前的爬行类型重新检查可爬行状态
+                // 用当前的爬行类型重新检查可爬行状态
                 crawlSurface.CheckCrawlabilityForType(currentCrawlName, this);
             }
         }
