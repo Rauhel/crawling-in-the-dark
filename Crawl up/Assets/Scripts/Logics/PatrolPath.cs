@@ -4,7 +4,7 @@ using Cinemachine;
 [RequireComponent(typeof(CinemachinePathBase))]
 public class PatrolPath : MonoBehaviour
 {
-    private CinemachinePathBase path;
+    [SerializeField] private CinemachinePathBase path;
     private void Awake()
     {
         path = GetComponent<CinemachinePathBase>();

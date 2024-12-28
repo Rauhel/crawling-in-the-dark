@@ -78,6 +78,11 @@ public class CrawlSurface : MonoBehaviour
             surfaceTag = "Water", 
             allowedCrawlTypes = new List<string> { "Turtle", "Snake" } 
         },
+        new CrawlTypeMapping 
+        { 
+            surfaceTag = "Slope", 
+            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Snake", "Cat", "Chameleon" } 
+        }
         // new CrawlTypeMapping 
         // { 
         //     surfaceTag = "Ice", 

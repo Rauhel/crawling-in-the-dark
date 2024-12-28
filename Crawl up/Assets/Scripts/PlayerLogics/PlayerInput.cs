@@ -45,7 +45,12 @@ public class PlayerInput : MonoBehaviour
     private Rigidbody2D rb;
 
     // 添加新字段来跟踪实际速度
-    private float currentActualSpeed = 0f;
+    [SerializeField] private float currentActualSpeed = 0f;
+    
+    // 速度计算相关变量
+    public float speedCalculationWindow = 1f;  // 速度计算的时间窗口
+    private Vector2 lastPosition;              // 上一次记录的位置
+    private float timeSinceLastSpeedCalc = 0f; // 距离上次速度计算的时间
     
     // 添加公共属性供其他脚本访问当前实际速度
     public float CurrentActualSpeed => currentActualSpeed;
@@ -54,6 +59,7 @@ public class PlayerInput : MonoBehaviour
     {
         currentKeyIndex = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();  // 获取SpriteRenderer组件
+        lastPosition = transform.position;  // 初始化位置记录
 
         // 初始化基础爬行
         if (basicCrawl == null)
@@ -65,10 +71,6 @@ public class PlayerInput : MonoBehaviour
             new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
             new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
         };
-        basicCrawl.groundSpeed = 50f;
-        basicCrawl.waterSpeed = 0f;
-        basicCrawl.iceSpeed = 10f;
-        basicCrawl.wallSpeed = 0f;
         basicCrawl.isActive = true;
         basicCrawl.canCrawl = true;
 
@@ -84,10 +86,6 @@ public class PlayerInput : MonoBehaviour
             new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
             new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
         };
-        geckoCrawl.groundSpeed = 50f;
-        geckoCrawl.waterSpeed = 30f;
-        geckoCrawl.iceSpeed = 20f;
-        geckoCrawl.wallSpeed = 40f;
         geckoCrawl.isActive = false;
         geckoCrawl.canCrawl = false;
 
@@ -103,14 +101,10 @@ public class PlayerInput : MonoBehaviour
             new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
             new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
         };
-        chameleonCrawl.groundSpeed = 30f;
-        chameleonCrawl.waterSpeed = 0f;
-        chameleonCrawl.iceSpeed = 10f;
-        chameleonCrawl.wallSpeed = 0f;
         chameleonCrawl.isActive = false;
         chameleonCrawl.canCrawl = false;
 
-        // 初始化乌龟爬行
+        // 初始化乌爬行
         if (turtleCrawl == null)
         {
             turtleCrawl = new CrawlSettings();
@@ -121,10 +115,6 @@ public class PlayerInput : MonoBehaviour
             new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
             new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
         };
-        turtleCrawl.groundSpeed = 20f;
-        turtleCrawl.waterSpeed = 60f;
-        turtleCrawl.iceSpeed = 40f;
-        turtleCrawl.wallSpeed = 0f;
         turtleCrawl.isActive = false;
         turtleCrawl.canCrawl = false;
 
@@ -143,10 +133,6 @@ public class PlayerInput : MonoBehaviour
             new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
             new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
         };
-        snakeCrawl.groundSpeed = 30f;
-        snakeCrawl.waterSpeed = 30f;
-        snakeCrawl.iceSpeed = 20f;
-        snakeCrawl.wallSpeed = 50f;
         snakeCrawl.isActive = false;
         snakeCrawl.canCrawl = false;
 
@@ -168,10 +154,6 @@ public class PlayerInput : MonoBehaviour
                 requiredMaxKeyCount = 5 
             }
         };
-        catCrawl.groundSpeed = 50f;
-        catCrawl.waterSpeed = 0f;
-        catCrawl.iceSpeed = 0f;
-        catCrawl.wallSpeed = 50f;
         catCrawl.isActive = false;
         catCrawl.canCrawl = false;
 
@@ -189,13 +171,19 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
-        currentKeys.Clear();
-        
-        // 如果没有任何按键按下，速度为0
-        if (!Input.anyKey)
+        // 更新速度计算
+        timeSinceLastSpeedCalc += Time.deltaTime;
+        if (timeSinceLastSpeedCalc >= speedCalculationWindow)
         {
-            currentActualSpeed = 0f;
+            Vector2 currentPosition = transform.position;
+            float distance = Vector2.Distance(currentPosition, lastPosition);
+            currentActualSpeed = distance / speedCalculationWindow;
+            
+            lastPosition = currentPosition;
+            timeSinceLastSpeedCalc = 0f;
         }
+
+        currentKeys.Clear();
         
         // 改用 Input.anyKey 来检测按键的持续状态
         if (Input.anyKey)
@@ -299,7 +287,7 @@ public class PlayerInput : MonoBehaviour
         bool isValid = keyCount >= keyList.requiredMinKeyCount && keyCount <= keyList.requiredMaxKeyCount;
         if (isValid)
         {
-            // Debug.Log($"符���要求的按键数: {keyCount}");
+            // Debug.Log($"符合要求的按键数: {keyCount}");
         }
         return isValid;
     }
@@ -309,7 +297,6 @@ public class PlayerInput : MonoBehaviour
         if (!canCrawlOnCurrentSurface)
         {
             Debug.Log("无法在当前表面爬行");
-            currentActualSpeed = 0f;  // 不能爬行时速度为0
             return;
         }
         
@@ -317,21 +304,7 @@ public class PlayerInput : MonoBehaviour
         float speed = GetSpeedBasedOnSurface();
         Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
 
-        // 设置当前实际速度
-        currentActualSpeed = speed;
-
-        // 根据接触面的法线计算旋转角度
-        if (isInContact)
-        {
-            // 计算与表面平行的角度（不需额外加90度）
-            float angle = Mathf.Atan2(currentMoveDirection.y, currentMoveDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-            
-            // 根据isReversing调整scale，实现左右朝向
-            Vector3 scale = transform.localScale;
-            scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-            transform.localScale = scale;
-        }
+        // 记录当前速度
 
         // 移动玩家
         transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
@@ -339,7 +312,26 @@ public class PlayerInput : MonoBehaviour
 
     float GetSpeedBasedOnSurface()
     {
-        return currentCrawlSettings.groundSpeed;
+        if (currentContact.collider != null)
+        {
+            string surfaceTag = currentContact.collider.tag;
+            switch (surfaceTag)
+            {
+                case "Ground":
+                    return currentCrawlSettings.groundSpeed;
+                case "Water":
+                    return currentCrawlSettings.waterSpeed;
+                case "Ice":
+                    return currentCrawlSettings.iceSpeed;
+                case "Tree":
+                    return currentCrawlSettings.treeSpeed;
+                case "Slope":
+                    return currentCrawlSettings.slopeSpeed;
+                default:
+                    return currentCrawlSettings.groundSpeed;
+            }
+        }
+        return currentCrawlSettings.groundSpeed;  // 默认返回地面速度
     }
 
     void PlayAnimation(string crawlName)
@@ -571,9 +563,18 @@ public class PlayerInput : MonoBehaviour
                 currentMoveDirection = -currentMoveDirection;
             }
 
+            // 根据移动方向计算旋转角度
+            float angle = Mathf.Atan2(currentMoveDirection.y, currentMoveDirection.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            
+            // 根据isReversing调整scale，实现左右朝向
+            Vector3 scale = transform.localScale;
+            scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+            transform.localScale = scale;
+
             CheckCrawlability();
             
-            Debug.Log($"新的移动���向: {currentMoveDirection}, 法线: {normal}");
+            Debug.Log($"法线: {normal}, 移动方向: {currentMoveDirection}, 角度: {angle}");
         }
     }
 
@@ -582,7 +583,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (currentContact.collider != null)
         {
-            // 获取当前接触表面的标签
+            // 获取当前触表面的标签
             string surfaceTag = currentContact.collider.tag;
             
             // 通知 CrawlSurface 组件检查当前爬行类型是否可用

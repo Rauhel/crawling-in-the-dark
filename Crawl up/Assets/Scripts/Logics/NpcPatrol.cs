@@ -160,12 +160,19 @@ public class NpcPatrol : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter2D");
         if (isDead) return;
 
         if (other.CompareTag("Player"))
         {
-            // 检查是否从上方接触
+            // 如果是在追击状态下碰到玩家，直接触发玩家死亡
+            if (isChasing)
+            {
+                Debug.Log("在追击状态下碰到玩家");
+                KillPlayer();
+                return;
+            }
+
+            // 检查是否从上方接触（只有在非追击状态下才检查）
             Vector2 contactPoint = other.transform.position - transform.position;
             bool isFromAbove = contactPoint.y > 0 && Mathf.Abs(contactPoint.x) < 0.5f;
 
@@ -173,23 +180,27 @@ public class NpcPatrol : MonoBehaviour
             {
                 Die();
             }
-            else if (isChasing)
-            {
-                Debug.Log("在追击状态下碰到玩家");
-                // 如果是在追击状态下碰到玩家，触发玩家死亡
-                KillPlayer();
-            }
         }
     }
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (isDead) return;
+        if (isDead || isInDialogue) return;
 
         if (other.CompareTag("Player"))
         {
+            // 如果已经在追击状态，直接触发玩家死亡
+            if (isChasing)
+            {
+                KillPlayer();
+                return;
+            }
+
             PlayerInput playerInput = other.GetComponent<PlayerInput>();
-            CheckPlayerDetection(playerInput);
+            if (playerInput != null)
+            {
+                CheckPlayerDetection(playerInput);
+            }
         }
     }
 
@@ -197,7 +208,10 @@ public class NpcPatrol : MonoBehaviour
     {
         // 通知 EventCenter 玩家死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
-        Debug.Log("玩家被NPC��住了！");
+        Debug.Log("玩家被NPC抓住了！");
+        
+        // 重置追击状态
+        isChasing = false;
     }
 
     private void Die()
@@ -399,7 +413,15 @@ public class NpcPatrol : MonoBehaviour
 public class DetectionSettings
 {
     [Tooltip("选择会触发追逐的爬行类型")]
-    public CrawlType[] hostileCrawlTypes;
+    public CrawlType[] hostileCrawlTypes = new CrawlType[] 
+    {
+        CrawlType.Basic,
+        CrawlType.Gecko,
+        CrawlType.Turtle,
+        CrawlType.Snake,
+        CrawlType.Cat,
+        CrawlType.Chameleon
+    };
     public float minDetectableSpeed = 0f;
     public float maxDetectableSpeed = 10f;
 }

@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: c6d18767d455fac40ba9ac563224d047, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -133,10 +133,11 @@ MonoBehaviour:
     - keySequence: 
       requiredMinKeyCount: 1
       requiredMaxKeyCount: 1
-    groundSpeed: 0
+    groundSpeed: 80
     waterSpeed: 0
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 0
+    slopeSpeed: 40
     isActive: 0
     canCrawl: 0
     animationFrames:
@@ -147,34 +148,42 @@ MonoBehaviour:
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 0
+    slopeSpeed: 0
     isActive: 0
     canCrawl: 0
     animationFrames: []
   turtleCrawl:
     keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
+    groundSpeed: 20
+    waterSpeed: 80
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 0
+    slopeSpeed: 0
     isActive: 0
     canCrawl: 0
-    animationFrames: []
+    animationFrames:
+    - sprite: {fileID: 21300000, guid: f5872ed094c7c9849ad3883ccb38e1f4, type: 3}
+    - sprite: {fileID: 21300000, guid: 5330247eae9288646a41ed1b626e9663, type: 3}
   snakeCrawl:
     keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
+    groundSpeed: 100
+    waterSpeed: 50
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 50
+    slopeSpeed: 30
     isActive: 0
     canCrawl: 0
-    animationFrames: []
+    animationFrames:
+    - sprite: {fileID: 21300000, guid: 75966373eec586b4cbbcfe3f61c79f5a, type: 3}
+    - sprite: {fileID: 21300000, guid: 408b9c51fa59e554993556b37e1d182a, type: 3}
   catCrawl:
     keyLists: []
-    groundSpeed: 0
+    groundSpeed: 60
     waterSpeed: 0
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 40
+    slopeSpeed: 50
     isActive: 0
     canCrawl: 0
     animationFrames:
@@ -182,10 +191,11 @@ MonoBehaviour:
     - sprite: {fileID: 21300000, guid: 2e3617581065aaf46896be752f4e8e1d, type: 3}
   chameleonCrawl:
     keyLists: []
-    groundSpeed: 0
+    groundSpeed: 30
     waterSpeed: 0
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 0
+    slopeSpeed: 30
     isActive: 0
     canCrawl: 0
     animationFrames:
@@ -198,7 +208,8 @@ MonoBehaviour:
     groundSpeed: 0
     waterSpeed: 0
     iceSpeed: 0
-    wallSpeed: 0
+    treeSpeed: 0
+    slopeSpeed: 0
     isActive: 0
     canCrawl: 0
     animationFrames: []

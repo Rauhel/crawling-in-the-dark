@@ -32,7 +32,8 @@ public class CrawlSettings
     public float groundSpeed;
     public float waterSpeed;
     public float iceSpeed;
-    public float wallSpeed;
+    public float treeSpeed;  // 竖直方向上的速度，用于Tree标签的物体
+    public float slopeSpeed; // 斜坡上的速度
     public bool isActive;
     public bool canCrawl;
     public AnimationFrame[] animationFrames;  // 动画帧数组
