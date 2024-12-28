@@ -105,7 +105,7 @@ public class NpcPatrol : MonoBehaviour
         if (canStartDialogue)
         {
             // 如果之前可以对话，现在重置状态时隐藏提示
-            PromptManager.Instance.HideInteractionPrompt("玩家离开NPC检测范围");
+            PromptManager.Instance.HideInteractionPrompt();
         }
         isChasing = false;
         canStartDialogue = false;
@@ -189,7 +189,7 @@ public class NpcPatrol : MonoBehaviour
                 return;
             }
 
-            // 检查是否从上方接触（只有在非追击状态下才检查）
+            // 检查是否从上方接触��只有在非追击状态下才检查）
             Vector2 contactPoint = other.transform.position - transform.position;
             bool isFromAbove = contactPoint.y > 0 && Mathf.Abs(contactPoint.x) < 0.5f;
 
@@ -349,7 +349,7 @@ public class NpcPatrol : MonoBehaviour
         isChasing = false;
 
         // 通知PromptManager隐藏交互提示并开始对话
-        PromptManager.Instance.HideInteractionPrompt("玩家开始对话");
+        PromptManager.Instance.HideInteractionPrompt();
         DialogueManager.Instance.StartDialogue(
             lines,
             () => {
