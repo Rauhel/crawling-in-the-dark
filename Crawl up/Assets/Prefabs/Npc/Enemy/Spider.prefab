@@ -33,6 +33,18 @@ PrefabInstance:
       value: Spider
       objectReference: {fileID: 0}
     - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 34.789
       objectReference: {fileID: 0}
@@ -72,9 +84,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: chaseSpeed
-      value: 6
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: patrolSpeed
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionRange
@@ -94,7 +114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.size
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.lethalCrawlTypes.Array.data[0]
@@ -114,15 +134,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[2]
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[3]
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[4]
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[5]

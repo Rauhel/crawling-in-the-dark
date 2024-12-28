@@ -77,28 +77,36 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: detectionSettings.lethalCrawlTypes.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.size
-      value: 6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.detectableCrawlTypes.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: detectionSettings.hostileCrawlTypes.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[1]
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[2]
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[3]
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[4]
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: detectionSettings.hostileCrawlTypes.Array.data[5]
