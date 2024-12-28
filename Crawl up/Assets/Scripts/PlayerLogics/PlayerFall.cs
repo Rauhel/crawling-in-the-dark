@@ -6,7 +6,7 @@ public class PlayerFall : MonoBehaviour
     private PlayerInput playerInput;
     private bool isGrounded = false;
     private float fallTimer = 0f;
-    public float maxFallTime = 3f;
+    public float maxFallTime = 1.5f;
     public float fallSpeed = 5f;
 
     void Start()
@@ -19,18 +19,18 @@ public class PlayerFall : MonoBehaviour
     {
         if (!isGrounded)
         {
-            Debug.Log("Player is falling");
+            // 增加下落时间
+            fallTimer += Time.deltaTime;
+            
             // 禁用玩家输入
             playerInput.enabled = false;
             // 施加下落速度
             rb.velocity = new Vector2(0, -fallSpeed);
             
-            // 增加下落时间
-            fallTimer += Time.deltaTime;
-            
             // 检查是否超过最大下落时间
             if (fallTimer >= maxFallTime)
             {
+                Debug.Log("玩家下落超过1.5秒，触发死亡");
                 // 通知事件中心玩家死亡
                 EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
                 fallTimer = 0f;  // 重置计时器
@@ -48,6 +48,7 @@ public class PlayerFall : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded = true;
+        Debug.Log("玩家已着地");
     }
 
     void OnCollisionStay2D(Collision2D collision)
@@ -58,5 +59,6 @@ public class PlayerFall : MonoBehaviour
     void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
+        Debug.Log("玩家开始下落");
     }
 } 
