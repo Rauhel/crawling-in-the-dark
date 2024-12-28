@@ -214,6 +214,12 @@ public class PlayerInput : MonoBehaviour
             // 当切换方向时重置所有进度
             ResetAllProgress();
             currentKeyIndex = 0;
+            
+            // 立即更新精灵朝向
+            Vector3 scale = transform.localScale;
+            scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+            transform.localScale = scale;
+            
             Debug.Log($"方向切换: {(isReversing ? "反向" : "正向")}");
         }
     }

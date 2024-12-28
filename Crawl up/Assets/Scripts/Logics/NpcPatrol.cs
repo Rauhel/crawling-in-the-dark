@@ -102,6 +102,11 @@ public class NpcPatrol : MonoBehaviour
 
     private void ResetDetectionState()
     {
+        if (canStartDialogue)
+        {
+            // 如果之前可以对话，现在重置状态时隐藏提示
+            PromptManager.Instance.HideInteractionPrompt("玩家离开NPC检测范围");
+        }
         isChasing = false;
         canStartDialogue = false;
         currentDialogueIndex = -1;
@@ -155,7 +160,7 @@ public class NpcPatrol : MonoBehaviour
             }
         }
 
-        // 如果方向发生改变，立即调整朝向
+        // 如果方向发生改变，立即调朝向
         if (wasReversing != isPathReversing)
         {
             Vector3 scale = transform.localScale;
@@ -286,8 +291,8 @@ public class NpcPatrol : MonoBehaviour
                 currentDialogueIndex = trigger.dialogueIndex;
                 isChasing = false;
 
-                // 通知DialogueManager显示交互提示
-                DialogueManager.Instance.ShowInteractionPrompt();
+                // 通知PromptManager显示交互提示
+                PromptManager.Instance.ShowInteractionPrompt();
                 
                 return false;
             }
@@ -343,8 +348,8 @@ public class NpcPatrol : MonoBehaviour
         canStartDialogue = false;
         isChasing = false;
 
-        // 通知DialogueManager隐藏交互提示并开始对话
-        DialogueManager.Instance.HideInteractionPrompt();
+        // 通知PromptManager隐藏交互提示并开始对话
+        PromptManager.Instance.HideInteractionPrompt("玩家开始对话");
         DialogueManager.Instance.StartDialogue(
             lines,
             () => {
