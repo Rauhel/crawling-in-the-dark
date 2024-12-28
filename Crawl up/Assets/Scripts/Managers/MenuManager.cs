@@ -24,6 +24,7 @@ public class MenuManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            Debug.Log("MenuManager实例已创建");
         }
         else
         {
@@ -33,8 +34,14 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        if (menuCanvas != null)
-            menuCanvas.SetActive(false);
+        Debug.Log("MenuManager开始初始化");
+        if (menuCanvas == null)
+        {
+            Debug.LogError("menuCanvas未设置！请在Inspector中设置menuCanvas引用");
+            return;
+        }
+        
+        menuCanvas.SetActive(false);
             
         // 添加空检查
         if (PlayerManager.Instance != null)
@@ -43,11 +50,25 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Debug.Log("检测到Tab键按下");
+            ToggleMenu();
+        }
+    }
+
     public void ToggleMenu()
     {
-        if (menuCanvas == null) return;
+        if (menuCanvas == null)
+        {
+            Debug.LogError("menuCanvas为空，无法切换菜单状态");
+            return;
+        }
 
         bool isMenuActive = menuCanvas.activeSelf;
+        Debug.Log($"切换菜单状态：从{isMenuActive}到{!isMenuActive}");
         menuCanvas.SetActive(!isMenuActive);
         Time.timeScale = isMenuActive ? 1 : 0;
 

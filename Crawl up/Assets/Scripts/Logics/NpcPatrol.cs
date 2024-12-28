@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class NpcPatrol : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class NpcPatrol : MonoBehaviour
     public CrawlType teachableCrawlType;  // 要教授的爬行类型
 
     [Header("对话触发设置")]
-    public DialogueTrigger[] dialogueTriggers;  // 在Inspector中设置对话触发条件
+    public DialogueTrigger[] dialogueTriggers;  // 在Inspector中设置对话���发条件
 
     // 私有状态字段
     private bool isDead = false;
@@ -284,6 +285,10 @@ public class NpcPatrol : MonoBehaviour
                 canStartDialogue = true;
                 currentDialogueIndex = trigger.dialogueIndex;
                 isChasing = false;
+
+                // 通知DialogueManager显示交互提示
+                DialogueManager.Instance.ShowInteractionPrompt();
+                
                 return false;
             }
 
@@ -337,8 +342,9 @@ public class NpcPatrol : MonoBehaviour
         isInDialogue = true;
         canStartDialogue = false;
         isChasing = false;
-        
-        // 开始对话
+
+        // 通知DialogueManager隐藏交互提示并开始对话
+        DialogueManager.Instance.HideInteractionPrompt();
         DialogueManager.Instance.StartDialogue(
             lines,
             () => {
@@ -427,7 +433,7 @@ public class NpcPatrol : MonoBehaviour
 [System.Serializable]
 public class DetectionSettings
 {
-    [Tooltip("选择会触发追逐��爬行类型")]
+    [Tooltip("选择会触发追逐的爬行类型")]
     public CrawlType[] hostileCrawlTypes;
     [Tooltip("选择会导致NPC死亡的爬行类型")]
     public CrawlType[] lethalCrawlTypes;

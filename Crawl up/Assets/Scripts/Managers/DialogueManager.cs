@@ -8,6 +8,7 @@ public class DialogueManager : MonoBehaviour
     [Header("UI 设置")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private GameObject interactionPrompt;  // 交互提示UI
     
     private string[] currentDialogueLines;
     [SerializeField] private int currentLineIndex = 0;
@@ -27,9 +28,11 @@ public class DialogueManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        // 初始时隐藏对话面板
+        // 初始时隐藏所有UI
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
+        if (interactionPrompt != null)
+            interactionPrompt.SetActive(false);
             
         // 获取玩家输入组件引用
         playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
@@ -133,5 +136,25 @@ public class DialogueManager : MonoBehaviour
     public bool IsDialogueActive()
     {
         return isInDialogue;
+    }
+
+    // 显示交互提示
+    public void ShowInteractionPrompt()
+    {
+        if (interactionPrompt != null && !isInDialogue)
+        {
+            interactionPrompt.SetActive(true);
+            Debug.Log("显示交互提示: 按Q交互");
+        }
+    }
+
+    // 隐藏交互提示
+    public void HideInteractionPrompt()
+    {
+        if (interactionPrompt != null)
+        {
+            interactionPrompt.SetActive(false);
+            Debug.Log("隐藏交互提示");
+        }
     }
 } 
