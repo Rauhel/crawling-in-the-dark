@@ -1,109 +1,27 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class CrawlTypeMapping
+{
+    public string surfaceTag;
+    public List<string> allowedCrawlTypes;
+}
+
 public class CrawlSurface : MonoBehaviour
 {
-    private static bool isTreeColliderDisabled = false;
-    private static List<CrawlSurface> treeInstances = new List<CrawlSurface>();
-
-    void Awake()
-    {
-        // 如果是树，添加到静态列表中
-        if (gameObject.CompareTag("Tree"))
-        {
-            treeInstances.Add(this);
-        }
-    }
-
-    void OnDestroy()
-    {
-        // 从列表中移除
-        if (gameObject.CompareTag("Tree"))
-        {
-            treeInstances.Remove(this);
-        }
-    }
-
-    void Update()
-    {
-        // 检测P键按下
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (gameObject.CompareTag("Tree"))
-            {
-                isTreeColliderDisabled = !isTreeColliderDisabled;
-                UpdateAllTreeColliders();
-            }
-        }
-    }
-
-    // 添加静态方法来更新所有树的碰撞体
-    private static void UpdateAllTreeColliders()
-    {
-        foreach (var tree in treeInstances)
-        {
-            if (tree != null)
-            {
-                Collider2D collider = tree.GetComponent<Collider2D>();
-                if (collider != null)
-                {
-                    collider.enabled = !isTreeColliderDisabled;
-                }
-            }
-        }
-        Debug.Log($"树的碰撞体状态: {(isTreeColliderDisabled ? "禁用" : "启用")}");
-    }
-
-    [System.Serializable]
-    public class CrawlTypeMapping
-    {
-        public string surfaceTag;
-        public List<string> allowedCrawlTypes = new List<string>();
-    }
-
-    public List<CrawlTypeMapping> crawlTypeMappings = new List<CrawlTypeMapping>()
-    {
-        new CrawlTypeMapping 
-        { 
-            surfaceTag = "Ground", 
-            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" } 
-        },
-        new CrawlTypeMapping 
-        { 
-            surfaceTag = "Tree", 
-            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Snake", "Cat" } 
-        },
-        new CrawlTypeMapping 
-        { 
-            surfaceTag = "Water", 
-            allowedCrawlTypes = new List<string> { "Turtle", "Snake" } 
-        },
-        new CrawlTypeMapping 
-        { 
-            surfaceTag = "Slope", 
-            allowedCrawlTypes = new List<string> { "Basic", "Gecko", "Snake", "Cat", "Chameleon" } 
-        }
-        // new CrawlTypeMapping 
-        // { 
-        //     surfaceTag = "Ice", 
-        //     allowedCrawlTypes = new List<string> { "Snake", "Chameleon" } 
-        // }
-    };
+    public List<CrawlTypeMapping> crawlTypeMappings;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        CheckCrawlability(collision);
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        CheckCrawlability(collision);
-    }
-
-    private void CheckCrawlability(Collision2D collision)
-    {
         if (collision.gameObject.CompareTag("Player"))
         {
+            // 如果是树根，显示提示
+            if (gameObject.CompareTag("Tree"))
+            {
+                PromptManager.Instance.ShowTreePrompt();
+            }
+
             PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
             if (playerInput != null)
             {
@@ -132,6 +50,24 @@ public class CrawlSurface : MonoBehaviour
                     Debug.LogWarning($"未找到标签 {currentTag} 的爬行类型映射");
                     playerInput.canCrawlOnCurrentSurface = false;
                 }
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // 如果是树根，隐藏提示
+            if (gameObject.CompareTag("Tree"))
+            {
+                PromptManager.Instance.HideTreePrompt();
+            }
+
+            PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
+            if (playerInput != null)
+            {
+                playerInput.canCrawlOnCurrentSurface = false;
             }
         }
     }

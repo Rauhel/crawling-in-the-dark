@@ -203,7 +203,12 @@ public class PlayerInput : MonoBehaviour
         
         CheckInput();
         CheckParallelInput();
-        CheckSpaceInput();
+        CheckSpaceInput();        
+        // 移动后根据当前接触点重新调整旋转
+        if (currentContact.collider != null)
+        {
+            AdjustRotationToSurface(currentContact);
+        }
     }
 
     void CheckSpaceInput()
@@ -308,12 +313,17 @@ public class PlayerInput : MonoBehaviour
         
         Debug.Log("Moving player...");
         float speed = GetSpeedBasedOnSurface();
-        Vector3 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
+        Vector2 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
 
-        // 记录当前速度
+        // 使用Rigidbody2D移动一个固定距离
+        Vector2 targetPosition = rb.position + (moveDirection * moveDistance);
+        rb.MovePosition(targetPosition);
 
-        // 移动玩家
-        transform.position += (Vector3)moveDirection * speed * moveDistance * Time.deltaTime;
+        // 移动后重新调整旋转
+        if (currentContact.collider != null)
+        {
+            AdjustRotationToSurface(currentContact);
+        }
     }
 
     float GetSpeedBasedOnSurface()
@@ -545,7 +555,7 @@ public class PlayerInput : MonoBehaviour
     // 添加碰撞检测方法
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // 停止所有运动
+        // 停止所有移动
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
@@ -568,6 +578,7 @@ public class PlayerInput : MonoBehaviour
 
             UpdateMoveDirection(collision);
         }
+        UpdateMoveDirection(collision);
     }
 
     void OnCollisionExit2D(Collision2D collision)
@@ -576,7 +587,40 @@ public class PlayerInput : MonoBehaviour
         canCrawlOnCurrentSurface = false;
     }
 
-    // 添加更新移动方向的方法
+    // 添加调整旋转的方法
+    void AdjustRotationToSurface(ContactPoint2D contact)
+    {
+        if (contact.collider == null) return;
+        
+        // 获取碰撞点的法线
+        Vector2 normal = contact.normal;
+        
+        // 计算沿表面的移动方向（法线的垂直方向，即表面切线方向）
+        Vector2 surfaceMoveDirection = new Vector2(-normal.y, normal.x);
+        Debug.Log($"法线: {normal}, 原始表面方向: {surfaceMoveDirection}");
+        
+        // 确保移动方向与玩家的朝向一致
+        if (Vector2.Dot(surfaceMoveDirection, Vector2.right) < 0)
+        {
+            surfaceMoveDirection = -surfaceMoveDirection;
+            Debug.Log($"调整后的表面方向: {surfaceMoveDirection}");
+        }
+
+        // 根据移动方向计算旋转角度
+        float angle = Mathf.Atan2(surfaceMoveDirection.y, surfaceMoveDirection.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        
+        // 根据isReversing调整scale，实现左右朝向
+        Vector3 scale = transform.localScale;
+        scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
+
+        // 更新当前移动方向
+        currentMoveDirection = surfaceMoveDirection;
+        
+        Debug.Log($"调整旋转 - 法线: {normal}, 移动方向: {surfaceMoveDirection}, 角度: {angle}");
+    }
+
     void UpdateMoveDirection(Collision2D collision)
     {
         if (collision.contactCount > 0)
@@ -584,30 +628,9 @@ public class PlayerInput : MonoBehaviour
             isInContact = true;
             currentContact = collision.GetContact(0);
             
-            // 获取碰撞点的法线
-            Vector2 normal = currentContact.normal;
-            
-            // 计算沿表面的移动方向（与法线垂直）
-            currentMoveDirection = new Vector2(normal.y, -normal.x);
-            
-            // 确保移动方向与玩家的朝向一致
-            if (Vector2.Dot(currentMoveDirection, Vector2.right) < 0)
-            {
-                currentMoveDirection = -currentMoveDirection;
-            }
-
-            // 根据移动方向计算旋转角度
-            float angle = Mathf.Atan2(currentMoveDirection.y, currentMoveDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-            
-            // 根据isReversing调整scale，实现左右朝向
-            Vector3 scale = transform.localScale;
-            scale.x = isReversing ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-            transform.localScale = scale;
-
+            // 调用新的旋转调整方法
+            AdjustRotationToSurface(currentContact);
             CheckCrawlability();
-            
-            Debug.Log($"法线: {normal}, 移动方向: {currentMoveDirection}, 角度: {angle}");
         }
     }
 
