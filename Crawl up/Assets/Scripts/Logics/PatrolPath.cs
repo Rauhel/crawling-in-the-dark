@@ -1,53 +1,86 @@
 using UnityEngine;
-using Cinemachine;
 
-[RequireComponent(typeof(CinemachinePathBase))]
 public class PatrolPath : MonoBehaviour
 {
-    [SerializeField] private CinemachinePathBase path;
+    [Header("巡逻设置")]
+    [Tooltip("巡逻方向，默认为水平方向(1,0)")]
+    public Vector2 patrolDirection = Vector2.right;  // 巡逻方向
+    [Tooltip("正向巡逻距离（从起点开始向patrolDirection方向移动的距离）")]
+    public float forwardDistance = 5f;    // 正向距离
+    [Tooltip("反向巡逻距离（从起点开始向-patrolDirection方向移动的距离）")]
+    public float backwardDistance = 5f;   // 反向距离
+
+    private Vector3 pathStartPosition;    // 路径起始位置
+    private Vector3 forwardEndPoint;      // 正向终点
+    private Vector3 backwardEndPoint;     // 反向终点
+
     private void Awake()
     {
-        path = GetComponent<CinemachinePathBase>();
+        UpdatePathPoints();
     }
 
-    public Vector3 GetPositionAtDistance(float normalizedDistance)
+    private void UpdatePathPoints()
     {
-        return path.EvaluatePosition(normalizedDistance);
+        pathStartPosition = transform.position;
+        Vector2 normalizedDirection = patrolDirection.normalized;
+        
+        // 计算端点
+        forwardEndPoint = pathStartPosition + new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * forwardDistance;
+        backwardEndPoint = pathStartPosition - new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * backwardDistance;
     }
 
-    public float GetPathLength()
+    // 获取路径总长度
+    public float GetTotalPathLength()
     {
-        return path.PathLength;
+        return forwardDistance + backwardDistance;
     }
 
-    public bool IsLooped()
+    // 获取两个端点
+    public void GetEndPoints(out Vector3 forward, out Vector3 backward)
     {
-        return path.Looped;
+        forward = forwardEndPoint;
+        backward = backwardEndPoint;
+    }
+
+    public Vector3 GetPositionAtProgress(float progress)
+    {
+        // 直接在两个端点之间进行插值
+        return Vector3.Lerp(backwardEndPoint, forwardEndPoint, progress);
+    }
+
+    private void OnValidate()
+    {
+        UpdatePathPoints();
     }
 
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying)
         {
-            var path = GetComponent<CinemachinePathBase>();
-            if (path != null)
-            {
-                Gizmos.color = Color.green;
-                float step = 0.1f;
-                for (float t = 0; t < 0.999f; t += step)
-                {
-                    float nextT = Mathf.Min(t + step, 1f);
-                    Gizmos.DrawLine(
-                        path.EvaluatePosition(t),
-                        path.EvaluatePosition(nextT)
-                    );
-                }
+            Vector3 currentPos = transform.position;
+            Vector2 normalizedDirection = patrolDirection.normalized;
+            Vector3 forward = currentPos + new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * forwardDistance;
+            Vector3 backward = currentPos - new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * backwardDistance;
 
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(path.EvaluatePosition(0), 0.3f);
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(path.EvaluatePosition(1), 0.3f);
-            }
+            // 绘制巡逻路径
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(forward, backward);
+
+            // 绘制路径起点（中心点）
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(currentPos, 0.3f);
+
+            // 绘制端点
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(forward, 0.2f);
+            Gizmos.DrawWireSphere(backward, 0.2f);
+            
+            // 绘制方向指示
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(currentPos, currentPos + new Vector3(normalizedDirection.x, normalizedDirection.y, 0));
+
+            // 绘制路径名称
+            UnityEditor.Handles.Label(currentPos + Vector3.up * 0.5f, gameObject.name);
         }
     }
 } 

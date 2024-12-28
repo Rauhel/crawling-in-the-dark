@@ -14,6 +14,7 @@ public class NpcPatrol : MonoBehaviour
     public DetectionSettings detectionSettings;
 
     [Header("巡逻路径设置")]
+    [Tooltip("引用场景中的PatrolPath物体")]
     public PatrolPath patrolPath;
     private float patrolProgress = 0f;  // 0到1之间的值
     private bool isPathReversing = false;
@@ -41,6 +42,22 @@ public class NpcPatrol : MonoBehaviour
     {
         originalPosition = transform.position;
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // 初始化巡逻进度
+        if (patrolPath != null)
+        {
+            Vector3 forwardEnd, backwardEnd;
+            patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
+            
+            // 计算NPC在路径上的初始进度
+            float totalDistance = Vector3.Distance(backwardEnd, forwardEnd);
+            if (totalDistance > 0)
+            {
+                Vector3 toNPC = transform.position - backwardEnd;
+                float projection = Vector3.Dot(toNPC, (forwardEnd - backwardEnd).normalized);
+                patrolProgress = Mathf.Clamp01(projection / totalDistance);
+            }
+        }
     }
 
     void Update()
@@ -96,6 +113,14 @@ public class NpcPatrol : MonoBehaviour
         Vector2 direction = (playerTransform.position - transform.position).normalized;
         Vector2 newPosition = (Vector2)transform.position + direction * chaseSpeed * Time.deltaTime;
 
+        // 检查是否已经足够接近玩家
+        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+        if (distanceToPlayer < 0.5f)  // 如果距离小于0.5个单位
+        {
+            KillPlayer();
+            return;
+        }
+
         transform.position = newPosition;
     }
 
@@ -103,13 +128,13 @@ public class NpcPatrol : MonoBehaviour
     {
         if (patrolPath == null) return;
 
-        float pathLength = patrolPath.GetPathLength();
-        if (pathLength <= 0) return;
-
-        float progressStep = (patrolSpeed / pathLength) * Time.deltaTime;
+        // 获取路径总长度用于计算速度
+        float totalLength = patrolPath.GetTotalPathLength();
+        float progressStep = (patrolSpeed * Time.deltaTime) / totalLength;
         
         bool wasReversing = isPathReversing;
         
+        // 更新进度
         if (isPathReversing)
         {
             patrolProgress = Mathf.Max(0f, patrolProgress - progressStep);
@@ -117,9 +142,6 @@ public class NpcPatrol : MonoBehaviour
             {
                 isPathReversing = false;
                 patrolProgress = 0f;
-                // 到达起点时告位置
-                Vector3 startPoint = patrolPath.GetPositionAtDistance(0f);
-                Debug.Log($"到达起点: {startPoint}, Progress: {patrolProgress}");
             }
         }
         else
@@ -129,33 +151,22 @@ public class NpcPatrol : MonoBehaviour
             {
                 isPathReversing = true;
                 patrolProgress = 1f;
-                // 到达终点时报告位置
-                Vector3 endPoint = patrolPath.GetPositionAtDistance(1f);
-                Debug.Log($"到达终点: {endPoint}, Progress: {patrolProgress}");
             }
         }
 
-        // 如果方向发生改变，进行镜像翻转
+        // 如果方向发生改变，立即调整朝向
         if (wasReversing != isPathReversing)
         {
             Vector3 scale = transform.localScale;
-            scale.x = -scale.x;
+            scale.x = isPathReversing ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             transform.localScale = scale;
-            // 报告方向改变
-            Debug.Log($"方向改变: {(isPathReversing ? "正向->反向" : "反向->正向")}, Scale.x: {scale.x}");
         }
 
         // 获取目标位置并移动
-        Vector3 targetPosition = patrolPath.GetPositionAtDistance(patrolProgress);
-        if (float.IsNaN(targetPosition.x) || float.IsNaN(targetPosition.y) || float.IsNaN(targetPosition.z))
-        {
-            Debug.LogError("计算出的置无效！");
-            return;
-        }
-
+        Vector3 targetPosition = patrolPath.GetPositionAtProgress(patrolProgress);
+        
         // 平滑移动
-        Vector3 currentPos = transform.position;
-        transform.position = Vector3.Lerp(currentPos, targetPosition, Time.deltaTime * patrolSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, patrolSpeed * Time.deltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -255,6 +266,14 @@ public class NpcPatrol : MonoBehaviour
 
         if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out CrawlType currentCrawlType))
         {
+            // 首先检查是否是致命爬行类型
+            if (System.Array.Exists(detectionSettings.lethalCrawlTypes, 
+                type => type == currentCrawlType))
+            {
+                Die();
+                return false;
+            }
+
             // 检查是否有可触发的对话
             DialogueTrigger trigger = System.Array.Find(dialogueTriggers, 
                 t => t.requiredCrawlType == currentCrawlType && !t.hasTriggered);
@@ -268,16 +287,12 @@ public class NpcPatrol : MonoBehaviour
                 return false;
             }
 
-            // 检查是否满足追击条件
-            float currentSpeed = GetPlayerCurrentSpeed(playerInput);
-            bool speedInRange = (currentSpeed >= detectionSettings.minDetectableSpeed && 
-                               currentSpeed <= detectionSettings.maxDetectableSpeed);
-
+            // 检查是否是敌对爬行类型
             bool isHostileCrawl = System.Array.Exists(detectionSettings.hostileCrawlTypes, 
                 type => type == currentCrawlType);
 
             // 如果条件改变，重置追击状态
-            if (!speedInRange || !isHostileCrawl)
+            if (!isHostileCrawl)
             {
                 if (isChasing)
                 {
@@ -412,18 +427,10 @@ public class NpcPatrol : MonoBehaviour
 [System.Serializable]
 public class DetectionSettings
 {
-    [Tooltip("选择会触发追逐的爬行类型")]
-    public CrawlType[] hostileCrawlTypes = new CrawlType[] 
-    {
-        CrawlType.Basic,
-        CrawlType.Gecko,
-        CrawlType.Turtle,
-        CrawlType.Snake,
-        CrawlType.Cat,
-        CrawlType.Chameleon
-    };
-    public float minDetectableSpeed = 0f;
-    public float maxDetectableSpeed = 10f;
+    [Tooltip("选择会触发追逐��爬行类型")]
+    public CrawlType[] hostileCrawlTypes;
+    [Tooltip("选择会导致NPC死亡的爬行类型")]
+    public CrawlType[] lethalCrawlTypes;
 }
 
 [System.Serializable]
