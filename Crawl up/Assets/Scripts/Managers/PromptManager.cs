@@ -10,6 +10,8 @@ public class PromptManager : MonoBehaviour
     public GameObject crawlPrompt;        // 爬行提示
     public GameObject tutorialPrompt;     // 教程提示
 
+    private bool hasShownBasicMoveTutorial = false;  // 是否已经显示过基础移动教程
+
     private void Awake()
     {
         if (Instance == null)
@@ -27,6 +29,27 @@ public class PromptManager : MonoBehaviour
     private void Start()
     {
         HideAllPrompts();
+        ShowBasicMoveTutorial();  // 游戏开始时显示基础移动教程
+    }
+
+    private void Update()
+    {
+        // 检测A或D键的按下，如果按下则隐藏教程提示
+        if (!hasShownBasicMoveTutorial && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)))
+        {
+            HideTutorialPrompt();
+            hasShownBasicMoveTutorial = true;
+            Debug.Log("玩家已按下A/D键，隐藏基础移动教程");
+        }
+    }
+
+    public void ShowBasicMoveTutorial()
+    {
+        if (!hasShownBasicMoveTutorial)
+        {
+            ShowTutorialPrompt("反复按顺序按A/D移动");
+            Debug.Log("显示基础移动教程");
+        }
     }
 
     public void ShowInteractionPrompt()

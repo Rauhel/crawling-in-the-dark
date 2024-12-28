@@ -143,6 +143,10 @@ MonoBehaviour:
     animationFrames:
     - sprite: {fileID: 21300000, guid: c6d18767d455fac40ba9ac563224d047, type: 3}
     - sprite: {fileID: 21300000, guid: 9b6d0e432ac79984a99bbdd31043e73e, type: 3}
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
+      - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   geckoCrawl:
     keyLists: []
     groundSpeed: 0
@@ -153,6 +157,10 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
     animationFrames: []
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 0}
+      - {fileID: 0}
   turtleCrawl:
     keyLists: []
     groundSpeed: 20
@@ -165,6 +173,10 @@ MonoBehaviour:
     animationFrames:
     - sprite: {fileID: 21300000, guid: f5872ed094c7c9849ad3883ccb38e1f4, type: 3}
     - sprite: {fileID: 21300000, guid: 5330247eae9288646a41ed1b626e9663, type: 3}
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
+      - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   snakeCrawl:
     keyLists: []
     groundSpeed: 100
@@ -177,6 +189,10 @@ MonoBehaviour:
     animationFrames:
     - sprite: {fileID: 21300000, guid: 75966373eec586b4cbbcfe3f61c79f5a, type: 3}
     - sprite: {fileID: 21300000, guid: 408b9c51fa59e554993556b37e1d182a, type: 3}
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
+      - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   catCrawl:
     keyLists: []
     groundSpeed: 60
@@ -189,6 +205,10 @@ MonoBehaviour:
     animationFrames:
     - sprite: {fileID: 21300000, guid: 0fee763bd1aa8cd4bac0f98e8d18f475, type: 3}
     - sprite: {fileID: 21300000, guid: 2e3617581065aaf46896be752f4e8e1d, type: 3}
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
+      - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   chameleonCrawl:
     keyLists: []
     groundSpeed: 30
@@ -201,6 +221,10 @@ MonoBehaviour:
     animationFrames:
     - sprite: {fileID: 21300000, guid: 6b44bbb6b15913c4ebd0d1b1f4e5736c, type: 3}
     - sprite: {fileID: 21300000, guid: cc23e682349477d4a9128e5fb127e091, type: 3}
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
+      - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   moveDistance: 1
   currentKeyIndex: 0
   currentCrawlSettings:
@@ -213,10 +237,16 @@ MonoBehaviour:
     isActive: 0
     canCrawl: 0
     animationFrames: []
+    transitionAnimation:
+      transitionFrames:
+      - {fileID: 0}
+      - {fileID: 0}
   currentKeys: 
   totalAnimFrames: 4
   maxTimeBetweenInputs: 2
   canCrawlOnCurrentSurface: 0
+  currentActualSpeed: 0
+  speedCalculationWindow: 1
 --- !u!114 &301771455367764938
 MonoBehaviour:
   m_ObjectHideFlags: 0

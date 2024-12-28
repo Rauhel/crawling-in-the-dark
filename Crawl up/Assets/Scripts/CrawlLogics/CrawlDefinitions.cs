@@ -26,6 +26,12 @@ public class AnimationFrame
 }
 
 [System.Serializable]
+public class TransitionAnimationSettings
+{
+    public Sprite[] transitionFrames = new Sprite[2];  // 过渡动画的两帧
+}
+
+[System.Serializable]
 public class CrawlSettings
 {
     public KeyList[] keyLists;
@@ -36,7 +42,8 @@ public class CrawlSettings
     public float slopeSpeed; // 斜坡上的速度
     public bool isActive;
     public bool canCrawl;
-    public AnimationFrame[] animationFrames;  // 动画帧数组
+    public AnimationFrame[] animationFrames;  // 爬行动画帧数组
+    public TransitionAnimationSettings transitionAnimation;  // 过渡动画设置
     public int TotalAnimFrames => animationFrames != null ? animationFrames.Length : 0;  // 总帧数属性
 }
 
@@ -47,4 +54,5 @@ public class CrawlProgress
     public float lastValidInputTime = 0f;
     public bool isInProgress = false;
     public bool isPlayingTransitionAnim = false;
+    public int currentTransitionFrame = 0;  // 当前过渡动画帧索引
 } 

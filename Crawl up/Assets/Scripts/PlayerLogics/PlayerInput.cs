@@ -435,7 +435,8 @@ public class PlayerInput : MonoBehaviour
         progress.currentKeyListIndex = 0;
         progress.isInProgress = false;
         progress.lastValidInputTime = 0f;
-        progress.isPlayingTransitionAnim = false;  // 重置动画状态
+        progress.isPlayingTransitionAnim = false;
+        progress.currentTransitionFrame = 0;  // 重置过渡动画帧索引
     }
 
     private void ResetAllProgress()
@@ -506,13 +507,39 @@ public class PlayerInput : MonoBehaviour
         Debug.Log($"播放{crawlName}动画关键帧: {currentAnimFrame}/{currentCrawlSettings.TotalAnimFrames-1}");
     }
 
-    // 添加新的动画播放方法
+    // 修改过渡动画播放方法
     void PlayTransitionAnimation(string crawlType, int sequenceIndex)
     {
-        // 注释掉过渡动画相关代码
-        // string triggerName = $"{crawlType}Transition{sequenceIndex + 1}";
-        // animator.SetTrigger(triggerName);
-        Debug.Log($"播放过渡动画: {crawlType}Transition{sequenceIndex + 1}");
+        CrawlSettings settings = null;
+        switch (crawlType.ToLower())
+        {
+            case "basic": settings = basicCrawl; break;
+            case "gecko": settings = geckoCrawl; break;
+            case "turtle": settings = turtleCrawl; break;
+            case "snake": settings = snakeCrawl; break;
+            case "cat": settings = catCrawl; break;
+            case "chameleon": settings = chameleonCrawl; break;
+        }
+
+        if (settings == null || settings.transitionAnimation == null || 
+            settings.transitionAnimation.transitionFrames == null || 
+            settings.transitionAnimation.transitionFrames.Length != 2)
+        {
+            Debug.LogWarning($"{crawlType}没有设置过渡动画帧！");
+            return;
+        }
+
+        var progress = crawlProgresses[crawlType];
+        // 在两帧之间切换
+        progress.currentTransitionFrame = (progress.currentTransitionFrame + 1) % 2;
+        
+        // 更新精灵
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sprite = settings.transitionAnimation.transitionFrames[progress.currentTransitionFrame];
+        }
+        
+        Debug.Log($"播放{crawlType}过渡动画帧: {progress.currentTransitionFrame}/1");
     }
 
     // 添加碰撞检测方法
