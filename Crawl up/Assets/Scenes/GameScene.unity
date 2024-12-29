@@ -7461,7 +7461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   patrolAngle: 0
-  forwardDistance: 6.5
+  forwardDistance: 2.63
   backwardDistance: 6.19
 --- !u!4 &475198437
 Transform:
@@ -7472,7 +7472,7 @@ Transform:
   m_GameObject: {fileID: 475198435}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 128.7, y: 19.249998, z: 0}
+  m_LocalPosition: {x: 120.42, y: 23.28, z: 0}
   m_LocalScale: {x: 8.9196, y: 8.9196, z: 8.9196}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7674,11 +7674,11 @@ PrefabInstance:
       objectReference: {fileID: 475198436}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 130.78
+      value: 122.5
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.249998
+      value: 23.28
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8095,11 +8095,11 @@ PrefabInstance:
       objectReference: {fileID: 475198436}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 129.10033
+      value: 120.82033
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.201206
+      value: 23.231209
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12722,11 +12722,11 @@ PrefabInstance:
       objectReference: {fileID: 475198436}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128.31
+      value: 120.03
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 19.249998
+      value: 23.28
       objectReference: {fileID: 0}
     - target: {fileID: 3666909103752235416, guid: aa10373dfd16c674c903886d545158d9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13099,7 +13099,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patrolAngle: 0
   forwardDistance: 6.5
-  backwardDistance: 6.19
+  backwardDistance: 6.63
 --- !u!4 &1691889975
 Transform:
   m_ObjectHideFlags: 0

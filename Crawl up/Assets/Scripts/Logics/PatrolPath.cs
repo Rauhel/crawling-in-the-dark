@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 public class PatrolPath : MonoBehaviour
@@ -10,6 +13,8 @@ public class PatrolPath : MonoBehaviour
     public float forwardDistance = 5f;    // 正向距离
     [Tooltip("反向巡逻距离（从起点开始向-patrolDirection方向移动的距离）")]
     public float backwardDistance = 5f;   // 反向距离
+    [Tooltip("是否显示路径Gizmos")]
+    public bool showGizmos = true;        // 是否显示Gizmos
 
     private Vector3 pathStartPosition;    // 路径起始位置
     private Vector3 forwardEndPoint;      // 正向终点
@@ -57,35 +62,37 @@ public class PatrolPath : MonoBehaviour
         UpdatePathPoints();
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying)
-        {
-            Vector3 currentPos = transform.position;
-            float angleRad = patrolAngle * Mathf.Deg2Rad;
-            Vector2 normalizedDirection = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
-            Vector3 forward = currentPos + new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * forwardDistance;
-            Vector3 backward = currentPos - new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * backwardDistance;
+        if (!showGizmos) return;
 
-            // 绘制巡逻路径
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(forward, backward);
+        UpdatePathPoints();  // 确保路径点是最新的
 
-            // 绘制路径起点（中心点）
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(currentPos, 0.3f);
+        // 绘制路径起点
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pathStartPosition, 0.3f);
 
-            // 绘制端点
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(forward, 0.2f);
-            Gizmos.DrawWireSphere(backward, 0.2f);
-            
-            // 绘制方向指示
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(currentPos, currentPos + new Vector3(normalizedDirection.x, normalizedDirection.y, 0));
+        // 绘制路径端点
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(forwardEndPoint, 0.2f);
+        Gizmos.DrawWireSphere(backwardEndPoint, 0.2f);
 
-            // 绘制路径名称
-            UnityEditor.Handles.Label(currentPos + Vector3.up * 0.5f, gameObject.name);
-        }
+        // 绘制路径线
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(backwardEndPoint, forwardEndPoint);
+
+        // 使用Handles绘制标签
+        Handles.Label(forwardEndPoint, "Forward");
+        Handles.Label(backwardEndPoint, "Backward");
+        Handles.Label(pathStartPosition, gameObject.name);
+
+        // 绘制方向指示
+        float angleRad = patrolAngle * Mathf.Deg2Rad;
+        Vector2 normalizedDirection = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
+        Gizmos.color = Color.white;
+        Gizmos.DrawLine(pathStartPosition, 
+            pathStartPosition + new Vector3(normalizedDirection.x, normalizedDirection.y, 0));
     }
+#endif
 } 
