@@ -3,8 +3,9 @@ using UnityEngine;
 public class PatrolPath : MonoBehaviour
 {
     [Header("巡逻设置")]
-    [Tooltip("巡逻方向，默认为水平方向(1,0)")]
-    public Vector2 patrolDirection = Vector2.right;  // 巡逻方向
+    [Tooltip("巡逻方向的角度，0度为水平向右，90度为向上")]
+    [Range(0f, 360f)]
+    public float patrolAngle = 0f;  // 巡逻方向的角度
     [Tooltip("正向巡逻距离（从起点开始向patrolDirection方向移动的距离）")]
     public float forwardDistance = 5f;    // 正向距离
     [Tooltip("反向巡逻距离（从起点开始向-patrolDirection方向移动的距离）")]
@@ -22,7 +23,10 @@ public class PatrolPath : MonoBehaviour
     private void UpdatePathPoints()
     {
         pathStartPosition = transform.position;
-        Vector2 normalizedDirection = patrolDirection.normalized;
+        
+        // 根据角度计算方向
+        float angleRad = patrolAngle * Mathf.Deg2Rad;
+        Vector2 normalizedDirection = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
         
         // 计算端点
         forwardEndPoint = pathStartPosition + new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * forwardDistance;
@@ -58,7 +62,8 @@ public class PatrolPath : MonoBehaviour
         if (!Application.isPlaying)
         {
             Vector3 currentPos = transform.position;
-            Vector2 normalizedDirection = patrolDirection.normalized;
+            float angleRad = patrolAngle * Mathf.Deg2Rad;
+            Vector2 normalizedDirection = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
             Vector3 forward = currentPos + new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * forwardDistance;
             Vector3 backward = currentPos - new Vector3(normalizedDirection.x, normalizedDirection.y, 0) * backwardDistance;
 

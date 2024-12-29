@@ -28,11 +28,11 @@ public class NpcVisualFeedback : MonoBehaviour
             indicator.transform.parent = transform;
             rangeIndicator = indicator.GetComponent<SpriteRenderer>();
             
-            // 设置范围指示器的大小以精确匹配检测范围
-            // 考虑到NPC的缩放，我们需要除以NPC的缩放值来得到正确的本地缩放
+            // 设置范围指示器的大小以匹配椭圆检测范围
             float npcScale = transform.localScale.x;  // 假设x和y的缩放是一样的
-            float targetScale = npcPatrol.detectionRange * 2 / npcScale;
-            indicator.transform.localScale = new Vector3(targetScale, targetScale, 1);
+            float horizontalScale = npcPatrol.horizontalDetectionRange * 2 / npcScale;
+            float verticalScale = npcPatrol.verticalDetectionRange * 2 / npcScale;
+            indicator.transform.localScale = new Vector3(horizontalScale, verticalScale, 1);
             
             // 确保范围指示器在NPC精灵的后面
             rangeIndicator.sortingOrder = -1;

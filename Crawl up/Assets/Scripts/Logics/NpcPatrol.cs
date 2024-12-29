@@ -8,7 +8,10 @@ public class NpcPatrol : MonoBehaviour
     [Header("基础设置")]
     public float patrolSpeed = 5f;
     public float chaseSpeed = 10f;
-    public float detectionRange = 5f;
+    [Tooltip("水平检测范围")]
+    public float horizontalDetectionRange = 8f;
+    [Tooltip("垂直检测范围")]
+    public float verticalDetectionRange = 3f;
 
     [Header("追逐设置")]
     [Tooltip("追逐相关的设置")]
@@ -28,7 +31,7 @@ public class NpcPatrol : MonoBehaviour
     public CrawlType teachableCrawlType;  // 要教授的爬行类型
 
     [Header("对话触发设置")]
-    public DialogueTrigger[] dialogueTriggers;  // 在Inspector中设置对话���发条件
+    public DialogueTrigger[] dialogueTriggers;  // 在Inspector中设置对话触发条件
 
     // 私有状态字段
     private bool isDead = false;
@@ -67,10 +70,15 @@ public class NpcPatrol : MonoBehaviour
 
         if (playerTransform != null)
         {
-            float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+            // 计算玩家相对于NPC的位置差
+            Vector2 toPlayer = playerTransform.position - transform.position;
+            // 计算椭圆检测
+            float normalizedDistance = Mathf.Pow(toPlayer.x / horizontalDetectionRange, 2) + 
+                                    Mathf.Pow(toPlayer.y / verticalDetectionRange, 2);
+            
             PlayerInput playerInput = playerTransform.GetComponent<PlayerInput>();
             
-            if (distanceToPlayer <= detectionRange)
+            if (normalizedDistance <= 1f)  // 如果在椭圆范围内
             {
                 // 检查玩家状态
                 bool shouldChase = CheckPlayerDetection(playerInput);
@@ -114,10 +122,36 @@ public class NpcPatrol : MonoBehaviour
 
     void ChasePlayer()
     {
+        if (patrolPath == null) return;
+
         Debug.Log("ChasePlayer");
         isChasing = true;
-        Vector2 direction = (playerTransform.position - transform.position).normalized;
+
+        // 获取玩家位置到巡逻路径的最近点
+        Vector3 forwardEnd, backwardEnd;
+        patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
+        
+        // 将 Vector3 转换为 Vector2 进行计算
+        Vector2 pathStart = new Vector2(backwardEnd.x, backwardEnd.y);
+        Vector2 pathEnd = new Vector2(forwardEnd.x, forwardEnd.y);
+        Vector2 playerPos = new Vector2(playerTransform.position.x, playerTransform.position.y);
+        
+        // 计算玩家在路径上的投影点
+        Vector2 pathDirection = (pathEnd - pathStart).normalized;
+        Vector2 playerToPath = playerPos - pathStart;
+        float dot = Vector2.Dot(playerToPath, pathDirection);
+        float t = Mathf.Clamp01(dot / Vector2.Distance(pathStart, pathEnd));
+        Vector2 targetPosition = Vector2.Lerp(pathStart, pathEnd, t);
+
+        // 计算NPC到目标点的方向
+        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
         Vector2 newPosition = (Vector2)transform.position + direction * chaseSpeed * Time.deltaTime;
+
+        // 确保新位置在路径范围内
+        Vector2 toNewPos = newPosition - pathStart;
+        float newDot = Vector2.Dot(toNewPos, pathDirection);
+        float newT = Mathf.Clamp01(newDot / Vector2.Distance(pathStart, pathEnd));
+        newPosition = Vector2.Lerp(pathStart, pathEnd, newT);
 
         // 检查是否已经足够接近玩家
         float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
@@ -127,7 +161,13 @@ public class NpcPatrol : MonoBehaviour
             return;
         }
 
-        transform.position = newPosition;
+        // 更新NPC位置
+        transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
+
+        // 更新NPC朝向
+        Vector3 scale = transform.localScale;
+        scale.x = direction.x > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
     }
 
     void Patrol()
@@ -189,7 +229,7 @@ public class NpcPatrol : MonoBehaviour
                 return;
             }
 
-            // 检查是否从上方接触��只有在非追击状态下才检查）
+            // 检查是否从上方接触（只有在非追击状态下才检查）
             Vector2 contactPoint = other.transform.position - transform.position;
             bool isFromAbove = contactPoint.y > 0 && Mathf.Abs(contactPoint.x) < 0.5f;
 
@@ -416,8 +456,24 @@ public class NpcPatrol : MonoBehaviour
     // 在 Scene 视图中绘制检测范围和巡逻区域
     void OnDrawGizmos()
     {
+        // 绘制椭圆形检测范围
+        const int segments = 50;
+        Vector3 prevPos = Vector3.zero;
+        
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = (float)i / segments * 2f * Mathf.PI;
+            float x = Mathf.Cos(angle) * horizontalDetectionRange;
+            float y = Mathf.Sin(angle) * verticalDetectionRange;
+            Vector3 pos = transform.position + new Vector3(x, y, 0);
+            
+            if (i > 0)
+            {
+                Gizmos.DrawLine(prevPos, pos);
+            }
+            prevPos = pos;
+        }
     }
 
     private void OnEnable()
