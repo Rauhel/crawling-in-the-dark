@@ -22,9 +22,9 @@ public class m_GameManager : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject winMenu;
     public GameObject menuCanvas;
-    public Animator endAnimator;
 
     private bool isPaused = false;
+    private bool isGameVictory = false;
 
     // Start is called before the first frame update
     void Start()
@@ -56,6 +56,11 @@ public class m_GameManager : MonoBehaviour
                 TogglePause();
             }
         }
+
+        if (isGameVictory && Input.anyKeyDown)
+        {
+            ReturnToMainMenu();
+        }
     }
 
     public void TogglePause()
@@ -76,18 +81,13 @@ public class m_GameManager : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
-    private IEnumerator PlayEndAnimation()
-    {
-        endAnimator.SetTrigger("PlayEnd");
-        yield return new WaitForSeconds(endAnimator.GetCurrentAnimatorStateInfo(0).length);
-        SceneManager.LoadScene("MainMenu");
-    }
     public void ResumeGame()
     {
         isPaused = false;
         pauseMenu.SetActive(false);
         Time.timeScale = 1;
     }
+
     public void ToggleMenu()
     {
         // 如果正在对话，不允许打开菜单
@@ -101,8 +101,9 @@ public class m_GameManager : MonoBehaviour
 
     public void OnGameVictory()
     {
+        isGameVictory = true;
         winMenu.SetActive(true);
-        StartCoroutine(PlayEndAnimation());// 处理游戏胜利逻辑
+        Debug.Log("游戏胜利！按任意键返回主菜单");
     }
 
     // 添加重生功能
