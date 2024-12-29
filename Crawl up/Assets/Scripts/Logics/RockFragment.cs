@@ -13,6 +13,12 @@ public class RockFragment : MonoBehaviour
             PlayerManager.Instance.SetSafePoint(transform.position);
             Debug.Log($"收集碎片并设置安全点: {transform.position}");
             
+            // 更新碎片进度显示
+            if (PromptManager.Instance != null)
+            {
+                PromptManager.Instance.UpdateFragmentProgress();
+            }
+            
             // 碎片被收集后销毁
             Destroy(gameObject);
         }

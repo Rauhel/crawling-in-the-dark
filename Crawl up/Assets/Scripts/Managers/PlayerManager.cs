@@ -8,9 +8,7 @@ public class PlayerManager : MonoBehaviour
     private const int TOTAL_FRAGMENTS = 7;
     private Vector3 lastSafePoint;
     private Transform playerTransform;  // 玩家的Transform组件
-    // private Animator playerAnimator;  // 玩家的Animator组件
     private Dictionary<string, bool> unlockedCrawlTypes = new Dictionary<string, bool>();
-    private int fragmentCount = 0;
 
     // 单例模式
     public static PlayerManager Instance { get; private set; }
@@ -30,7 +28,6 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        // playerAnimator = playerTransform.GetComponent<Animator>();  // 获取Animator组件
         lastSafePoint = playerTransform.position;
         
         // 订阅玩家死亡事件
@@ -58,27 +55,8 @@ public class PlayerManager : MonoBehaviour
 
     private IEnumerator RespawnPlayer()
     {
-        // 播放死亡动画
-        // if (playerAnimator != null)
-        // {
-        //     playerAnimator.SetTrigger("Die");
-        //     // 等待死亡动画播放完成
-        //     yield return new WaitForSeconds(playerAnimator.GetCurrentAnimatorStateInfo(0).length);
-        // }
-        // else
-        // {
-            yield return new WaitForSeconds(1f);  // 如果没有动画，等待1秒
-        // }
-
-        // 将玩家传送回安全点
+        yield return new WaitForSeconds(1f);  // 等待1秒
         playerTransform.position = lastSafePoint;
-
-        // 播放重生动画
-        // if (playerAnimator != null)
-        // {
-        //     playerAnimator.SetTrigger("Respawn");
-        // }
-
         Debug.Log($"玩家已重生于安全点: {lastSafePoint}");
     }
 
@@ -108,12 +86,7 @@ public class PlayerManager : MonoBehaviour
 
     public int GetFragmentCount()
     {
-        return fragmentCount;
-    }
-
-    public void AddFragment()
-    {
-        fragmentCount++;
+        return collectedFragments;
     }
 
     // 在学习爬行类型时更新解锁状态
@@ -125,7 +98,7 @@ public class PlayerManager : MonoBehaviour
     public void SaveGameState()
     {
         // 保存游戏状态的基本实现
-        PlayerPrefs.SetInt("FragmentCount", fragmentCount);
+        PlayerPrefs.SetInt("FragmentCount", collectedFragments);
         
         // 保存已解锁的爬行类型
         foreach (var crawlType in unlockedCrawlTypes)

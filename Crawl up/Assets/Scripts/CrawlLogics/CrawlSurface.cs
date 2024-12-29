@@ -16,12 +16,30 @@ public class CrawlSurface : MonoBehaviour
     public bool allowCatCrawl = false;
     public bool allowChameleonCrawl = false;
 
+    private SpriteRenderer spriteRenderer;
+    private Tilemap tilemap;
+    private Color originalColor;
+
     void Awake()
     {
         // 如果是树，添加到静态列表中
         if (gameObject.CompareTag("Tree"))
         {
             treeInstances.Add(this);
+            
+            // 获取渲染器组件
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            tilemap = GetComponent<Tilemap>();
+            
+            // 保存原始颜色
+            if (spriteRenderer)
+            {
+                originalColor = spriteRenderer.color;
+            }
+            else if (tilemap)
+            {
+                originalColor = tilemap.color;
+            }
         }
     }
 
@@ -89,14 +107,33 @@ public class CrawlSurface : MonoBehaviour
                     // 启用时切换回Surface层
                     tree.gameObject.layer = LayerMask.NameToLayer("Surface");
                 }
+
+                // 更新透明度
+                tree.UpdateTreeVisual(isTreeColliderDisabled);
             }
         }
         Debug.Log($"树的碰撞体状态: {(isTreeColliderDisabled ? "禁用" : "启用")}, Layer: {(isTreeColliderDisabled ? "Default" : "Surface")}");
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void UpdateTreeVisual(bool isPassable)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (spriteRenderer)
+        {
+            Color newColor = originalColor;
+            newColor.a = isPassable ? 0.5f : 1f;
+            spriteRenderer.color = newColor;
+        }
+        else if (tilemap)
+        {
+            Color newColor = originalColor;
+            newColor.a = isPassable ? 0.5f : 1f;
+            tilemap.color = newColor;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
         {
             // 如果是树根，显示提示
             if (gameObject.CompareTag("Tree"))
@@ -104,7 +141,7 @@ public class CrawlSurface : MonoBehaviour
                 PromptManager.Instance.ShowTreePrompt();
             }
 
-            PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
+            PlayerInput playerInput = other.GetComponent<PlayerInput>();
             if (playerInput != null)
             {
                 string currentCrawlType = playerInput.currentCrawlName;
@@ -125,17 +162,17 @@ public class CrawlSurface : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             // 如果是树根，隐藏提示
             if (gameObject.CompareTag("Tree"))
             {
-                PromptManager.Instance.HideTreePrompt();
+                PromptManager.Instance.ResetTreePrompt();
             }
 
-            PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
+            PlayerInput playerInput = other.GetComponent<PlayerInput>();
             if (playerInput != null)
             {
                 playerInput.canCrawlOnCurrentSurface = false;

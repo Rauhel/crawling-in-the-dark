@@ -54,7 +54,7 @@ public class MenuManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            Debug.Log("检测到Tab键按下");
+            Debug.Log("检测到Tab键按下，准备切换菜单状态");
             ToggleMenu();
         }
     }
@@ -64,6 +64,13 @@ public class MenuManager : MonoBehaviour
         if (menuCanvas == null)
         {
             Debug.LogError("menuCanvas为空，无法切换菜单状态");
+            return;
+        }
+
+        // 如果正在对话，不允许打开菜单
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive())
+        {
+            Debug.Log("当前正在对话，不能打开菜单");
             return;
         }
 

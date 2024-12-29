@@ -56,11 +56,6 @@ public class m_GameManager : MonoBehaviour
                 TogglePause();
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            MenuManager.Instance.ToggleMenu();
-        }
     }
 
     public void TogglePause()
