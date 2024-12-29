@@ -127,47 +127,9 @@ public class NpcPatrol : MonoBehaviour
         Debug.Log("ChasePlayer");
         isChasing = true;
 
-        // 获取玩家位置到巡逻路径的最近点
-        Vector3 forwardEnd, backwardEnd;
-        patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
-        
-        // 将 Vector3 转换为 Vector2 进行计算
-        Vector2 pathStart = new Vector2(backwardEnd.x, backwardEnd.y);
-        Vector2 pathEnd = new Vector2(forwardEnd.x, forwardEnd.y);
-        Vector2 playerPos = new Vector2(playerTransform.position.x, playerTransform.position.y);
-        
-        // 计算玩家在路径上的投影点
-        Vector2 pathDirection = (pathEnd - pathStart).normalized;
-        Vector2 playerToPath = playerPos - pathStart;
-        float dot = Vector2.Dot(playerToPath, pathDirection);
-        float t = Mathf.Clamp01(dot / Vector2.Distance(pathStart, pathEnd));
-        Vector2 targetPosition = Vector2.Lerp(pathStart, pathEnd, t);
-
-        // 计算NPC到目标点的方向
-        Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-        Vector2 newPosition = (Vector2)transform.position + direction * chaseSpeed * Time.deltaTime;
-
-        // 确保新位置在路径范围内
-        Vector2 toNewPos = newPosition - pathStart;
-        float newDot = Vector2.Dot(toNewPos, pathDirection);
-        float newT = Mathf.Clamp01(newDot / Vector2.Distance(pathStart, pathEnd));
-        newPosition = Vector2.Lerp(pathStart, pathEnd, newT);
-
-        // 检查是否已经足够接近玩家
-        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
-        if (distanceToPlayer < 0.5f)  // 如果距离小于0.5个单位
-        {
-            KillPlayer();
-            return;
-        }
-
-        // 更新NPC位置
-        transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
-
-        // 更新NPC朝向
-        Vector3 scale = transform.localScale;
-        scale.x = direction.x > 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-        transform.localScale = scale;
+        // 一旦开始追逐就立即触发玩家死亡
+        KillPlayer();
+        return;  // 直接返回，不需要继续执行移动逻辑
     }
 
     void Patrol()
@@ -215,44 +177,26 @@ public class NpcPatrol : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, patrolSpeed * Time.deltaTime);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isDead) return;
+        if (isDead) return;  // 如果NPC已死亡，不处理碰撞
 
         if (other.CompareTag("Player"))
         {
-            // 如果是在追击状态下碰到玩家，直接触发玩家死亡
-            if (isChasing)
+            PlayerInput playerInput = other.GetComponent<PlayerInput>();
+            if (playerInput != null)
             {
-                Debug.Log("在追击状态下碰到玩家");
-                KillPlayer();
-                return;
-            }
-
-            // 检查是否从上方接触（只有在非追击状态下才检查）
-            Vector2 contactPoint = other.transform.position - transform.position;
-            bool isFromAbove = contactPoint.y > 0 && Mathf.Abs(contactPoint.x) < 0.5f;
-
-            if (isFromAbove)
-            {
-                Die();
+                CheckPlayerDetection(playerInput);
             }
         }
     }
 
-    void OnTriggerStay2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
-        if (isDead || isInDialogue) return;
+        if (isDead || isInDialogue) return;  // 如果NPC已死亡或正在对话，不处理碰撞
 
         if (other.CompareTag("Player"))
         {
-            // 如果已经在追击状态，直接触发玩家死亡
-            if (isChasing)
-            {
-                KillPlayer();
-                return;
-            }
-
             PlayerInput playerInput = other.GetComponent<PlayerInput>();
             if (playerInput != null)
             {
@@ -263,9 +207,10 @@ public class NpcPatrol : MonoBehaviour
 
     private void KillPlayer()
     {
+        Debug.Log($"执行KillPlayer - NPC位置: {transform.position}");
         // 通知 EventCenter 玩家死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
-        Debug.Log("玩家被NPC抓住了！");
+        Debug.Log("已发送玩家死亡事件");
         
         // 重置追击状态
         isChasing = false;

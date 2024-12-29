@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1131740345739804978, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4064987059489991752, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_Color.b
       value: 0.568463
