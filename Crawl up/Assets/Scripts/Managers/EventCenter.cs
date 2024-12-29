@@ -50,6 +50,7 @@ public class EventCenter : MonoBehaviour
     public const string EVENT_PLAYER_DIED = "player_died";
     public const string EVENT_NPC_DIED = "npc_died";
     public const string EVENT_REVIVE_ALL_NPCS = "revive_all_npcs";
+    public const string EVENT_SET_SAFE_POINT = "set_safe_point";
 
     // 订阅事件
     public void Subscribe(string eventType, Action listener)

@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: c6d18767d455fac40ba9ac563224d047, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -104,7 +104,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 5d797618603a01742a81a890c29898a4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -133,7 +133,7 @@ MonoBehaviour:
     - keySequence: 
       requiredMinKeyCount: 1
       requiredMaxKeyCount: 1
-    groundSpeed: 80
+    groundSpeed: 100
     waterSpeed: 0
     iceSpeed: 0
     treeSpeed: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
     treeSpeed: 40
     slopeSpeed: 50
     isActive: 0
-    canCrawl: 0
+    canCrawl: 1
     animationFrames:
     - sprite: {fileID: 21300000, guid: 0fee763bd1aa8cd4bac0f98e8d18f475, type: 3}
     - sprite: {fileID: 21300000, guid: 2e3617581065aaf46896be752f4e8e1d, type: 3}
@@ -211,13 +211,13 @@ MonoBehaviour:
       - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
   chameleonCrawl:
     keyLists: []
-    groundSpeed: 30
+    groundSpeed: 200
     waterSpeed: 0
     iceSpeed: 0
     treeSpeed: 0
     slopeSpeed: 30
     isActive: 0
-    canCrawl: 0
+    canCrawl: 1
     animationFrames:
     - sprite: {fileID: 21300000, guid: 6b44bbb6b15913c4ebd0d1b1f4e5736c, type: 3}
     - sprite: {fileID: 21300000, guid: cc23e682349477d4a9128e5fb127e091, type: 3}
@@ -293,8 +293,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.05844594, y: -0.040519025}
-  m_Size: {x: 1.8831103, y: 0.8676929}
+  m_Offset: {x: 0.03628525, y: -0.040519036}
+  m_Size: {x: 0.8677227, y: 0.8677227}
   m_Direction: 1
 --- !u!58 &891244708392976485
 CircleCollider2D:
