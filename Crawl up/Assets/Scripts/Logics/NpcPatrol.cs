@@ -282,6 +282,10 @@ public class NpcPatrol : MonoBehaviour
     private void KillPlayer()
     {
         Debug.Log($"执行KillPlayer - NPC位置: {transform.position}");
+        
+        // 播放玩家死亡音效
+        SoundManager.Instance.PlaySFX(2, true, false, 1f);
+        
         // 通知 EventCenter 玩家死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
         Debug.Log("已发送玩家死亡事件");
@@ -297,6 +301,9 @@ public class NpcPatrol : MonoBehaviour
         isChasing = false;
         isEscaping = false;
         Debug.Log("NPC 死亡了！");
+        
+        // 播放NPC死亡音效
+        SoundManager.Instance.PlaySFX(1, true, false, 1f);
         
         // 通知事件中心NPC死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_NPC_DIED);

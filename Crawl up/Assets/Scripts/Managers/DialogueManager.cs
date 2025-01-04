@@ -73,7 +73,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         currentDialogueLines = lines;
-        currentLineIndex = -1;
+        currentLineIndex = 0;
         isInDialogue = true;
         onDialogueComplete = onComplete;
 
@@ -97,6 +97,8 @@ public class DialogueManager : MonoBehaviour
         {
             Debug.Log($"显示对话: {currentDialogueLines[currentLineIndex]}");
             dialogueText.text = currentDialogueLines[currentLineIndex];
+            // 播放对话音效
+            SoundManager.Instance.PlaySFX(3, true, false, 1f);
         }
     }
 

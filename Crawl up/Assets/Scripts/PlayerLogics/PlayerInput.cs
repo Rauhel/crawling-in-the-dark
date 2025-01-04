@@ -207,6 +207,9 @@ public class PlayerInput : MonoBehaviour
         Vector2 targetPosition = rb.position + (moveDirection * moveDistance);
         rb.MovePosition(targetPosition);
 
+        // 播放移动音效，参数分别是：音效索引，是否播放，是否循环，音量
+        SoundManager.Instance.PlaySFX(0, true, false, 1f);
+
         // 移动后重新调整旋转
         if (currentContact.collider != null)
         {

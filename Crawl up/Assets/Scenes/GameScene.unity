@@ -3277,7 +3277,7 @@ Transform:
   m_GameObject: {fileID: 271885276}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.87, y: 4.45, z: -10}
+  m_LocalPosition: {x: 39.87, y: 6.4300003, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8659,11 +8659,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2380570054371343259, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.87
+      value: 39.87
       objectReference: {fileID: 0}
     - target: {fileID: 2380570054371343259, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.45
+      value: 3.43
       objectReference: {fileID: 0}
     - target: {fileID: 2380570054371343259, guid: 86ab359181a92d94ab8ef5a6bcdbf295, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9189,13 +9189,17 @@ PrefabInstance:
       propertyPath: interactionPrompt
       value: 
       objectReference: {fileID: 556792638}
+    - target: {fileID: 2852928699880703851, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.07
+      objectReference: {fileID: 0}
     - target: {fileID: 3132767682532613787, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: m_Name
       value: DialogueManager
       objectReference: {fileID: 0}
     - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: MySFXList.Array.size
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: MyMusicList.Array.size
@@ -9216,7 +9220,15 @@ PrefabInstance:
     - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: MySFXList.Array.data[3]
       value: 
-      objectReference: {fileID: 8300000, guid: a3f9c73c57b0f2245926c6cfaaedf16a, type: 3}
+      objectReference: {fileID: 8300000, guid: 04e34c125a79d864bb69252e155b413d, type: 3}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MySFXList.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: f9f9ee306ba60dc4085c2253af3a5337, type: 3}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MySFXList.Array.data[5]
+      value: 
+      objectReference: {fileID: 8300000, guid: 0e6166118c684d14199e87b15cdd918b, type: 3}
     - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: MyMusicList.Array.data[0]
       value: 
@@ -14393,7 +14405,7 @@ Transform:
   m_GameObject: {fileID: 2034464850}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.87, y: 4.45, z: -10}
+  m_LocalPosition: {x: 39.87, y: 6.4300003, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
