@@ -172,7 +172,6 @@ public class PlayerInput : MonoBehaviour
         {
             if (!keyList.keySequence.Contains(pressedKey))
             {
-                // Debug.Log($"检测到无效按键: {pressedKey}，本次输入无效");
                 return false;
             }
         }
@@ -180,14 +179,14 @@ public class PlayerInput : MonoBehaviour
         // 计算有效按键数量
         int keyCount = keyList.keySequence.Count(key => currentKeys.Contains(key));
         
-        // Debug.Log($"按下的键数: {keyCount}, 最小要: {keyList.requiredMinKeyCount}, 最大允许: {keyList.requiredMaxKeyCount}");
+        // 检查是否完全匹配
+        if (keyCount != currentKeys.Count)
+        {
+            return false;
+        }
         
         // 检查按键数是否在允许的范围内
         bool isValid = keyCount >= keyList.requiredMinKeyCount && keyCount <= keyList.requiredMaxKeyCount;
-        if (isValid)
-        {
-            // Debug.Log($"符合要求的按键数: {keyCount}");
-        }
         return isValid;
     }
 
