@@ -102,6 +102,7 @@ MonoBehaviour:
   chaseSpeed: 4
   horizontalDetectionRange: 8
   verticalDetectionRange: 3
+  bodyRange: 0.5
   detectionSettings:
     hostileCrawlTypes: 
     lethalCrawlTypes: 

@@ -12,6 +12,8 @@ public class NpcPatrol : MonoBehaviour
     public float horizontalDetectionRange = 8f;
     [Tooltip("垂直检测范围")]
     public float verticalDetectionRange = 3f;
+    [Tooltip("击杀检测范围")]
+    public float bodyRange = 1f;      // 新增：触发击杀的范围
 
     [Header("追逐设置")]
     [Tooltip("追逐相关的设置")]
@@ -76,6 +78,9 @@ public class NpcPatrol : MonoBehaviour
             float normalizedDistance = Mathf.Pow(toPlayer.x / horizontalDetectionRange, 2) + 
                                     Mathf.Pow(toPlayer.y / verticalDetectionRange, 2);
             
+            // 计算实际距离（用于bodyRange检测）
+            float actualDistance = Vector2.Distance(transform.position, playerTransform.position);
+            
             PlayerInput playerInput = playerTransform.GetComponent<PlayerInput>();
             
             if (normalizedDistance <= 1f)  // 如果在椭圆范围内
@@ -86,6 +91,12 @@ public class NpcPatrol : MonoBehaviour
                 // 根据检查结果决定行为
                 if (shouldChase)
                 {
+                    // 如果在bodyRange内且正在追逐，直接击杀
+                    if (actualDistance <= bodyRange)
+                    {
+                        KillPlayer();
+                        return;
+                    }
                     ChasePlayer();
                 }
                 else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
@@ -127,9 +138,39 @@ public class NpcPatrol : MonoBehaviour
         Debug.Log("ChasePlayer");
         isChasing = true;
 
-        // 一旦开始追逐就立即触发玩家死亡
-        KillPlayer();
-        return;  // 直接返回，不需要继续执行移动逻辑
+        // 获取路径的两个端点
+        Vector3 forwardEnd, backwardEnd;
+        patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
+        
+        // 计算玩家到两个端点的距离
+        float distToForward = Vector2.Distance(playerTransform.position, forwardEnd);
+        float distToBackward = Vector2.Distance(playerTransform.position, backwardEnd);
+        
+        // 获取路径总长度用于计算速度
+        float totalLength = patrolPath.GetTotalPathLength();
+        float progressStep = (chaseSpeed * Time.deltaTime) / totalLength;
+        
+        // 根据玩家位置决定移动方向
+        bool shouldMoveForward = distToForward < distToBackward;
+        
+        // 更新进度
+        if (shouldMoveForward)
+        {
+            patrolProgress = Mathf.Min(1f, patrolProgress + progressStep);
+        }
+        else
+        {
+            patrolProgress = Mathf.Max(0f, patrolProgress - progressStep);
+        }
+        
+        // 获取目标位置并移动
+        Vector3 targetPosition = patrolPath.GetPositionAtProgress(patrolProgress);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, chaseSpeed * Time.deltaTime);
+        
+        // 更新朝向
+        Vector3 scale = transform.localScale;
+        scale.x = shouldMoveForward ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
     }
 
     void Patrol()
@@ -419,6 +460,10 @@ public class NpcPatrol : MonoBehaviour
             }
             prevPos = pos;
         }
+        
+        // 绘制击杀范围
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, bodyRange);
     }
 
     private void OnEnable()
