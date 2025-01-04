@@ -119,7 +119,7 @@ public class PromptManager : MonoBehaviour
     {
         string currentCrawlType = playerInput.currentCrawlName;
         string displayName = GetCrawlTypeDisplayName(currentCrawlType);
-        crawlTypeText.text = $"按P绕过山脊/按空格反向/反相输入反向爬行/当前爬行方式：{displayName}";
+        crawlTypeText.text = $"当前爬行方式：{displayName}";
     }
 
     private string GetCrawlTypeDisplayName(string crawlType)

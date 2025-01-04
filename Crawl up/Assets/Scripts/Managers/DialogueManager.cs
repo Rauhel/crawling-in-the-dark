@@ -73,7 +73,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         currentDialogueLines = lines;
-        currentLineIndex = 0;
+        currentLineIndex = -1;  // 从-1开始，用于显示提示信息
         isInDialogue = true;
         onDialogueComplete = onComplete;
 
@@ -88,12 +88,13 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         Debug.Log($"对话面板设置后状态: {dialoguePanel.activeSelf}");
         
-        DisplayCurrentLine();
+        // 显示提示信息
+        dialogueText.text = "按Q进行交互/继续对话";
     }
 
     private void DisplayCurrentLine()
     {
-        if (currentLineIndex < currentDialogueLines.Length)
+        if (currentLineIndex < currentDialogueLines.Length && currentLineIndex >= 0)  // 只有在显示实际对话时才播放音效
         {
             Debug.Log($"显示对话: {currentDialogueLines[currentLineIndex]}");
             dialogueText.text = currentDialogueLines[currentLineIndex];

@@ -401,6 +401,9 @@ public class NpcPatrol : MonoBehaviour
         canStartDialogue = false;
         isChasing = false;
 
+        // 保存当前对话索引，用于在回调中标记对话
+        int dialogueIndexToMark = currentDialogueIndex;
+
         // 通知PromptManager隐藏交互提示并开始对话
         PromptManager.Instance.HideInteractionPrompt();
         DialogueManager.Instance.StartDialogue(
@@ -409,12 +412,14 @@ public class NpcPatrol : MonoBehaviour
                 // 对话结束后的回调
                 isInDialogue = false;
                 
-                // 标记当前对话已触发
-                var trigger = System.Array.Find(dialogueTriggers, 
-                    t => t.dialogueIndex == currentDialogueIndex);
-                if (trigger != null)
+                // 标记所有相同索引的对话为已触发
+                foreach (var trigger in dialogueTriggers)
                 {
-                    trigger.hasTriggered = true;
+                    if (trigger.dialogueIndex == dialogueIndexToMark)
+                    {
+                        trigger.hasTriggered = true;
+                        Debug.Log($"标记对话为已触发: 爬行类型={trigger.requiredCrawlType}, 索引={dialogueIndexToMark}");
+                    }
                 }
 
                 // 如果是安全点NPC，设置安全点

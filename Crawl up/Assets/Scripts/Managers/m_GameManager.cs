@@ -101,9 +101,17 @@ public class m_GameManager : MonoBehaviour
 
     public void OnGameVictory()
     {
+        Debug.Log("游戏胜利！");
         isGameVictory = true;
-        winMenu.SetActive(true);
-        Debug.Log("游戏胜利！按任意键返回主菜单");
+        
+        // 播放胜利音效
+        SoundManager.Instance.PlaySFX(6, true, false, 1f);
+        
+        // 显示胜利菜单
+        if (winMenu != null)
+        {
+            winMenu.SetActive(true);
+        }
     }
 
     // 添加重生功能
