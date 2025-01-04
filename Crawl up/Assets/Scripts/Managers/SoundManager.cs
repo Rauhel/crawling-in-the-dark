@@ -29,6 +29,9 @@ public class SoundManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // 初始化音频播放器
+            InitializeBGMPlayers();
         }
         else if (instance != this)
         {
@@ -42,30 +45,32 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject bgmPlayer = new GameObject("BGMPlayer" + i);
-            bgmPlayer.transform.parent = this.transform;
-            AudioSource audioSource = bgmPlayer.AddComponent<AudioSource>();
-            BGMPlayers.Add(audioSource);
-        }
-
+        // 订阅场景加载事件
         SceneManager.sceneLoaded += OnSceneLoaded;
+        
+        // 播放默认背景音乐
+        PlayMusic(0, true, true, 1.0f);
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnDestroy()
     {
+        // 取消订阅场景加载事件
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void InitializeBGMPlayers()
+    {
+        // 清理现有的播放器
         foreach (var player in BGMPlayers)
         {
-            // 这里应该检查player.gameObject是否是场景中的对象
-            if (player.gameObject.scene == SceneManager.GetActiveScene())
+            if (player != null)
             {
-                DestroyImmediate(player.gameObject, true);
+                Destroy(player.gameObject);
             }
         }
         BGMPlayers.Clear();
 
-        // 重新创建BGMPlayers
+        // 创建新的播放器
         for (int i = 0; i < 5; i++)
         {
             GameObject bgmPlayer = new GameObject("BGMPlayer" + i);
@@ -73,9 +78,37 @@ public class SoundManager : MonoBehaviour
             AudioSource audioSource = bgmPlayer.AddComponent<AudioSource>();
             BGMPlayers.Add(audioSource);
         }
+    }
 
-        // 播放默认背景音乐
-        PlayMusic(0, true, true, 1.0f);
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 停止所有当前播放的音乐
+        foreach (var player in BGMPlayers)
+        {
+            if (player != null && player.isPlaying)
+            {
+                player.Stop();
+            }
+        }
+
+        // 重新初始化音频播放器
+        InitializeBGMPlayers();
+
+        // 根据场景名称播放对应的背景音乐
+        switch (scene.name)
+        {
+            case "MainMenu":
+                PlayMusic(0, true, true, 1.0f); // 播放主菜单音乐
+                break;
+            case "GameScene":
+                PlayMusic(1, true, true, 1.0f); // 播放游戏场景音乐
+                break;
+            default:
+                PlayMusic(0, true, true, 1.0f); // 默认音乐
+                break;
+        }
+        
+        Debug.Log($"场景 {scene.name} 加载完成，开始播放背景音乐");
     }
 
     public void PlayMusic(int index, bool isPlay, bool isLoop, float volume = 1.0f)

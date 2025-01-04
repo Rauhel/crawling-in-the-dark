@@ -276,6 +276,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 6.5
   backwardDistance: 6.19
+  showGizmos: 1
 --- !u!4 &92445215
 Transform:
   m_ObjectHideFlags: 0
@@ -1925,6 +1926,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2
   backwardDistance: 2
+  showGizmos: 1
 --- !u!4 &280671967
 Transform:
   m_ObjectHideFlags: 0
@@ -7247,6 +7249,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &417703335
 Transform:
   m_ObjectHideFlags: 0
@@ -7463,6 +7466,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2.63
   backwardDistance: 6.19
+  showGizmos: 1
 --- !u!4 &475198437
 Transform:
   m_ObjectHideFlags: 0
@@ -7645,6 +7649,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 6.5
   backwardDistance: 6.19
+  showGizmos: 1
 --- !u!4 &501439764
 Transform:
   m_ObjectHideFlags: 0
@@ -8066,6 +8071,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 13.7
   backwardDistance: 7.29
+  showGizmos: 1
 --- !u!4 &573982259
 Transform:
   m_ObjectHideFlags: 0
@@ -8174,6 +8180,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &581897035
 Transform:
   m_ObjectHideFlags: 0
@@ -8257,6 +8264,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: DialogueManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MyMusicList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MyMusicList.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8d446537431abe444a38a48e7391e06d, type: 3}
     - target: {fileID: 5697043734891367180, guid: e741d67c67757344ab96478410a8202a, type: 3}
       propertyPath: treeTutorial
       value: 
@@ -8340,6 +8355,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 3
   backwardDistance: 3
+  showGizmos: 1
 --- !u!4 &594132985
 Transform:
   m_ObjectHideFlags: 0
@@ -8505,6 +8521,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1.84
   backwardDistance: 5.09
+  showGizmos: 1
 --- !u!4 &641771294
 Transform:
   m_ObjectHideFlags: 0
@@ -10138,6 +10155,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 32.6
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &680713679
 Transform:
   m_ObjectHideFlags: 0
@@ -10185,6 +10203,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2
   backwardDistance: 2
+  showGizmos: 1
 --- !u!4 &684500207
 Transform:
   m_ObjectHideFlags: 0
@@ -10242,6 +10261,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &716997465
 Transform:
   m_ObjectHideFlags: 0
@@ -10422,6 +10442,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 7.6
   backwardDistance: 2.97
+  showGizmos: 1
 --- !u!4 &764074764
 Transform:
   m_ObjectHideFlags: 0
@@ -10530,6 +10551,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 23.5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &801255927
 Transform:
   m_ObjectHideFlags: 0
@@ -10577,6 +10599,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 19.4
   backwardDistance: 5.58
+  showGizmos: 1
 --- !u!4 &805219729
 Transform:
   m_ObjectHideFlags: 0
@@ -10624,6 +10647,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2
   backwardDistance: 2
+  showGizmos: 1
 --- !u!4 &831158531
 Transform:
   m_ObjectHideFlags: 0
@@ -10992,6 +11016,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &999612096
 Transform:
   m_ObjectHideFlags: 0
@@ -11039,6 +11064,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 10.93
   backwardDistance: 3.46
+  showGizmos: 1
 --- !u!4 &1065222576
 Transform:
   m_ObjectHideFlags: 0
@@ -11086,6 +11112,7 @@ MonoBehaviour:
   patrolAngle: 135
   forwardDistance: 3
   backwardDistance: 3
+  showGizmos: 1
 --- !u!4 &1102118159
 Transform:
   m_ObjectHideFlags: 0
@@ -11133,6 +11160,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 19.4
   backwardDistance: 5.58
+  showGizmos: 1
 --- !u!4 &1119385440
 Transform:
   m_ObjectHideFlags: 0
@@ -11245,6 +11273,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1
   backwardDistance: 1
+  showGizmos: 1
 --- !u!4 &1142204691
 Transform:
   m_ObjectHideFlags: 0
@@ -11292,6 +11321,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 8.9
   backwardDistance: 5.21
+  showGizmos: 1
 --- !u!4 &1147487518
 Transform:
   m_ObjectHideFlags: 0
@@ -11339,6 +11369,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2.54
   backwardDistance: 1.04
+  showGizmos: 1
 --- !u!4 &1210989847
 Transform:
   m_ObjectHideFlags: 0
@@ -11610,6 +11641,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1
   backwardDistance: 2
+  showGizmos: 1
 --- !u!4 &1323635306
 Transform:
   m_ObjectHideFlags: 0
@@ -11722,6 +11754,7 @@ MonoBehaviour:
   patrolAngle: 44
   forwardDistance: 4.18
   backwardDistance: 1.82
+  showGizmos: 1
 --- !u!4 &1337619936
 Transform:
   m_ObjectHideFlags: 0
@@ -11779,6 +11812,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &1356731311
 Transform:
   m_ObjectHideFlags: 0
@@ -11826,6 +11860,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1
   backwardDistance: 1
+  showGizmos: 1
 --- !u!4 &1362054157
 Transform:
   m_ObjectHideFlags: 0
@@ -12412,6 +12447,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1.13
   backwardDistance: 10.02
+  showGizmos: 1
 --- !u!4 &1528842889
 Transform:
   m_ObjectHideFlags: 0
@@ -12459,6 +12495,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 6.5
   backwardDistance: 6.19
+  showGizmos: 1
 --- !u!4 &1545783049
 Transform:
   m_ObjectHideFlags: 0
@@ -12567,6 +12604,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &1549804510
 Transform:
   m_ObjectHideFlags: 0
@@ -13053,6 +13091,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 0.52
   backwardDistance: 5.22
+  showGizmos: 1
 --- !u!4 &1688004344
 Transform:
   m_ObjectHideFlags: 0
@@ -13100,6 +13139,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 6.5
   backwardDistance: 6.63
+  showGizmos: 1
 --- !u!4 &1691889975
 Transform:
   m_ObjectHideFlags: 0
@@ -13147,6 +13187,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 8.9
   backwardDistance: 5.21
+  showGizmos: 1
 --- !u!4 &1701218779
 Transform:
   m_ObjectHideFlags: 0
@@ -13194,6 +13235,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &1709535517
 Transform:
   m_ObjectHideFlags: 0
@@ -13448,6 +13490,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 1
   backwardDistance: 1
+  showGizmos: 1
 --- !u!4 &1782083218
 Transform:
   m_ObjectHideFlags: 0
@@ -13495,6 +13538,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 2.97
   backwardDistance: 4.58
+  showGizmos: 1
 --- !u!4 &1786630761
 Transform:
   m_ObjectHideFlags: 0
@@ -13542,6 +13586,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &1793739826
 Transform:
   m_ObjectHideFlags: 0
@@ -13723,6 +13768,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &1809758520
 Transform:
   m_ObjectHideFlags: 0
@@ -14166,6 +14212,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 21.5
   backwardDistance: 5
+  showGizmos: 1
 --- !u!4 &2094453037
 Transform:
   m_ObjectHideFlags: 0
@@ -14282,6 +14329,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: 5.31
   backwardDistance: 4.05
+  showGizmos: 1
 --- !u!4 &2106954163
 Transform:
   m_ObjectHideFlags: 0
@@ -14398,6 +14446,7 @@ MonoBehaviour:
   patrolAngle: 0
   forwardDistance: -1.41
   backwardDistance: 7.8
+  showGizmos: 1
 --- !u!4 &2139980619
 Transform:
   m_ObjectHideFlags: 0
