@@ -22,6 +22,7 @@ public class m_GameManager : MonoBehaviour
     public GameObject pauseMenu;
     public GameObject winMenu;
     public GameObject menuCanvas;
+    public SpriteRenderer backgroundRenderer;
 
     private bool isPaused = false;
     private bool isGameVictory = false;
@@ -122,5 +123,14 @@ public class m_GameManager : MonoBehaviour
         
         // 恢复游戏
         ResumeGame();
+    }
+
+    // 添加背景切换方法
+    public void ChangeBackground(Sprite newBackground)
+    {
+        if (backgroundRenderer != null && newBackground != null)
+        {
+            backgroundRenderer.sprite = newBackground;
+        }
     }
 }

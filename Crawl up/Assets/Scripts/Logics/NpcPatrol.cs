@@ -19,8 +19,8 @@ public class NpcPatrol : MonoBehaviour
     public float horizontalOffset = 2f;
     [Tooltip("击杀检测范围")]
     public float bodyRange = 1f;      // 新增：触发击杀的范围
-    public float knockbackDistance = 8f;  // 弹飞距离，增加到8
-    public float knockbackDuration = 0.2f;  // 弹飞持续时间，减少到0.2秒
+    public float knockbackDistance = 10f;  // 弹飞距离，增加到8
+    public float knockbackDuration = 1f;  // 弹飞持续时间，减少到0.2秒
 
     [Header("追逐设置")]
     [Tooltip("追逐相关的设置")]

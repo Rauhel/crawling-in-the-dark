@@ -268,6 +268,12 @@ public class PlayerInput : MonoBehaviour
             currentCrawlSettings.isActive = true;
             Debug.Log($"切换到 {crawlType} 爬行方式");
 
+            // 切换背景
+            if (currentCrawlSettings.backgroundSprite != null)
+            {
+                m_GameManager.Instance.ChangeBackground(currentCrawlSettings.backgroundSprite);
+            }
+
             // 如果当前正在接触表面，检查爬行状态
             if (isInContact)
             {

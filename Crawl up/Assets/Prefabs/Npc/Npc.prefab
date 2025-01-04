@@ -104,9 +104,10 @@ MonoBehaviour:
   knockbackForce: 10
   horizontalDetectionRange: 8
   verticalDetectionRange: 3
+  horizontalOffset: 2
   bodyRange: 0.5
-  knockbackDistance: 5
-  knockbackDuration: 0.5
+  knockbackDistance: 10
+  knockbackDuration: 1
   detectionSettings:
     hostileCrawlTypes: 
     lethalCrawlTypes: 

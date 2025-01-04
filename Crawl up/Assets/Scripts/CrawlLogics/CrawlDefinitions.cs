@@ -28,31 +28,18 @@ public class AnimationFrame
 [System.Serializable]
 public class CrawlSettings
 {
-    public KeyList[] keyLists;
-
-    [Header("速度设置")]
-    [Tooltip("在地面上的移动速度")]
-    public float groundSpeed = 1f;
-    [Tooltip("在水中的移动速度")]
-    public float waterSpeed = 0.7f;
-    [Tooltip("在冰面上的移动速度")]
-    public float iceSpeed = 1.5f;
-    [Tooltip("在树上的移动速度")]
-    public float treeSpeed = 0.8f;
-    [Tooltip("在斜坡上的移动速度")]
-    public float slopeSpeed = 0.9f;
-
-    [Header("状态设置")]
-    [Tooltip("是否是当前激活的爬行方式")]
-    public bool isActive;
-    [Tooltip("是否已解锁此爬行方式")]
-    public bool canCrawl;
-
-    [Header("动画设置")]
-    [Tooltip("爬行动画的关键帧")]
-    public AnimationFrame[] animationFrames;
-
-    public int TotalAnimFrames => animationFrames != null ? animationFrames.Length : 0;
+    public bool canCrawl = false;  // 是否可以爬行
+    public bool isActive = false;  // 是否是当前激活的爬行类型
+    public KeyList[] keyLists;     // 按键序列列表
+    public float groundSpeed = 5f;  // 地面速度
+    public float waterSpeed = 3f;   // 水中速度
+    public float iceSpeed = 2f;     // 冰面速度
+    public float treeSpeed = 4f;    // 树上速度
+    public float slopeSpeed = 4f;   // 斜坡速度
+    public float moveDistance = 1f; // 移动距离
+    public AnimationFrame[] animationFrames;  // 动画帧数组
+    public int TotalAnimFrames => animationFrames?.Length ?? 0;  // 总帧数
+    public Sprite backgroundSprite;  // 添加背景图片字段
 }
 
 [System.Serializable]
