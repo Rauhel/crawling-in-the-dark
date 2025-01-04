@@ -8,12 +8,16 @@ public class NpcPatrol : MonoBehaviour
     [Header("基础设置")]
     public float patrolSpeed = 5f;
     public float chaseSpeed = 10f;
+    public float escapeSpeed = 12f;  // 逃跑速度
+    public float knockbackForce = 10f;  // 被击中时的弹飞力度
     [Tooltip("水平检测范围")]
     public float horizontalDetectionRange = 8f;
     [Tooltip("垂直检测范围")]
     public float verticalDetectionRange = 3f;
     [Tooltip("击杀检测范围")]
     public float bodyRange = 1f;      // 新增：触发击杀的范围
+    public float knockbackDistance = 8f;  // 弹飞距离，增加到8
+    public float knockbackDuration = 0.2f;  // 弹飞持续时间，减少到0.2秒
 
     [Header("追逐设置")]
     [Tooltip("追逐相关的设置")]
@@ -43,32 +47,43 @@ public class NpcPatrol : MonoBehaviour
     private int currentDialogueIndex = -1;
     private Transform playerTransform;
     private Vector3 originalPosition;
+    private bool isEscaping = false;  // 是否在逃跑
+    private bool isKnockedBack = false;  // 是否被弹飞
+    private Vector3 deadPosition = new Vector3(1000, 1000, 0);  // 死亡时移动到的位置
+    private Vector3 knockbackStartPos;
+    private Vector3 knockbackTargetPos;
+    private float knockbackTimer = 0f;
 
     void Start()
     {
         originalPosition = transform.position;
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        // 初始化巡逻进度
-        if (patrolPath != null)
-        {
-            Vector3 forwardEnd, backwardEnd;
-            patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
-            
-            // 计算NPC在路径上的初始进度
-            float totalDistance = Vector3.Distance(backwardEnd, forwardEnd);
-            if (totalDistance > 0)
-            {
-                Vector3 toNPC = transform.position - backwardEnd;
-                float projection = Vector3.Dot(toNPC, (forwardEnd - backwardEnd).normalized);
-                patrolProgress = Mathf.Clamp01(projection / totalDistance);
-            }
-        }
     }
 
     void Update()
     {
-        if (isDead) return;
+        if (isDead && !isKnockedBack) return;
+
+        // 处理弹飞效果
+        if (isKnockedBack)
+        {
+            knockbackTimer += Time.deltaTime;
+            float t = knockbackTimer / knockbackDuration;
+            Debug.Log($"弹飞进行中: timer={knockbackTimer}, t={t}, 当前位置={transform.position}");
+            
+            if (t >= 1f)
+            {
+                Debug.Log("弹飞结束，移动到死亡位置");
+                isKnockedBack = false;
+                transform.position = deadPosition;
+            }
+            else
+            {
+                // 使用平滑的插值
+                transform.position = Vector3.Lerp(knockbackStartPos, knockbackTargetPos, t);
+            }
+            return;
+        }
 
         if (playerTransform != null)
         {
@@ -85,13 +100,24 @@ public class NpcPatrol : MonoBehaviour
             
             if (normalizedDistance <= 1f)  // 如果在椭圆范围内
             {
-                // 检查玩家状态
                 bool shouldChase = CheckPlayerDetection(playerInput);
+                bool shouldEscape = CheckPlayerLethal(playerInput);
                 
-                // 根据检查结果决定行为
-                if (shouldChase)
+                if (shouldEscape)
                 {
-                    // 如果在bodyRange内且正在追逐，直接击杀
+                    if (actualDistance <= bodyRange)
+                    {
+                        Debug.Log($"玩家进入击杀范围，距离={actualDistance}，bodyRange={bodyRange}");
+                        // 被玩家击中，触发弹飞和死亡
+                        StartKnockback(toPlayer.normalized);
+                        Die();
+                        return;
+                    }
+                    // 注释掉逃跑相关代码
+                    // EscapeFromPlayer();
+                }
+                else if (shouldChase)
+                {
                     if (actualDistance <= bodyRange)
                     {
                         KillPlayer();
@@ -101,7 +127,6 @@ public class NpcPatrol : MonoBehaviour
                 }
                 else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
                 {
-                    Debug.Log("开始对话");
                     StartDialogue();
                     return;
                 }
@@ -127,6 +152,7 @@ public class NpcPatrol : MonoBehaviour
             PromptManager.Instance.HideInteractionPrompt();
         }
         isChasing = false;
+        isEscaping = false;
         canStartDialogue = false;
         currentDialogueIndex = -1;
     }
@@ -259,31 +285,26 @@ public class NpcPatrol : MonoBehaviour
 
     private void Die()
     {
+        // 设置状态但不立即移动位置，让弹飞效果完成
         isDead = true;
+        isChasing = false;
+        isEscaping = false;
         Debug.Log("NPC 死亡了！");
         
         // 通知事件中心NPC死亡
         EventCenter.Instance.Publish(EventCenter.EVENT_NPC_DIED);
-        
-        // 播放死亡动画（暂时注释掉）
-        // if (animator != null)
-        // {
-        //     animator.SetTrigger("Die");
-        // }
     }
 
     // 添加复活方法
     public void Revive()
     {
         isDead = false;
+        isChasing = false;
+        isEscaping = false;
+        isKnockedBack = false;
+        knockbackTimer = 0f;
         transform.position = originalPosition;
         Debug.Log("NPC 已复活！");
-        
-        // 播放复活动画（暂时注释掉）
-        // if (animator != null)
-        // {
-        //     animator.SetTrigger("Revive");
-        // }
     }
 
     private float GetPlayerCurrentSpeed(PlayerInput playerInput)
@@ -298,14 +319,6 @@ public class NpcPatrol : MonoBehaviour
 
         if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out CrawlType currentCrawlType))
         {
-            // 首先检查是否是致命爬行类型
-            if (System.Array.Exists(detectionSettings.lethalCrawlTypes, 
-                type => type == currentCrawlType))
-            {
-                Die();
-                return false;
-            }
-
             // 检查是否有可触发的对话
             DialogueTrigger trigger = System.Array.Find(dialogueTriggers, 
                 t => t.requiredCrawlType == currentCrawlType && !t.hasTriggered);
@@ -478,6 +491,73 @@ public class NpcPatrol : MonoBehaviour
         // 从NpcManager中注销
         if (NpcManager.Instance != null)
             NpcManager.Instance.UnregisterNpc(this);
+    }
+
+    bool CheckPlayerLethal(PlayerInput playerInput)
+    {
+        if (playerInput != null && playerInput.currentCrawlSettings != null)
+        {
+            CrawlType currentCrawlType;
+            if (System.Enum.TryParse<CrawlType>(playerInput.currentCrawlName, true, out currentCrawlType))
+            {
+                return System.Array.Exists(detectionSettings.lethalCrawlTypes, type => type == currentCrawlType);
+            }
+        }
+        return false;
+    }
+
+    void EscapeFromPlayer()
+    {
+        if (patrolPath == null) return;
+
+        Debug.Log("Escaping from player");
+        isEscaping = true;
+        isChasing = false;
+
+        // 获取路径的两个端点
+        Vector3 forwardEnd, backwardEnd;
+        patrolPath.GetEndPoints(out forwardEnd, out backwardEnd);
+        
+        // 计算玩家到两个端点的距离
+        float distToForward = Vector2.Distance(playerTransform.position, forwardEnd);
+        float distToBackward = Vector2.Distance(playerTransform.position, backwardEnd);
+        
+        // 获取路径总长度用于计算速度
+        float totalLength = patrolPath.GetTotalPathLength();
+        float progressStep = (escapeSpeed * Time.deltaTime) / totalLength;
+        
+        // 选择离玩家更远的方向逃跑
+        bool shouldMoveForward = distToForward > distToBackward;
+        
+        // 更新进度
+        if (shouldMoveForward)
+        {
+            patrolProgress = Mathf.Min(1f, patrolProgress + progressStep);
+        }
+        else
+        {
+            patrolProgress = Mathf.Max(0f, patrolProgress - progressStep);
+        }
+        
+        // 获取目标位置并移动
+        Vector3 targetPosition = patrolPath.GetPositionAtProgress(patrolProgress);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, escapeSpeed * Time.deltaTime);
+        
+        // 更新朝向
+        Vector3 scale = transform.localScale;
+        scale.x = shouldMoveForward ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
+    }
+
+    void StartKnockback(Vector2 direction)
+    {
+        Debug.Log($"开始弹飞，方向={direction}, 距离={knockbackDistance}");
+        Debug.Log($"起始位置={transform.position}");
+        isKnockedBack = true;
+        knockbackTimer = 0f;
+        knockbackStartPos = transform.position;
+        knockbackTargetPos = (Vector2)transform.position - direction * knockbackDistance;
+        Debug.Log($"目标位置={knockbackTargetPos}");
     }
 }
 
