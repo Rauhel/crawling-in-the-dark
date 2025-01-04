@@ -81,6 +81,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: horizontalOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: verticalDetectionRange
       value: 1.5
       objectReference: {fileID: 0}

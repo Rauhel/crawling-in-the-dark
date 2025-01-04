@@ -1406,11 +1406,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 81.04
+      value: 108.3
       objectReference: {fileID: 0}
     - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 30.63
+      value: 3.147
       objectReference: {fileID: 0}
     - target: {fileID: 7778433069156251081, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1471,6 +1471,14 @@ PrefabInstance:
     - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
       propertyPath: horizontalDetectionRange
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: dialogueTriggers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089821058756764135, guid: e2565ce0d84c987479c182c5b7ad418e, type: 3}
+      propertyPath: dialogueTriggers.Array.data[0].requiredCrawlType
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
