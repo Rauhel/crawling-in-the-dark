@@ -10,10 +10,13 @@ public class NpcPatrol : MonoBehaviour
     public float chaseSpeed = 10f;
     public float escapeSpeed = 12f;  // 逃跑速度
     public float knockbackForce = 10f;  // 被击中时的弹飞力度
+    [Header("检测范围设置")]
     [Tooltip("水平检测范围")]
     public float horizontalDetectionRange = 8f;
     [Tooltip("垂直检测范围")]
     public float verticalDetectionRange = 3f;
+    [Tooltip("水平检测范围的偏移量（正值向右偏移，负值向左偏移）")]
+    public float horizontalOffset = 2f;
     [Tooltip("击杀检测范围")]
     public float bodyRange = 1f;      // 新增：触发击杀的范围
     public float knockbackDistance = 8f;  // 弹飞距离，增加到8
@@ -87,8 +90,12 @@ public class NpcPatrol : MonoBehaviour
 
         if (playerTransform != null)
         {
-            // 计算玩家相对于NPC的位置差
+            // 计算玩家相对于NPC的位置差（考虑偏移）
             Vector2 toPlayer = playerTransform.position - transform.position;
+            // 根据NPC的朝向调整偏移
+            float actualOffset = transform.localScale.x < 0 ? horizontalOffset : -horizontalOffset;
+            toPlayer.x -= actualOffset;  // 调整相对位置以考虑偏移
+            
             // 计算椭圆检测
             float normalizedDistance = Mathf.Pow(toPlayer.x / horizontalDetectionRange, 2) + 
                                     Mathf.Pow(toPlayer.y / verticalDetectionRange, 2);
@@ -125,7 +132,7 @@ public class NpcPatrol : MonoBehaviour
                     }
                     ChasePlayer();
                 }
-                else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
+                else if (canStartDialogue) //else if (canStartDialogue && Input.GetKeyDown(KeyCode.Q))
                 {
                     StartDialogue();
                     return;
@@ -459,13 +466,17 @@ public class NpcPatrol : MonoBehaviour
         const int segments = 50;
         Vector3 prevPos = Vector3.zero;
         
+        // 根据NPC的朝向调整偏移
+        float actualOffset = transform.localScale.x < 0 ? horizontalOffset : -horizontalOffset;
+        Vector3 centerOffset = new Vector3(actualOffset, 0, 0);
+        
         Gizmos.color = Color.yellow;
         for (int i = 0; i <= segments; i++)
         {
             float angle = (float)i / segments * 2f * Mathf.PI;
             float x = Mathf.Cos(angle) * horizontalDetectionRange;
             float y = Mathf.Sin(angle) * verticalDetectionRange;
-            Vector3 pos = transform.position + new Vector3(x, y, 0);
+            Vector3 pos = transform.position + centerOffset + new Vector3(x, y, 0);
             
             if (i > 0)
             {

@@ -100,9 +100,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patrolSpeed: 2
   chaseSpeed: 4
+  escapeSpeed: 12
+  knockbackForce: 10
   horizontalDetectionRange: 8
   verticalDetectionRange: 3
   bodyRange: 0.5
+  knockbackDistance: 5
+  knockbackDuration: 0.5
   detectionSettings:
     hostileCrawlTypes: 
     lethalCrawlTypes: 
@@ -128,4 +132,4 @@ MonoBehaviour:
   hostileColor: {r: 1, g: 0, b: 0, a: 0.627451}
   friendlyColor: {r: 0.3, g: 1, b: 0.3, a: 0.23529412}
   neutralColor: {r: 1, g: 1, b: 1, a: 0.23529412}
-  lethalColor: {r: 0.7, g: 0, b: 1, a: 0.23529412}
+  lethalColor: {r: 1, g: 0, b: 0.8081136, a: 0.23529412}

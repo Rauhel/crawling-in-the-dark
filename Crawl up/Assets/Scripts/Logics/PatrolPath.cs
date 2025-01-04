@@ -69,23 +69,14 @@ public class PatrolPath : MonoBehaviour
 
         UpdatePathPoints();  // 确保路径点是最新的
 
-        // 绘制路径起点
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(pathStartPosition, 0.3f);
-
-        // 绘制路径端点
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(forwardEndPoint, 0.2f);
-        Gizmos.DrawWireSphere(backwardEndPoint, 0.2f);
-
         // 绘制路径线
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.cyan;
         Gizmos.DrawLine(backwardEndPoint, forwardEndPoint);
 
-        // 使用Handles绘制标签
-        Handles.Label(forwardEndPoint, "Forward");
-        Handles.Label(backwardEndPoint, "Backward");
-        Handles.Label(pathStartPosition, gameObject.name);
+        // 绘制端点
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(pathStartPosition, 0.2f);  // 起点
+        Gizmos.DrawWireSphere(forwardEndPoint, 0.2f);  // 终点
 
         // 绘制方向指示
         float angleRad = patrolAngle * Mathf.Deg2Rad;
