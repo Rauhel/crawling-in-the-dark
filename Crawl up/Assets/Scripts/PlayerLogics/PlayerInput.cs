@@ -151,41 +151,15 @@ public class PlayerInput : MonoBehaviour
             if (!crawlSettings.canCrawl || crawlSettings.keyLists == null || crawlSettings.keyLists.Length == 0) 
                 continue;
 
-            CrawlProgress progress = crawlProgresses[crawlType];
-            
-            if (progress.isInProgress && Time.time - progress.lastValidInputTime > maxTimeBetweenInputs)
+            // 如果不是当前爬行方式，检查是否需要切换
+            if (crawlType != currentCrawlName)
             {
-                ResetProgress(crawlType);
-                continue;
-            }
-
-            // 根据 isReversing 获取正确的序列索引
-            int sequenceIndex = isReversing 
-                ? crawlSettings.keyLists.Length - 1 - progress.currentKeyListIndex 
-                : progress.currentKeyListIndex;
-
-            KeyList currentKeyList = crawlSettings.keyLists[sequenceIndex];
-
-            if (IsValidKeyListInput(currentKeyList))
-            {
-                progress.lastValidInputTime = Time.time;
-                progress.isInProgress = true;
-
-                if (!progress.isPlayingTransitionAnim)
-                {
-                    progress.isPlayingTransitionAnim = true;
-                    PlayTransitionAnimation(crawlType, sequenceIndex);
-                }
-
-                progress.currentKeyListIndex++;
-                Debug.Log($"{crawlType} 进度: {progress.currentKeyListIndex}/{crawlSettings.keyLists.Length}");
-
-                if (progress.currentKeyListIndex >= crawlSettings.keyLists.Length)
+                KeyList firstKeyList = crawlSettings.keyLists[0];
+                if (IsValidKeyListInput(firstKeyList))
                 {
                     Debug.Log($"切换到 {crawlType} 爬行方式");
                     ChangeCrawlType(crawlType);
-                    ResetAllProgress();
-                    return;
+                    return; // 切换后立即返回，这一次不移动
                 }
             }
         }
@@ -273,23 +247,25 @@ public class PlayerInput : MonoBehaviour
     // Call this method to change the current crawl settings
     public void ChangeCrawlType(string crawlType)
     {
+        // 先把所有爬行方式的isActive设为false
+        basicCrawl.isActive = false;
+        geckoCrawl.isActive = false;
+        turtleCrawl.isActive = false;
+        snakeCrawl.isActive = false;
+        catCrawl.isActive = false;
+        chameleonCrawl.isActive = false;
+
         FieldInfo field = GetType().GetField(crawlType.ToLower() + "Crawl", BindingFlags.Public | BindingFlags.Instance);
         if (field != null)
         {
             currentCrawlSettings = (CrawlSettings)field.GetValue(this);
             currentCrawlName = crawlType;
 
-            // 新所有爬行方式的 isActive 状态
-            basicCrawl.isActive = false;
-            geckoCrawl.isActive = false;
-            turtleCrawl.isActive = false;
-            snakeCrawl.isActive = false;
-            catCrawl.isActive = false;
-            chameleonCrawl.isActive = false;
-
+            // 只设置当前爬行方式为active
             currentCrawlSettings.isActive = true;
+            Debug.Log($"切换到 {crawlType} 爬行方式");
 
-            // 如果当前正在接触表面，新检查爬行状态
+            // 如果当前正在接触表面，检查爬行状态
             if (isInContact)
             {
                 CheckCrawlability();
@@ -305,8 +281,6 @@ public class PlayerInput : MonoBehaviour
         progress.currentKeyListIndex = 0;
         progress.isInProgress = false;
         progress.lastValidInputTime = 0f;
-        progress.isPlayingTransitionAnim = false;
-        progress.currentTransitionFrame = 0;  // 重置过渡动画帧索引
     }
 
     private void ResetAllProgress()
@@ -330,12 +304,7 @@ public class PlayerInput : MonoBehaviour
             currentKeyIndex = 0;
         }
 
-        // 根据 isReversing 获取正确的序列索引
-        int sequenceIndex = isReversing 
-            ? currentCrawlSettings.keyLists.Length - 1 - currentKeyIndex 
-            : currentKeyIndex;
-
-        KeyList currentKeyList = currentCrawlSettings.keyLists[sequenceIndex];
+        KeyList currentKeyList = currentCrawlSettings.keyLists[currentKeyIndex];
         
         if (IsValidKeyListInput(currentKeyList))
         {
@@ -375,41 +344,6 @@ public class PlayerInput : MonoBehaviour
         }
         
         Debug.Log($"播放{crawlName}动画关键帧: {currentAnimFrame}/{currentCrawlSettings.TotalAnimFrames-1}");
-    }
-
-    // 修改过渡动画播放方法
-    void PlayTransitionAnimation(string crawlType, int sequenceIndex)
-    {
-        CrawlSettings settings = null;
-        switch (crawlType.ToLower())
-        {
-            case "basic": settings = basicCrawl; break;
-            case "gecko": settings = geckoCrawl; break;
-            case "turtle": settings = turtleCrawl; break;
-            case "snake": settings = snakeCrawl; break;
-            case "cat": settings = catCrawl; break;
-            case "chameleon": settings = chameleonCrawl; break;
-        }
-
-        if (settings == null || settings.transitionAnimation == null || 
-            settings.transitionAnimation.transitionFrames == null || 
-            settings.transitionAnimation.transitionFrames.Length != 2)
-        {
-            Debug.LogWarning($"{crawlType}没有设置过渡动画帧！");
-            return;
-        }
-
-        var progress = crawlProgresses[crawlType];
-        // 在两帧之间切换
-        progress.currentTransitionFrame = (progress.currentTransitionFrame + 1) % 2;
-        
-        // 更新精灵
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.sprite = settings.transitionAnimation.transitionFrames[progress.currentTransitionFrame];
-        }
-        
-        Debug.Log($"播放{crawlType}过渡动画帧: {progress.currentTransitionFrame}/1");
     }
 
     // 添加碰撞检测方法

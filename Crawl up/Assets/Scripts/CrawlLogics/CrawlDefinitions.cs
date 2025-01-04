@@ -26,12 +26,6 @@ public class AnimationFrame
 }
 
 [System.Serializable]
-public class TransitionAnimationSettings
-{
-    public Sprite[] transitionFrames = new Sprite[2];  // 过渡动画的两帧
-}
-
-[System.Serializable]
 public class CrawlSettings
 {
     public KeyList[] keyLists;
@@ -57,8 +51,6 @@ public class CrawlSettings
     [Header("动画设置")]
     [Tooltip("爬行动画的关键帧")]
     public AnimationFrame[] animationFrames;
-    [Tooltip("切换爬行方式时的过渡动画")]
-    public TransitionAnimationSettings transitionAnimation;
 
     public int TotalAnimFrames => animationFrames != null ? animationFrames.Length : 0;
 }
@@ -69,8 +61,6 @@ public class CrawlProgress
     public int currentKeyListIndex = 0;
     public float lastValidInputTime = 0f;
     public bool isInProgress = false;
-    public bool isPlayingTransitionAnim = false;
-    public int currentTransitionFrame = 0;  // 当前过渡动画帧索引
 }
 
 public static class CrawlSettingsInitializer

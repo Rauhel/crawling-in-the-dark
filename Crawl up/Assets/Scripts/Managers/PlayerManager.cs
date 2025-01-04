@@ -131,41 +131,65 @@ public class PlayerManager : MonoBehaviour
     {
         OnLearnCrawlType("Basic");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.basicCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.basicCrawl.canCrawl = true;
+            Debug.Log("已学习基础爬行方式");
+        }
     }
 
     private void OnLearnGeckoCrawl()
     {
         OnLearnCrawlType("Gecko");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.geckoCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.geckoCrawl.canCrawl = true;
+            Debug.Log("已学习壁虎爬行方式");
+        }
     }
 
     private void OnLearnTurtleCrawl()
     {
         OnLearnCrawlType("Turtle");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.turtleCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.turtleCrawl.canCrawl = true;
+            Debug.Log("已学习乌龟爬行方式");
+        }
     }
 
     private void OnLearnSnakeCrawl()
     {
         OnLearnCrawlType("Snake");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.snakeCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.snakeCrawl.canCrawl = true;
+            Debug.Log("已学习蛇爬行方式");
+        }
     }
 
     private void OnLearnCatCrawl()
     {
         OnLearnCrawlType("Cat");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.catCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.catCrawl.canCrawl = true;
+            Debug.Log("已学习猫爬行方式");
+        }
     }
 
     private void OnLearnChameleonCrawl()
     {
         OnLearnCrawlType("Chameleon");
         var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
-        if (playerInput != null) playerInput.chameleonCrawl.canCrawl = true;
+        if (playerInput != null) 
+        {
+            playerInput.chameleonCrawl.canCrawl = true;
+            Debug.Log("已学习变色龙爬行方式");
+        }
     }
 }
