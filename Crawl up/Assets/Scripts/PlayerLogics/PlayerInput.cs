@@ -61,101 +61,15 @@ public class PlayerInput : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();  // 获取SpriteRenderer组件
         lastPosition = transform.position;  // 初始化位置记录
 
-        // 初始化基础爬行
-        if (basicCrawl == null)
-        {
-            basicCrawl = new CrawlSettings();
-        }
-        basicCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { keySequence = new KeyCode[] { KeyCode.A}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.D}, requiredMinKeyCount = 1, requiredMaxKeyCount = 1 }
-        };
-        basicCrawl.isActive = true;
-        basicCrawl.canCrawl = true;
-
-        // 初始化壁虎爬行
-        if (geckoCrawl == null)
-        {
-            geckoCrawl = new CrawlSettings();
-        }
-        geckoCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
-        };
-        geckoCrawl.isActive = false;
-        geckoCrawl.canCrawl = false;
-
-        // 初始化变色龙爬行
-        if (chameleonCrawl == null)
-        {
-            chameleonCrawl = new CrawlSettings();
-        }
-        chameleonCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { keySequence = new KeyCode[] { KeyCode.W } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.R } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.S } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.F } }
-        };
-        chameleonCrawl.isActive = false;
-        chameleonCrawl.canCrawl = false;
-
-        // 初始化乌爬行
-        if (turtleCrawl == null)
-        {
-            turtleCrawl = new CrawlSettings();
-        }
-        turtleCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { keySequence = new KeyCode[] { KeyCode.F, KeyCode.J }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.D, KeyCode.K }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.S, KeyCode.L }, requiredMinKeyCount = 2, requiredMaxKeyCount = 2 }
-        };
-        turtleCrawl.isActive = false;
-        turtleCrawl.canCrawl = false;
-
-        // 初始化蛇爬行
-        if (snakeCrawl == null)
-        {
-            snakeCrawl = new CrawlSettings();
-        }
-        snakeCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { keySequence = new KeyCode[] { KeyCode.M } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.N } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.B } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.V } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.C } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.X } },
-            new KeyList { keySequence = new KeyCode[] { KeyCode.Z } }
-        };
-        snakeCrawl.isActive = false;
-        snakeCrawl.canCrawl = false;
-
-        // 初始化猫爬行
-        if (catCrawl == null)
-        {
-            catCrawl = new CrawlSettings();
-        }
-        catCrawl.keyLists = new KeyList[]
-        {
-            new KeyList { 
-                keySequence = new KeyCode[] { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F, KeyCode.G }, 
-                requiredMinKeyCount = 3, 
-                requiredMaxKeyCount = 5 
-            },
-            new KeyList { 
-                keySequence = new KeyCode[] { KeyCode.H, KeyCode.J, KeyCode.K, KeyCode.L, KeyCode.Y }, 
-                requiredMinKeyCount = 3, 
-                requiredMaxKeyCount = 5 
-            }
-        };
-        catCrawl.isActive = false;
-        catCrawl.canCrawl = false;
+        // 使用CrawlSettingsInitializer初始化所有爬行设置
+        CrawlSettingsInitializer.InitializeSettings(
+            ref basicCrawl,
+            ref geckoCrawl,
+            ref turtleCrawl,
+            ref snakeCrawl,
+            ref catCrawl,
+            ref chameleonCrawl
+        );
 
         // 初始化进度字典
         foreach (var crawlType in new[] { "Basic", "Gecko", "Turtle", "Snake", "Cat", "Chameleon" })
@@ -382,60 +296,6 @@ public class PlayerInput : MonoBehaviour
             }
         }
         ResetAllProgress();
-    }
-
-    private void OnEnable()
-    {
-        // 订阅事件
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
-        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
-    }
-
-    private void OnDisable()
-    {
-        // 取消订阅事件
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
-        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
-    }
-
-    private void OnDestroy()
-    {
-        // 确保在销毁时取消订阅事件
-        OnDisable();
-    }
-
-    // 事件处理方法
-    private void OnLearnBasicCrawl()
-    {
-        basicCrawl.canCrawl = true;
-    }
-    private void OnLearnGeckoCrawl()
-    {
-        geckoCrawl.canCrawl = true;
-    }
-    private void OnLearnTurtleCrawl()
-    {
-        turtleCrawl.canCrawl = true;
-    }
-    private void OnLearnSnakeCrawl()
-    {
-        snakeCrawl.canCrawl = true;
-    }
-    private void OnLearnCatCrawl()
-    {
-        catCrawl.canCrawl = true;
-    }
-    private void OnLearnChameleonCrawl()
-    {
-        chameleonCrawl.canCrawl = true;
     }
 
     // 添加新的辅助方法

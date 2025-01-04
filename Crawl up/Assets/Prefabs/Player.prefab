@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5158412202624019409}
   - component: {fileID: 3804587785009650127}
   - component: {fileID: 2759704693789213163}
+  - component: {fileID: 1754065273517399407}
+  - component: {fileID: 675643255532056414}
   - component: {fileID: 301771455367764938}
   - component: {fileID: 6681816447593089412}
   - component: {fileID: 891244708392976485}
@@ -225,28 +227,32 @@ MonoBehaviour:
       transitionFrames:
       - {fileID: 21300000, guid: 72d130ba7c9d87f4da980956c5c4d61f, type: 3}
       - {fileID: 21300000, guid: c69fc063f4400ee4dbcafed640e4abd8, type: 3}
-  moveDistance: 1
-  currentKeyIndex: 0
-  currentCrawlSettings:
-    keyLists: []
-    groundSpeed: 0
-    waterSpeed: 0
-    iceSpeed: 0
-    treeSpeed: 0
-    slopeSpeed: 0
-    isActive: 0
-    canCrawl: 0
-    animationFrames: []
-    transitionAnimation:
-      transitionFrames:
-      - {fileID: 0}
-      - {fileID: 0}
-  currentKeys: 
-  totalAnimFrames: 4
   maxTimeBetweenInputs: 2
-  canCrawlOnCurrentSurface: 0
-  currentActualSpeed: 0
-  speedCalculationWindow: 1
+--- !u!114 &1754065273517399407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977890615198079475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dade5ca2a0599c24faa9504647b607bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &675643255532056414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977890615198079475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 935fd01e2188d464c83c72afc2fb7232, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveDistance: 1
 --- !u!114 &301771455367764938
 MonoBehaviour:
   m_ObjectHideFlags: 0

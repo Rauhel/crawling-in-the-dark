@@ -32,11 +32,27 @@ public class PlayerManager : MonoBehaviour
         
         // 订阅玩家死亡事件
         EventCenter.Instance.Subscribe(EventCenter.EVENT_PLAYER_DIED, OnPlayerDied);
+        
+        // 订阅学习爬行方式事件
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
+        EventCenter.Instance.Subscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
     }
 
     private void OnDestroy()
     {
         EventCenter.Instance.Unsubscribe(EventCenter.EVENT_PLAYER_DIED, OnPlayerDied);
+        
+        // 取消订阅学习爬行方式事件
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_BASIC_CRAWL, OnLearnBasicCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_GECKO_CRAWL, OnLearnGeckoCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_TURTLE_CRAWL, OnLearnTurtleCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_SNAKE_CRAWL, OnLearnSnakeCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CAT_CRAWL, OnLearnCatCrawl);
+        EventCenter.Instance.Unsubscribe(EventCenter.EVENT_LEARNED_CHAMELEON_CRAWL, OnLearnChameleonCrawl);
     }
 
     // 记录安全点（在与Friend对话时调用）
@@ -108,5 +124,48 @@ public class PlayerManager : MonoBehaviour
         
         PlayerPrefs.Save();
         Debug.Log("游戏状态已保存");
+    }
+
+    // 学习爬行方式的事件处理方法
+    private void OnLearnBasicCrawl()
+    {
+        OnLearnCrawlType("Basic");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.basicCrawl.canCrawl = true;
+    }
+
+    private void OnLearnGeckoCrawl()
+    {
+        OnLearnCrawlType("Gecko");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.geckoCrawl.canCrawl = true;
+    }
+
+    private void OnLearnTurtleCrawl()
+    {
+        OnLearnCrawlType("Turtle");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.turtleCrawl.canCrawl = true;
+    }
+
+    private void OnLearnSnakeCrawl()
+    {
+        OnLearnCrawlType("Snake");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.snakeCrawl.canCrawl = true;
+    }
+
+    private void OnLearnCatCrawl()
+    {
+        OnLearnCrawlType("Cat");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.catCrawl.canCrawl = true;
+    }
+
+    private void OnLearnChameleonCrawl()
+    {
+        OnLearnCrawlType("Chameleon");
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
+        if (playerInput != null) playerInput.chameleonCrawl.canCrawl = true;
     }
 }
