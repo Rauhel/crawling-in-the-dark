@@ -19,7 +19,6 @@ public class PlayerInput : MonoBehaviour
 
     // 注释掉 Animator 引用
     // public Animator animator;
-    public float moveDistance = 1f;
 
     public int currentKeyIndex = 0;
     public CrawlSettings currentCrawlSettings;
@@ -58,8 +57,18 @@ public class PlayerInput : MonoBehaviour
     void Start()
     {
         currentKeyIndex = 0;
-        spriteRenderer = GetComponent<SpriteRenderer>();  // 获取SpriteRenderer组件
-        lastPosition = transform.position;  // 初始化位置记录
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        lastPosition = transform.position;
+
+        // 初始化Rigidbody2D设置
+        rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            // 设置连续碰撞检测
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            // 设置插值模式使移动更平滑
+            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        }
 
         // 使用CrawlSettingsInitializer初始化所有爬行设置
         CrawlSettingsInitializer.InitializeSettings(
@@ -76,8 +85,6 @@ public class PlayerInput : MonoBehaviour
         {
             crawlProgresses[crawlType] = new CrawlProgress();
         }
-
-        rb = GetComponent<Rigidbody2D>();
         
         // 最后设置当前爬行类型
         ChangeCrawlType("Basic");
@@ -118,6 +125,28 @@ public class PlayerInput : MonoBehaviour
         CheckInput();
         CheckParallelInput();
         CheckSpaceInput();        
+
+        // 实时检测碰撞和移动方向
+        if (rb != null && rb.velocity.magnitude > 0)
+        {
+            // 获取所有接触点
+            ContactPoint2D[] contacts = new ContactPoint2D[10];
+            int contactCount = rb.GetContacts(contacts);
+            
+            for (int i = 0; i < contactCount; i++)
+            {
+                // 如果移动方向与碰撞法线方向相反，说明可能会穿模
+                if (Vector2.Dot(currentMoveDirection, contacts[i].normal) < 0)
+                {
+                    // 停止移动并调整位置
+                    rb.velocity = Vector2.zero;
+                    rb.MovePosition(rb.position + contacts[i].normal * 0.1f);
+                    Debug.Log("检测到可能的穿模，已调整位置");
+                    break;
+                }
+            }
+        }
+
         // 移动后根据当前接触点重新调整旋转
         if (currentContact.collider != null)
         {
@@ -202,11 +231,69 @@ public class PlayerInput : MonoBehaviour
         float speed = GetSpeedBasedOnSurface();
         Vector2 moveDirection = isReversing ? -currentMoveDirection : currentMoveDirection;
 
-        // 使用Rigidbody2D移动一个固定距离
-        Vector2 targetPosition = rb.position + (moveDirection * moveDistance);
-        rb.MovePosition(targetPosition);
+        // 限制deltaTime的最大值，防止帧率波动导致的突然移动
+        float clampedDeltaTime = Mathf.Min(Time.deltaTime, 0.02f);
+        float distance = speed * clampedDeltaTime;
+        
+        // 获取碰撞体
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            // 计算移动方向在表面上的投影
+            Vector2 surfaceNormal = currentContact.normal;
+            Vector2 surfaceTangent = new Vector2(-surfaceNormal.y, surfaceNormal.x);
+            
+            // 计算移动方向与表面切线的点积
+            float dotProduct = Vector2.Dot(moveDirection, surfaceTangent);
+            
+            // 根据点积选择正确的切线方向
+            Vector2 adjustedMoveDirection = dotProduct >= 0 ? surfaceTangent : -surfaceTangent;
+            
+            // 进行射线检测
+            RaycastHit2D hit = Physics2D.Raycast(rb.position, adjustedMoveDirection, distance);
+            if (hit.collider != null && hit.collider != collider)
+            {
+                // 如果检测到碰撞，检查是否是可爬行的斜面
+                float normalDot = Vector2.Dot(hit.normal, currentContact.normal);
+                if (normalDot > 0.7f) // 允许30度以内的角度变化
+                {
+                    // 更新表面法线和切线
+                    surfaceNormal = hit.normal;
+                    surfaceTangent = new Vector2(-surfaceNormal.y, surfaceNormal.x);
+                    
+                    // 重新计算移动方向
+                    dotProduct = Vector2.Dot(moveDirection, surfaceTangent);
+                    adjustedMoveDirection = dotProduct >= 0 ? surfaceTangent : -surfaceTangent;
+                }
+                else
+                {
+                    // 如果是障碍物，则调整移动距离
+                    distance = Mathf.Max(0, hit.distance - 0.1f);
+                }
+            }
 
-        // 播放移动音效，参数分别是：音效索引，是否播放，是否循环，音量
+            // 计算最终位置
+            Vector2 targetPosition = rb.position + (adjustedMoveDirection * distance);
+            
+            // 使用MovePosition移动
+            rb.MovePosition(targetPosition);
+            
+            // 更新实际速度计算
+            currentActualSpeed = (targetPosition - rb.position).magnitude / clampedDeltaTime;
+            
+            // 如果实际速度超过了预期速度的1.5倍，进行限制
+            if (currentActualSpeed > speed * 1.5f)
+            {
+                Debug.LogWarning($"检测到异常速度: {currentActualSpeed}, 预期速度: {speed}");
+                targetPosition = rb.position + (adjustedMoveDirection * (speed * clampedDeltaTime));
+                rb.MovePosition(targetPosition);
+            }
+
+            // Debug输出
+            Debug.Log($"Surface Normal: {surfaceNormal}, Move Direction: {moveDirection}, Adjusted Direction: {adjustedMoveDirection}");
+        }
+
+        // 播放移动音效
         SoundManager.Instance.PlaySFX(0, true, false, 1f);
 
         // 移动后重新调整旋转
