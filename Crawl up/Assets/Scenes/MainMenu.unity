@@ -291,7 +291,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Continue
+  m_text: "\u7EE7\u7EED"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
   m_sharedMaterial: {fileID: -2326650036583193645, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
@@ -420,8 +420,28 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: BGMPlayers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MyMusicList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MyMusicList.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8d446537431abe444a38a48e7391e06d, type: 3}
+    - target: {fileID: 4024249539048757785, guid: e741d67c67757344ab96478410a8202a, type: 3}
+      propertyPath: MyMusicList.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8d446537431abe444a38a48e7391e06d, type: 3}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3132767682532613787, guid: e741d67c67757344ab96478410a8202a, type: 3}
+    - {fileID: 7957939873150612203, guid: e741d67c67757344ab96478410a8202a, type: 3}
+    - {fileID: 2318169061266083064, guid: e741d67c67757344ab96478410a8202a, type: 3}
+    - {fileID: 7789315488524820958, guid: e741d67c67757344ab96478410a8202a, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e741d67c67757344ab96478410a8202a, type: 3}
@@ -747,7 +767,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit
+  m_text: "\u9000\u51FA"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
   m_sharedMaterial: {fileID: -2326650036583193645, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
@@ -860,7 +880,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1078,7 +1098,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start
+  m_text: "\u5F00\u59CB"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
   m_sharedMaterial: {fileID: -2326650036583193645, guid: 3a4bdbec604810f4c81f35164d3f9e02, type: 2}
