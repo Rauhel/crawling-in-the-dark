@@ -78,7 +78,7 @@ public class m_GameManager : MonoBehaviour
     // 处理玩家死亡事件
     private void OnPlayerDied()
     {
-        RespawnPlayer();
+        StartCoroutine(ReviveSequence());
     }
 
     // Update is called once per frame
@@ -117,14 +117,67 @@ public class m_GameManager : MonoBehaviour
     {
         // 保存游戏状态
         PlayerManager.Instance.SaveGameState();
+        Time.timeScale = 1; // 确保返回主菜单时时间恢复正常
         SceneManager.LoadScene("MainMenu");
     }
 
     public void ResumeGame()
     {
+        // 简单地恢复游戏，不需要黑屏效果
         isPaused = false;
         pauseMenu.SetActive(false);
         Time.timeScale = 1;
+    }
+
+    public void ReviveAtCheckpoint()
+    {
+        // 触发玩家死亡事件
+        EventCenter.Instance.Publish(EventCenter.EVENT_PLAYER_DIED);
+    }
+
+    private IEnumerator ReviveSequence()
+    {
+        // 关闭暂停菜单并恢复时间流动（因为需要协程工作）
+        isPaused = false;
+        pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+
+        // 等待一帧确保UI状态更新
+        yield return null;
+
+        // 开始重生过程
+        yield return StartCoroutine(RespawnSequence());
+    }
+
+    private IEnumerator RespawnSequence()
+    {
+        if (isRespawning) yield break;
+        
+        isRespawning = true;
+
+        // 淡出效果
+        yield return StartCoroutine(FadeEffect(true));
+
+        // 重置玩家位置到最后的安全点
+        if (PlayerManager.Instance != null)
+        {
+            PlayerManager.Instance.transform.position = PlayerManager.Instance.GetLastSafePoint();
+        }
+
+        // 增加黑屏等待时间
+        yield return new WaitForSeconds(blackScreenDuration);
+
+        // 淡入效果
+        yield return StartCoroutine(FadeEffect(false));
+
+        // 确保玩家完全可见
+        if (playerRenderer != null)
+        {
+            Color color = playerRenderer.color;
+            playerRenderer.color = new Color(color.r, color.g, color.b, 1f);
+        }
+
+        isRespawning = false;
     }
 
     public void ToggleMenu()
@@ -142,6 +195,7 @@ public class m_GameManager : MonoBehaviour
     {
         Debug.Log("游戏胜利！");
         isGameVictory = true;
+        Time.timeScale = 1; // 确保胜利时时间恢复正常
         
         // 播放胜利音效
         SoundManager.Instance.PlaySFX(6, true, false, 1f);
@@ -151,38 +205,6 @@ public class m_GameManager : MonoBehaviour
         {
             winMenu.SetActive(true);
         }
-    }
-
-    // 修改重生功能
-    public void RespawnPlayer()
-    {
-        if (!isRespawning)
-        {
-            StartCoroutine(RespawnSequence());
-        }
-    }
-
-    private IEnumerator RespawnSequence()
-    {
-        isRespawning = true;
-
-        // 淡出效果
-        yield return StartCoroutine(FadeEffect(true));
-
-        // 增加黑屏等待时间
-        yield return new WaitForSeconds(blackScreenDuration);
-
-        // 淡入效果
-        yield return StartCoroutine(FadeEffect(false));
-
-        // 确保玩家完全可见
-        if (playerRenderer != null)
-        {
-            Color color = playerRenderer.color;
-            playerRenderer.color = new Color(color.r, color.g, color.b, 1f);
-        }
-
-        isRespawning = false;
     }
 
     private IEnumerator FadeEffect(bool fadeOut)

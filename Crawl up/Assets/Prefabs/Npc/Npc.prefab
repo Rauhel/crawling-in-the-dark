@@ -101,13 +101,13 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 4
   escapeSpeed: 12
-  knockbackForce: 10
+  knockbackForce: 20
   horizontalDetectionRange: 8
   verticalDetectionRange: 3
   horizontalOffset: 2
   bodyRange: 0.5
-  knockbackDistance: 10
-  knockbackDuration: 1
+  knockbackDistance: 20
+  knockbackDuration: 2
   detectionSettings:
     hostileCrawlTypes: 
     lethalCrawlTypes: 

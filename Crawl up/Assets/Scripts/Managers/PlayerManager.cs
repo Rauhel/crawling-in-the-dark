@@ -192,4 +192,9 @@ public class PlayerManager : MonoBehaviour
             Debug.Log("已学习变色龙爬行方式");
         }
     }
+
+    public Vector3 GetLastSafePoint()
+    {
+        return lastSafePoint;
+    }
 }
